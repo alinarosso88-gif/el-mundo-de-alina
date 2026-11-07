@@ -1,6 +1,6 @@
 // Guarda la app en el celular para que abra rápido y también sin internet.
 // Para publicar una versión nueva, cambiá el número de VERSION.
-const VERSION = "mundo-alina-v2";
+const VERSION = "mundo-alina-v3";
 const BASE = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png",
               "ladybug.png", "catnoir.png", "tikki.png"];
 
@@ -31,6 +31,6 @@ self.addEventListener("fetch", e => {
         if (r && r.ok) { const copia = r.clone(); caches.open(VERSION).then(c => c.put(e.request, copia)); }
         return r;
       })
-      .catch(() => caches.match(e.request).then(r => r || caches.match("index.html")))
+      .catch(() => caches.match(e.request).then(r => r || (e.request.mode === "navigate" ? caches.match("index.html") : Response.error())))
   );
 });

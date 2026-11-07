@@ -233,10 +233,46 @@
     u.pitch = actual.pitch; u.rate = actual.rate;
     speechSynthesis.speak(u);
   }
-  function decir(texto, id = "gBubble"){ $(id).textContent = texto; hablar(texto); }
+  // ---------- Audios grabados ----------
+  // Busca "<personaje>_<frase>.mp3" (o .m4a, .ogg, .wav, .aac) en la carpeta principal o en "audio/".
+  // Si el archivo no existe, la frase se lee con la voz del celular.
+  const EXT = ["mp3", "m4a", "ogg", "wav", "aac"];
+  const hallados = {};   // clave -> dirección del audio, o null si no existe
+  let turnoAudio = 0, audioActual = null;
+
+  async function cargarAudio(clave){
+    if (clave in hallados) return hallados[clave];
+    const carpetas = ["", "audio/"];
+    const intentos = carpetas.flatMap(c => EXT.map(e => ({ u: c + clave + "." + e, c })));
+    const res = await Promise.all(intentos.map(x =>
+      fetch(x.u).then(r => (r.ok && /audio|mpeg|mp4|ogg|wav|aac|octet/i.test(r.headers.get("content-type") || "")) ? r.blob().then(b => ({ b, c: x.c })) : null).catch(() => null)));
+    const ok = res.find(Boolean);
+    hallados[clave] = ok ? URL.createObjectURL(ok.b) : null;
+    return hallados[clave];
+  }
+  function parar(){
+    turnoAudio++;
+    if (audioActual) { try { audioActual.pause(); } catch(e) {} audioActual = null; }
+    if (hayVoz) speechSynthesis.cancel();
+  }
+  async function reproducir(clave, texto){
+    if (!vozOn) return;
+    parar();
+    const ts = turnoAudio;
+    const url = clave ? await cargarAudio(clave) : null;
+    if (ts !== turnoAudio) return;
+    if (url) { const a = new Audio(url); audioActual = a; a.play().catch(() => hablar(texto)); }
+    else hablar(texto);
+  }
+  function decir(texto, id = "gBubble", clave = null){ $(id).textContent = texto; reproducir(clave, texto); }
+  // Elige una frase al azar de una lista; su audio se llama <personaje>_<nombre><número>
+  function decirDe(lista, nombre, id = "gBubble"){
+    const i = Math.floor(Math.random() * lista.length);
+    decir(lista[i], id, actual.id + "_" + nombre + (i + 1));
+  }
 
   function mostrar(id){
-    if (hayVoz) speechSynthesis.cancel();
+    parar();
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     $(id).classList.add("active");
   }
@@ -287,11 +323,11 @@
       $("callBubble").style.display = "block";
       $("menuJuegos").style.display = "flex";
       $("stage").classList.add("talking");
-      decir(p.saludo, "callBubble");
+      decir(p.saludo, "callBubble", p.id + "_saludo");
     }, 1300);
   }
   function colgar(){ clearTimeout(temporizador); actual = null; mostrar("home"); }
-  function volverJuegos(){ mostrar("hub"); $("callBubble").style.display = "block"; decir(r(actual.menu), "callBubble"); }
+  function volverJuegos(){ mostrar("hub"); $("callBubble").style.display = "block"; decirDe(actual.menu, "menu", "callBubble"); }
 
   $("endBtn").onclick = colgar;
   $("switchBtn").onclick = colgar;
@@ -300,7 +336,7 @@
     vozOn = !vozOn;
     $("vozBtn").classList.toggle("off", !vozOn);
     $("vozBtn").textContent = vozOn ? "🔊" : "🔇";
-    if (!vozOn && hayVoz) speechSynthesis.cancel();
+    if (!vozOn) parar();
   };
 
   $("cambiaVozBtn").onclick = () => {
@@ -336,7 +372,7 @@
       <button class="gbtn" id="otra">Jugar otra vez</button><button class="gbtn sec" id="vol">Volver a los juegos</button></div>`;
     $("otra").onclick = otraVez;
     $("vol").onclick = volverJuegos;
-    decir(frase || r(actual.frases.fin));
+    if (frase) decir(frase); else decirDe(actual.frases.fin, "fin");
   }
 
   // ---------- Juego 1: Memoria ----------
@@ -346,7 +382,7 @@
       <button class="gbtn" id="n6">Más difícil · 6 parejas</button>`;
     $("n3").onclick = () => memoria(3);
     $("n6").onclick = () => memoria(6);
-    decir(actual.intro.memoria);
+    decir(actual.intro.memoria, "gBubble", actual.id + "_intro-memoria");
   }
 
   function memoria(n){
@@ -421,7 +457,7 @@
           setTimeout(() => {
             emparejar(x, y); ptsA++; pintar();
             if (hechas === n) return terminar();
-            bloqueo = false; decir(r(actual.frases.ok));
+            bloqueo = false; decirDe(actual.frases.ok, "ok");
           }, 500);
         } else {
           setTimeout(() => { cerrar(x); cerrar(y); pintar(); if (contra) turnoPersonaje(); else bloqueo = false; }, 900);
@@ -480,11 +516,15 @@
     { q:"¿Qué número sigue?", s:"20 · 18 · 16 · 14 · ❓", a:"12", o:["10","13"] }
   ];
 
+  // Nombre del audio de cada pregunta (ver la lista del documento): q01..q22 y l01..l09
+  PREGUNTAS.forEach((it, i) => { it.k = "q" + String(i + 1).padStart(2, "0"); });
+  { const vistos = []; LOGICA.forEach(it => { let j = vistos.indexOf(it.q); if (j < 0) { vistos.push(it.q); j = vistos.length - 1; } it.k = "l" + String(j + 1).padStart(2, "0"); }); }
+
   function jugarPreguntas(banco, cantidad, tipo){
     const items = mezclar(banco).slice(0, cantidad);
     const contra = modo === "contra";
     let idx = 0, puntos = 0, ptsP = 0;
-    decir(actual.intro[tipo]);
+    decir(actual.intro[tipo], "gBubble", actual.id + "_intro-" + tipo);
 
     function mostrarPregunta(){
       const it = items[idx];
@@ -496,14 +536,14 @@
         ${it.s ? `<div class="seq">${it.s}</div>` : ""}
         <div class="opts">${opciones.map(o => `<button class="opt">${o}</button>`).join("")}</div>`;
       let primera = true;
-      $("escuchar").onclick = () => hablar(it.q);
+      $("escuchar").onclick = () => reproducir(it.k, it.q);
       document.querySelectorAll(".opt").forEach(btn => {
         btn.onclick = () => {
           if (btn.textContent === it.a) {
             btn.classList.add("ok");
             document.querySelectorAll(".opt").forEach(x => x.disabled = true);
             if (primera) puntos++;
-            decir(r(actual.frases.ok));
+            decirDe(actual.frases.ok, "ok");
             let espera = 2200;
             if (contra) {
               // El personaje también responde: acierta más o menos 6 de cada 10 veces
@@ -517,7 +557,7 @@
             }
             setTimeout(() => {
               idx++;
-              if (idx < items.length) { mostrarPregunta(); hablar(items[idx].q); }
+              if (idx < items.length) { mostrarPregunta(); reproducir(items[idx].k, items[idx].q); }
               else if (contra) {
                 const v = actual.vs;
                 const frase = puntos > ptsP ? v.ganaA : puntos < ptsP ? v.ganaP : v.empate;
@@ -530,7 +570,7 @@
             primera = false;
             btn.classList.add("no");
             btn.disabled = true;
-            decir(r(actual.frases.mal));
+            decirDe(actual.frases.mal, "mal");
           }
         };
       });
