@@ -108,7 +108,8 @@
     <button class="gamebtn" id="jLogica"><span class="ico">🧩</span><span>Misiones de lógica<small>Resolvé los desafíos</small></span></button>
   </div>
   <div class="controls">
-    <div class="ctl"><button class="btn" id="vozBtn" aria-label="Voz">🔊</button><span class="label">Voz</span></div>
+    <div class="ctl"><button class="btn" id="vozBtn" aria-label="Sonido">🔊</button><span class="label">Sonido</span></div>
+    <div class="ctl"><button class="btn" id="cambiaVozBtn" aria-label="Cambiar voz">🎙️</button><span class="label">Cambiar voz</span></div>
     <div class="ctl"><button class="btn end" id="endBtn" aria-label="Finalizar">📞</button><span class="label">Cortar</span></div>
     <div class="ctl"><button class="btn" id="switchBtn" aria-label="Cambiar personaje">🔄</button><span class="label">Cambiar</span></div>
   </div>
@@ -130,7 +131,7 @@
   const personajes = [
     { id:"ladybug", img:"ladybug.png", zoom:1.9, origen:"50% 12%", nombre:"Ladybug", emoji:"🐞",
       color:"linear-gradient(135deg,#e53935,#ff8a80)", desc:"Valiente, inteligente y cariñosa",
-      pitch:1.35, rate:1.05,
+      pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
       intro:{ memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
@@ -141,7 +142,7 @@
                fin:["¡Misión cumplida, Alina! Sos una gran heroína.","¡Qué bien jugaste! Estoy muy orgullosa de vos."] } },
     { id:"catnoir", img:"catnoir.png", zoom:1.9, origen:"50% 12%", nombre:"Cat Noir", emoji:"🐱",
       color:"linear-gradient(135deg,#212121,#6a1b9a)", desc:"Divertido, bromista y entusiasta",
-      pitch:0.8, rate:1.1,
+      pitch:0.9, rate:0.98,
       saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
       menu:["¿Qué juego sigue, Alina?","¡Elegí otro, que esto se pone bueno!"],
       intro:{ memoria:"¡A buscar parejas! Ojo de gato, Alina.",
@@ -152,7 +153,7 @@
                fin:["¡Miau-gnífico! ¡Ganaste, Alina!","¡Sos increíble! ¿Jugamos otra vez?"] } },
     { id:"tikki", img:"tikki.png", zoom:1.0, origen:"50% 40%", nombre:"Tikki", emoji:"✨",
       color:"linear-gradient(135deg,#ff7043,#ffcc80)", desc:"Dulce, tierna y sabia",
-      pitch:1.7, rate:0.95,
+      pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
       menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
       intro:{ memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
@@ -179,7 +180,21 @@
 
   // ---------- Voz del celular (no usa internet ni inteligencia artificial) ----------
   const hayVoz = 'speechSynthesis' in window;
-  function cargarVoces(){ voces = speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang)); }
+  let vozIdx = 0;
+  // Puntaje: prefiere voces "naturales" / de Google / de red y acento latino
+  function puntaje(v){
+    let n = 0;
+    if (/natural|neural|online|enhanced|premium/i.test(v.name)) n += 6;
+    if (/google/i.test(v.name)) n += 4;
+    if (!v.localService) n += 2;
+    if (/es[-_](AR|419|MX|US|CO|CL|UY)/i.test(v.lang)) n += 3;
+    if (/female|mujer|paulina|helena|sabina|monica|mónica|elena|paloma|camila|dalia|salome|salomé|elvira|lupe|valentina|laura|marisol|ximena/i.test(v.name)) n += 3;
+    return n;
+  }
+  function cargarVoces(){
+    voces = speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang)).sort((a, b) => puntaje(b) - puntaje(a));
+    try { const g = localStorage.getItem("vozAlina"); const i = voces.findIndex(v => v.name === g); vozIdx = i >= 0 ? i : 0; } catch(e) { vozIdx = 0; }
+  }
   if (hayVoz) { cargarVoces(); speechSynthesis.onvoiceschanged = cargarVoces; }
 
   function hablar(texto){
@@ -189,7 +204,7 @@
       .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "")
       .replace(/\+/g, " más ").replace(/−/g, " menos ").replace(/×/g, " por ").replace(/=/g, " igual ").replace(/___/g, " ... ");
     const u = new SpeechSynthesisUtterance(limpio);
-    const v = voces.find(v => /AR|419|MX|US/i.test(v.lang)) || voces[0];
+    const v = voces[vozIdx];
     if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "es-AR"; }
     u.pitch = actual.pitch; u.rate = actual.rate;
     speechSynthesis.speak(u);
@@ -242,6 +257,14 @@
     $("vozBtn").classList.toggle("off", !vozOn);
     $("vozBtn").textContent = vozOn ? "🔊" : "🔇";
     if (!vozOn && hayVoz) speechSynthesis.cancel();
+  };
+
+  $("cambiaVozBtn").onclick = () => {
+    if (!voces.length) { decir("Este celular no tiene voces en español instaladas.", "callBubble"); return; }
+    vozIdx = (vozIdx + 1) % voces.length;
+    try { localStorage.setItem("vozAlina", voces[vozIdx].name); } catch(e) {}
+    vozOn = true; $("vozBtn").classList.remove("off"); $("vozBtn").textContent = "🔊";
+    decir("Hola, Alina. ¿Te gusta cómo sueno ahora? Voz " + (vozIdx + 1) + " de " + voces.length + ".", "callBubble");
   };
 
   function entrarJuego(){
@@ -309,13 +332,18 @@
   // a = respuesta correcta, o = las otras dos opciones, s = secuencia o dibujo (opcional)
   const PREGUNTAS = [
     { q:"¿Cuántas patas tiene una araña?", a:"8", o:["6","10"] },
-    { q:"¿Cuánto es 7 + 8?", a:"15", o:["14","16"] },
+    { q:"¿Cuánto es 7 + 5?", a:"12", o:["11","13"] },
+    { q:"¿Cuánto es 13 − 6?", a:"7", o:["6","8"] },
+    { q:"¿Cuánto es 25 + 10?", a:"35", o:["30","45"] },
+    { q:"¿Cuánto es 18 − 9?", a:"9", o:["8","10"] },
+    { q:"Tenés 8 figuritas y te regalan 5. ¿Cuántas tenés ahora?", a:"13", o:["12","14"] },
+    { q:"Había 15 globos y se pinchan 6. ¿Cuántos quedan?", a:"9", o:["8","10"] },
     { q:"¿Qué planeta es conocido como el planeta rojo?", a:"Marte", o:["Venus","Júpiter"] },
     { q:"¿Cuál es el animal más grande del mundo?", a:"La ballena azul", o:["El elefante","La jirafa"] },
     { q:"¿Cuántos días tiene una semana?", a:"7", o:["5","10"] },
     { q:"¿Qué color se forma al mezclar azul con amarillo?", a:"Verde", o:["Naranja","Violeta"] },
     { q:"¿Cuál es la capital de Argentina?", a:"Buenos Aires", o:["Córdoba","Rosario"] },
-    { q:"¿Cuánto es 6 × 4?", a:"24", o:["20","28"] },
+    { q:"¿Cuánto es 9 + 6?", a:"15", o:["14","16"] },
     { q:"¿Cuál de estos animales pone huevos?", a:"La gallina", o:["La vaca","El perro"] },
     { q:"¿Cuántos lados tiene un triángulo?", a:"3", o:["4","5"] },
     { q:"¿Qué necesitan las plantas para crecer?", a:"Sol y agua", o:["Solo caramelos","Nada"] },
@@ -332,7 +360,7 @@
     { q:"¿Qué viene después?", s:"🐞 🐞 🐱 🐞 🐞 🐱 🐞 🐞 ❓", a:"🐱", o:["🐞","⭐"] },
     { q:"¿Qué número sigue?", s:"2 · 4 · 6 · 8 · ❓", a:"10", o:["9","12"] },
     { q:"¿Qué número sigue?", s:"5 · 10 · 15 · 20 · ❓", a:"25", o:["30","22"] },
-    { q:"¿Qué número sigue?", s:"1 · 2 · 4 · 8 · ❓", a:"16", o:["12","10"] },
+    { q:"¿Qué número sigue?", s:"1 · 3 · 5 · 7 · ❓", a:"9", o:["8","10"] },
     { q:"¿Qué número sigue?", s:"3 · 6 · 9 · 12 · ❓", a:"15", o:["14","18"] },
     { q:"¿Qué número sigue?", s:"10 · 9 · 8 · 7 · ❓", a:"6", o:["5","8"] },
     { q:"¿Cuál no pertenece al grupo?", s:"🍎 🍌 🍇 🚗", a:"🚗", o:["🍎","🍇"] },
@@ -342,7 +370,10 @@
     { q:"Si hoy es lunes, ¿qué día será dentro de dos días?", a:"Miércoles", o:["Martes","Jueves"] },
     { q:"Tengo agujas pero no sé coser, y todos me miran para saber la hora. ¿Qué soy?", a:"Un reloj", o:["Un sombrero","Un libro"] },
     { q:"María tiene 3 caramelos y le dan 4 más. Después se come 2. ¿Cuántos le quedan?", a:"5", o:["7","9"] },
-    { q:"7 + ___ = 12. ¿Qué número falta?", a:"5", o:["4","6"] }
+    { q:"7 + ___ = 12. ¿Qué número falta?", a:"5", o:["4","6"] },
+    { q:"15 − ___ = 9. ¿Qué número falta?", a:"6", o:["5","7"] },
+    { q:"Lucía tiene 9 lápices, regala 4 y le dan 3 más. ¿Cuántos tiene?", a:"8", o:["6","10"] },
+    { q:"¿Qué número sigue?", s:"20 · 18 · 16 · 14 · ❓", a:"12", o:["10","13"] }
   ];
 
   function jugarPreguntas(banco, cantidad, tipo){
