@@ -21,6 +21,8 @@
           border-radius:22px; padding:16px; color:#fff; font:inherit; text-align:left; width:100%; cursor:pointer; }
   .card:active { transform:scale(.98); }
   .avatar-sm { width:68px; height:68px; border-radius:50%; display:grid; place-items:center; font-size:2.2rem; flex:none; }
+  .pic { width:100%; height:100%; border-radius:50%; overflow:hidden; display:grid; place-items:center; }
+  .pic img { width:100%; height:100%; object-fit:cover; object-position:50% 0%; }
   .card b { font-size:1.25rem; display:block; }
   .card span { opacity:.85; font-size:.95rem; }
 
@@ -74,16 +76,26 @@
 
 <script>
   // Personajes (por ahora con íconos de reemplazo; después ponemos las imágenes)
+  // Archivos de imagen esperados (subirlos a la raíz del repositorio con estos nombres exactos).
+  // zoom = qué tan cerca se ve la cara; origen = punto del zoom (x% y%).
   const personajes = [
-    { id:"ladybug", nombre:"Ladybug", emoji:"🐞", color:"linear-gradient(135deg,#e53935,#ff8a80)",
+    { id:"ladybug", img:"ladybug.png", zoom:1.9, origen:"50% 12%", nombre:"Ladybug", emoji:"🐞", color:"linear-gradient(135deg,#e53935,#ff8a80)",
       desc:"Valiente, inteligente y cariñosa", saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿Lista para una aventura?" },
-    { id:"catnoir", nombre:"Cat Noir", emoji:"🐱", color:"linear-gradient(135deg,#212121,#6a1b9a)",
+    { id:"catnoir", img:"catnoir.png", zoom:1.9, origen:"50% 12%", nombre:"Cat Noir", emoji:"🐱", color:"linear-gradient(135deg,#212121,#6a1b9a)",
       desc:"Divertido, bromista y entusiasta", saludo:"¡Hola, Alina! Tengo un chiste nuevo… ¿querés oírlo?" },
-    { id:"tikki", nombre:"Tikki", emoji:"✨", color:"linear-gradient(135deg,#ff7043,#ffcc80)",
+    { id:"tikki", img:"tikki.png", zoom:1.0, origen:"50% 40%", nombre:"Tikki", emoji:"✨", color:"linear-gradient(135deg,#ff7043,#ffcc80)",
       desc:"Dulce, tierna y sabia", saludo:"¡Hola, Alina! Me encanta que hablemos. ¿Cómo fue tu día?" }
   ];
 
   const $ = id => document.getElementById(id);
+
+  // Imagen del personaje; si el archivo no existe todavía, muestra el ícono de reemplazo
+  function avatar(p){
+    return `<div class="pic" style="background:${p.color}">
+      <img src="${p.img}" alt="${p.nombre}" style="transform:scale(${p.zoom});transform-origin:${p.origen}"
+           onerror="this.remove();this.parentNode.textContent='${p.emoji}'">
+    </div>`;
+  }
   let actual = null, segundos = 0, reloj = null;
 
   function mostrar(id){ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); }
@@ -92,15 +104,14 @@
   personajes.forEach(p => {
     const b = document.createElement("button");
     b.className = "card";
-    b.innerHTML = `<div class="avatar-sm" style="background:${p.color}">${p.emoji}</div><div><b>${p.nombre}</b><span>${p.desc}</span></div>`;
+    b.innerHTML = `<div class="avatar-sm">${avatar(p)}</div><div><b>${p.nombre}</b><span>${p.desc}</span></div>`;
     b.onclick = () => llamar(p);
     $("cards").appendChild(b);
   });
 
   function llamar(p){
     actual = p;
-    $("callAvatar").style.background = p.color;
-    $("callAvatar").textContent = p.emoji;
+    $("callAvatar").innerHTML = avatar(p);
     $("callName").textContent = p.nombre;
     $("callStatus").textContent = "Llamando…";
     $("callBubble").style.display = "none";
