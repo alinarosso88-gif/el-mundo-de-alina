@@ -1,0 +1,17 @@
+{
+  "name": "El mundo de Alina",
+  "short_name": "Mundo de Alina",
+  "description": "Juegos con Ladybug, Cat Noir y Tikki",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2b1055",
+  "theme_color": "#2b1055",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

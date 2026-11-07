@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2b1055">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>El mundo de Alina</title>
 <style>
   :root { --bg1:#2b1055; --bg2:#7597de; --card:rgba(255,255,255,.14); }
@@ -82,6 +85,10 @@
   .final h2 { margin:0; font-size:1.6rem; }
   .final p { margin:0; font-size:1.1rem; }
   .trofeo { font-size:4rem; }
+  .marcador { display:flex; justify-content:space-between; gap:10px; background:rgba(255,255,255,.16); border-radius:14px; padding:10px 14px; font-size:1.05rem; }
+  .marcador b { font-size:1.3rem; }
+  #instalarBtn { display:none; margin:18px auto 0; background:#ffca28; color:#2b1055; border:none; border-radius:999px; padding:14px 22px; font-size:1.05rem; font-weight:700; cursor:pointer; }
+  #instalarAyuda { display:none; text-align:center; font-size:.9rem; opacity:.9; margin:14px 8px 0; }
 </style>
 </head>
 <body>
@@ -91,15 +98,17 @@
   <h1>✨ El mundo de Alina ✨</h1>
   <p class="sub">¿Con quién querés jugar hoy?</p>
   <div class="cards" id="cards"></div>
+  <button id="instalarBtn">📲 Instalar como app</button>
+  <p id="instalarAyuda">Para instalarla: tocá los tres puntitos de arriba a la derecha del navegador y elegí “Agregar a la pantalla principal” o “Instalar app”.</p>
 </section>
 
 <!-- SALA DEL PERSONAJE: saludo y menú de juegos -->
 <section id="hub" class="screen">
-  <div class="topbar"><span>📹 Videollamada</span><span id="hubHint"></span></div>
+  <div class="topbar"><span>🎮 Sala de juegos</span><span id="hubHint"></span></div>
   <div class="stage" id="stage">
     <div class="ring" id="callAvatar"></div>
     <div id="callName"></div>
-    <div id="callStatus">Llamando…</div>
+    <div id="callStatus">Preparándose…</div>
     <div class="bubble" id="callBubble" style="display:none"></div>
   </div>
   <div id="menuJuegos">
@@ -110,7 +119,7 @@
   <div class="controls">
     <div class="ctl"><button class="btn" id="vozBtn" aria-label="Sonido">🔊</button><span class="label">Sonido</span></div>
     <div class="ctl"><button class="btn" id="cambiaVozBtn" aria-label="Cambiar voz">🎙️</button><span class="label">Cambiar voz</span></div>
-    <div class="ctl"><button class="btn end" id="endBtn" aria-label="Finalizar">📞</button><span class="label">Cortar</span></div>
+    <div class="ctl"><button class="btn end" id="endBtn" aria-label="Salir">🏠</button><span class="label">Salir</span></div>
     <div class="ctl"><button class="btn" id="switchBtn" aria-label="Cambiar personaje">🔄</button><span class="label">Cambiar</span></div>
   </div>
 </section>
@@ -129,7 +138,12 @@
   // ---------- Personajes ----------
   // Las imágenes (ladybug.png, catnoir.png, tikki.png) están en la raíz del repositorio.
   const personajes = [
-    { id:"ladybug", img:"ladybug.png", zoom:1.9, origen:"50% 12%", nombre:"Ladybug", emoji:"🐞",
+    { id:"ladybug",
+      vs:{ elegir:"¿Querés jugar sola o jugamos juntas?", turnoA:"¡Te toca, Alina!", turnoP:"Ahora me toca a mí.",
+        yoOk:["¡Yo también acerté!","¡Esta me salió bien!"], yoMal:["Uy, esta no me salió.","¡Me equivoqué esta vez!"],
+        par:["¡Encontré una pareja!","¡Esta la tenía!"], nopar:["Uy, no eran iguales.","Casi, casi."],
+        ganaA:"¡Ganaste, Alina! Fue una gran partida.", empate:"¡Empatamos! Somos un gran equipo.",
+        ganaP:"¡Esta vez gané yo! Pero jugás genial, la próxima seguro ganás." }, img:"ladybug.png", zoom:1.9, origen:"50% 12%", nombre:"Ladybug", emoji:"🐞",
       color:"linear-gradient(135deg,#e53935,#ff8a80)", desc:"Valiente, inteligente y cariñosa",
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
@@ -140,7 +154,12 @@
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
                mal:["¡Casi! Probá otra vez, vos podés.","Todavía no, pero seguro lo descubrís."],
                fin:["¡Misión cumplida, Alina! Sos una gran heroína.","¡Qué bien jugaste! Estoy muy orgullosa de vos."] } },
-    { id:"catnoir", img:"catnoir.png", zoom:1.9, origen:"50% 12%", nombre:"Cat Noir", emoji:"🐱",
+    { id:"catnoir",
+      vs:{ elegir:"¿Jugás sola o te animás a jugar contra mí?", turnoA:"¡Tu turno, Alina!", turnoP:"¡Mi turno! Ojo de gato.",
+        yoOk:["¡Miau! Esta también la acerté.","¡Eso fue fácil para un gato!"], yoMal:["¡Uy! Hasta los gatos fallan.","Esta me salió mal, ¡qué torpe!"],
+        par:["¡Una pareja para el gato!","¡Miau, la encontré!"], nopar:["Uy, no eran iguales.","Falló el salto."],
+        ganaA:"¡Ganaste, Alina! Me ganaste con astucia.", empate:"¡Empate! Estamos a la par.",
+        ganaP:"¡Miau, gané! Pero casi me alcanzás. ¿Revancha?" }, img:"catnoir.png", zoom:1.9, origen:"50% 12%", nombre:"Cat Noir", emoji:"🐱",
       color:"linear-gradient(135deg,#212121,#6a1b9a)", desc:"Divertido, bromista y entusiasta",
       pitch:0.9, rate:0.98,
       saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
@@ -151,7 +170,12 @@
       frases:{ ok:["¡Miau-ravilloso, Alina!","¡Eso es! Sos genial.","¡Fantástico! Me impresionaste."],
                mal:["¡Uy, casi! Hasta los gatos fallan un salto. ¡Intentá de nuevo!","Ese no era, pero seguí intentando."],
                fin:["¡Miau-gnífico! ¡Ganaste, Alina!","¡Sos increíble! ¿Jugamos otra vez?"] } },
-    { id:"tikki", img:"tikki.png", zoom:1.0, origen:"50% 40%", nombre:"Tikki", emoji:"✨",
+    { id:"tikki",
+      vs:{ elegir:"¿Jugamos juntas o preferís jugar sola?", turnoA:"Ahora te toca a vos, Alina.", turnoP:"Ahora voy yo, con calma.",
+        yoOk:["Yo también lo acerté.","Esta me salió bien."], yoMal:["Ay, esta no me salió.","Me equivoqué, no pasa nada."],
+        par:["Encontré una pareja.","¡Esta sí!"], nopar:["Ay, no eran iguales.","Casi."],
+        ganaA:"¡Ganaste, Alina! Estoy muy contenta por vos.", empate:"¡Empatamos! Qué lindo jugar juntas.",
+        ganaP:"Esta vez gané yo, pero lo hiciste muy bien. Jugamos otra vez cuando quieras." }, img:"tikki.png", zoom:1.0, origen:"50% 40%", nombre:"Tikki", emoji:"✨",
       color:"linear-gradient(135deg,#ff7043,#ffcc80)", desc:"Dulce, tierna y sabia",
       pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
@@ -217,6 +241,26 @@
     $(id).classList.add("active");
   }
 
+  // ---------- Instalar como app ----------
+  let promptInstalar = null;
+  const yaInstalada = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    promptInstalar = e;
+    if (!yaInstalada) { $("instalarBtn").style.display = "block"; $("instalarAyuda").style.display = "none"; }
+  });
+  $("instalarBtn").onclick = async () => {
+    if (!promptInstalar) return;
+    promptInstalar.prompt();
+    try { await promptInstalar.userChoice; } catch(e) {}
+    promptInstalar = null;
+    $("instalarBtn").style.display = "none";
+  };
+  window.addEventListener("appinstalled", () => { $("instalarBtn").style.display = "none"; $("instalarAyuda").style.display = "none"; });
+  // Si el navegador no ofrece el botón (por ejemplo, ya hay otra versión instalada o Chrome lo demora), mostramos la ayuda escrita
+  if (!yaInstalada) setTimeout(() => { if (!promptInstalar) $("instalarAyuda").style.display = "block"; }, 4000);
+  if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+
   // ---------- Inicio ----------
   personajes.forEach(p => {
     const b = document.createElement("button");
@@ -232,14 +276,14 @@
     actual = p;
     $("callAvatar").innerHTML = avatar(p);
     $("callName").textContent = p.nombre;
-    $("callStatus").textContent = "Llamando…";
+    $("callStatus").textContent = "Preparándose…";
     $("callBubble").style.display = "none";
     $("menuJuegos").style.display = "none";
     $("stage").classList.remove("talking");
     mostrar("hub");
     clearTimeout(temporizador);
     temporizador = setTimeout(() => {
-      $("callStatus").textContent = "Conectada";
+      $("callStatus").textContent = "¡Lista para jugar!";
       $("callBubble").style.display = "block";
       $("menuJuegos").style.display = "flex";
       $("stage").classList.add("talking");
@@ -271,17 +315,28 @@
     $("gAvatar").innerHTML = avatar(actual);
     mostrar("game");
   }
-  $("jMemoria").onclick = () => { entrarJuego(); eligeNivelMemoria(); };
-  $("jQuiz").onclick = () => { entrarJuego(); jugarPreguntas(PREGUNTAS, 6, "quiz"); };
-  $("jLogica").onclick = () => { entrarJuego(); jugarPreguntas(LOGICA, 6, "logica"); };
+  // ---------- Elegir: jugar sola o contra el personaje ----------
+  let modo = "sola"; // "sola" o "contra"
+  const spansMarcador = (a, b) => `<span>Alina <b>${a}</b></span><span>${actual.nombre} <b>${b}</b></span>`;
+  function elegirModo(siguiente){
+    $("gameBody").innerHTML = `<p class="q">¿Cómo querés jugar?</p>
+      <button class="gbtn" id="mSola">Jugar sola</button>
+      <button class="gbtn" id="mContra">Jugar contra ${actual.nombre}</button>`;
+    $("mSola").onclick = () => { modo = "sola"; siguiente(); };
+    $("mContra").onclick = () => { modo = "contra"; siguiente(); };
+    decir(actual.vs.elegir);
+  }
+  $("jMemoria").onclick = () => { entrarJuego(); elegirModo(eligeNivelMemoria); };
+  $("jQuiz").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(PREGUNTAS, 6, "quiz")); };
+  $("jLogica").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(LOGICA, 6, "logica")); };
 
   // ---------- Pantalla final común ----------
-  function final(titulo, detalle, otraVez){
+  function final(titulo, detalle, otraVez, frase){
     $("gameBody").innerHTML = `<div class="final"><div class="trofeo">🏆</div><h2>${titulo}</h2><p>${detalle}</p>
       <button class="gbtn" id="otra">Jugar otra vez</button><button class="gbtn sec" id="vol">Volver a los juegos</button></div>`;
     $("otra").onclick = otraVez;
     $("vol").onclick = volverJuegos;
-    decir(r(actual.frases.fin));
+    decir(frase || r(actual.frases.fin));
   }
 
   // ---------- Juego 1: Memoria ----------
@@ -297,33 +352,82 @@
   function memoria(n){
     const base = [...personajes.map(p => ({ k:p.id, p })), { k:"flor", e:"🌸" }, { k:"est", e:"⭐" }, { k:"trebol", e:"🍀" }].slice(0, n);
     const cartas = mezclar([...base, ...base]);
-    let abiertas = [], hechas = 0, intentos = 0, bloqueo = false;
+    const els = [];
+    const contra = modo === "contra";
+    let abiertas = [], hechas = 0, intentos = 0, bloqueo = false, ptsA = 0, ptsP = 0;
+    const recuerdo = new Map(); // carta -> lo que el personaje "recuerda" haber visto
     const cols = n === 3 ? 3 : 4;
-    $("gameBody").innerHTML = `<p class="info" id="info">Intentos: 0</p><div class="grid" id="grid" style="grid-template-columns:repeat(${cols},1fr)"></div>`;
-    cartas.forEach(c => {
+    $("gameBody").innerHTML = `<div class="info" id="info"></div><div class="grid" id="grid" style="grid-template-columns:repeat(${cols},1fr)"></div>`;
+    const pintar = () => { $("info").innerHTML = contra ? `<div class="marcador">${spansMarcador(ptsA, ptsP)}</div>` : "Intentos: " + intentos; };
+    pintar();
+
+    const libre = i => !els[i].classList.contains("abierta") && !els[i].classList.contains("par");
+    const abrir = i => { els[i].classList.add("abierta"); if (contra && !recuerdo.has(i) && Math.random() < 0.5) recuerdo.set(i, cartas[i].k); };
+    const cerrar = i => els[i].classList.remove("abierta");
+    const emparejar = (i, j) => { [i, j].forEach(x => { els[x].classList.remove("abierta"); els[x].classList.add("par"); recuerdo.delete(x); }); hechas++; };
+
+    const terminar = () => {
+      if (!contra) return final("¡Encontraste todas las parejas!", `Lo lograste en ${intentos} intentos.`, () => memoria(n));
+      const v = actual.vs;
+      const frase = ptsA > ptsP ? v.ganaA : ptsA < ptsP ? v.ganaP : v.empate;
+      const titulo = ptsA > ptsP ? "¡Ganaste, Alina!" : ptsA < ptsP ? `Ganó ${actual.nombre}` : "¡Empate!";
+      final(titulo, `Alina ${ptsA} - ${actual.nombre} ${ptsP}`, () => memoria(n), frase);
+    };
+
+    // Turno del personaje: recuerda algunas cartas, no todas, así que a veces falla
+    function turnoPersonaje(anuncia = true){
+      bloqueo = true;
+      if (anuncia) decir(actual.vs.turnoP);
+      setTimeout(() => {
+        let a = null, b2 = null;
+        const vistos = [...recuerdo.entries()].filter(([i]) => libre(i));
+        buscar: for (let u = 0; u < vistos.length; u++) for (let v = u + 1; v < vistos.length; v++) {
+          if (vistos[u][1] === vistos[v][1]) { a = vistos[u][0]; b2 = vistos[v][0]; break buscar; }
+        }
+        if (a === null) a = r(cartas.map((_, i) => i).filter(libre));
+        abrir(a);
+        setTimeout(() => {
+          if (b2 === null) {
+            const k = cartas[a].k;
+            const conocida = [...recuerdo.entries()].find(([i, kk]) => i !== a && kk === k && libre(i));
+            b2 = conocida ? conocida[0] : r(cartas.map((_, i) => i).filter(i => i !== a && libre(i)));
+          }
+          abrir(b2);
+          setTimeout(() => {
+            if (cartas[a].k === cartas[b2].k) {
+              emparejar(a, b2); ptsP++; pintar(); decir(r(actual.vs.par));
+              if (hechas === n) return setTimeout(terminar, 1200);
+              setTimeout(() => turnoPersonaje(false), 1500);
+            } else {
+              cerrar(a); cerrar(b2); decir(r(actual.vs.nopar));
+              setTimeout(() => { bloqueo = false; decir(actual.vs.turnoA); }, 1400);
+            }
+          }, 1000);
+        }, 900);
+      }, 1400);
+    }
+
+    cartas.forEach((c, i) => {
       const b = document.createElement("button");
       b.className = "carta";
       b.innerHTML = `<span class="dorso">❓</span><span class="frente">${c.p ? avatar(c.p) : c.e}</span>`;
       b.onclick = () => {
-        if (bloqueo || b.classList.contains("abierta") || b.classList.contains("par")) return;
-        b.classList.add("abierta");
-        abiertas.push({ b, c });
-        if (abiertas.length === 2) {
-          intentos++; $("info").textContent = "Intentos: " + intentos;
-          bloqueo = true;
-          const [x, y] = abiertas;
-          if (x.c.k === y.c.k) {
-            setTimeout(() => {
-              x.b.classList.add("par"); y.b.classList.add("par");
-              abiertas = []; bloqueo = false; hechas++;
-              if (hechas === n) final("¡Encontraste todas las parejas!", `Lo lograste en ${intentos} intentos.`, () => memoria(n));
-              else decir(r(actual.frases.ok));
-            }, 500);
-          } else {
-            setTimeout(() => { x.b.classList.remove("abierta"); y.b.classList.remove("abierta"); abiertas = []; bloqueo = false; }, 900);
-          }
+        if (bloqueo || !libre(i)) return;
+        abrir(i); abiertas.push(i);
+        if (abiertas.length < 2) return;
+        intentos++; bloqueo = true;
+        const [x, y] = abiertas; abiertas = [];
+        if (cartas[x].k === cartas[y].k) {
+          setTimeout(() => {
+            emparejar(x, y); ptsA++; pintar();
+            if (hechas === n) return terminar();
+            bloqueo = false; decir(r(actual.frases.ok));
+          }, 500);
+        } else {
+          setTimeout(() => { cerrar(x); cerrar(y); pintar(); if (contra) turnoPersonaje(); else bloqueo = false; }, 900);
         }
       };
+      els.push(b);
       $("grid").appendChild(b);
     });
   }
@@ -378,13 +482,15 @@
 
   function jugarPreguntas(banco, cantidad, tipo){
     const items = mezclar(banco).slice(0, cantidad);
-    let idx = 0, puntos = 0;
+    const contra = modo === "contra";
+    let idx = 0, puntos = 0, ptsP = 0;
     decir(actual.intro[tipo]);
 
     function mostrarPregunta(){
       const it = items[idx];
       const opciones = mezclar([it.a, ...it.o]);
-      $("gameBody").innerHTML = `<p class="info">Pregunta ${idx + 1} de ${items.length}</p>
+      $("gameBody").innerHTML = `${contra ? `<div class="marcador" id="marc">${spansMarcador(puntos, ptsP)}</div>` : ""}
+        <p class="info">Pregunta ${idx + 1} de ${items.length}</p>
         <p class="q">${it.q}</p>
         <button class="gbtn sec" id="escuchar">🔊 Escuchar la pregunta</button>
         ${it.s ? `<div class="seq">${it.s}</div>` : ""}
@@ -398,11 +504,28 @@
             document.querySelectorAll(".opt").forEach(x => x.disabled = true);
             if (primera) puntos++;
             decir(r(actual.frases.ok));
+            let espera = 2200;
+            if (contra) {
+              // El personaje también responde: acierta más o menos 6 de cada 10 veces
+              const acerto = Math.random() < 0.6;
+              if (acerto) ptsP++;
+              espera = 4400;
+              setTimeout(() => {
+                decir(r(acerto ? actual.vs.yoOk : actual.vs.yoMal));
+                if ($("marc")) $("marc").innerHTML = spansMarcador(puntos, ptsP);
+              }, 2000);
+            }
             setTimeout(() => {
               idx++;
               if (idx < items.length) { mostrarPregunta(); hablar(items[idx].q); }
+              else if (contra) {
+                const v = actual.vs;
+                const frase = puntos > ptsP ? v.ganaA : puntos < ptsP ? v.ganaP : v.empate;
+                const titulo = puntos > ptsP ? "¡Ganaste, Alina!" : puntos < ptsP ? `Ganó ${actual.nombre}` : "¡Empate!";
+                final(titulo, `Alina ${puntos} - ${actual.nombre} ${ptsP}`, () => jugarPreguntas(banco, cantidad, tipo), frase);
+              }
               else final(`¡Terminaste! ${"⭐".repeat(puntos)}`, `Acertaste ${puntos} de ${items.length} a la primera.`, () => jugarPreguntas(banco, cantidad, tipo));
-            }, 2200);
+            }, espera);
           } else {
             primera = false;
             btn.classList.add("no");
