@@ -10,8 +10,9 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin:0; height:100%; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:#fff; }
   body { background: linear-gradient(160deg, var(--bg1), var(--bg2)); overflow:hidden; }
-  .screen { position:absolute; inset:0; display:none; flex-direction:column; padding:20px 18px calc(20px + env(safe-area-inset-bottom)); }
+  .screen { position:absolute; inset:0; display:none; flex-direction:column; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); overflow-y:auto; }
   .screen.active { display:flex; }
+  button { font-family:inherit; }
 
   /* Inicio */
   h1 { font-size:1.9rem; text-align:center; margin:12px 0 4px; }
@@ -21,86 +22,187 @@
           border-radius:22px; padding:16px; color:#fff; font:inherit; text-align:left; width:100%; cursor:pointer; }
   .card:active { transform:scale(.98); }
   .avatar-sm { width:68px; height:68px; border-radius:50%; display:grid; place-items:center; font-size:2.2rem; flex:none; }
+  .avatar-sm.small { width:52px; height:52px; font-size:1.6rem; }
   .pic { width:100%; height:100%; border-radius:50%; overflow:hidden; display:grid; place-items:center; }
   .pic img { width:100%; height:100%; object-fit:cover; object-position:50% 0%; }
   .card b { font-size:1.25rem; display:block; }
   .card span { opacity:.85; font-size:.95rem; }
 
-  /* Llamada */
-  #call { align-items:center; text-align:center; }
+  /* Sala del personaje */
+  #hub { align-items:center; text-align:center; }
   .topbar { width:100%; display:flex; justify-content:space-between; align-items:center; font-size:.95rem; opacity:.9; }
-  .stage { flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
-  .ring { width:min(62vw,260px); aspect-ratio:1; border-radius:50%; display:grid; place-items:center;
-          font-size:min(26vw,110px); position:relative; }
-  .ring::after { content:""; position:absolute; inset:-12px; border-radius:50%; border:3px solid rgba(255,255,255,.5);
-                 animation:pulse 1.6s ease-out infinite; }
+  .stage { width:100%; display:flex; flex-direction:column; align-items:center; gap:10px; padding:10px 0; }
+  .ring { width:min(40vw,170px); aspect-ratio:1; border-radius:50%; display:grid; place-items:center; font-size:min(18vw,76px); position:relative; }
+  .ring::after { content:""; position:absolute; inset:-10px; border-radius:50%; border:3px solid rgba(255,255,255,.5); animation:pulse 1.6s ease-out infinite; }
   .talking .ring { animation:bob 1s ease-in-out infinite; }
   @keyframes pulse { from { transform:scale(.95); opacity:.9; } to { transform:scale(1.25); opacity:0; } }
   @keyframes bob { 50% { transform:translateY(-6px); } }
-  #callName { font-size:1.7rem; font-weight:700; }
-  #callStatus { opacity:.85; }
-  .bubble { background:rgba(255,255,255,.95); color:#2b1055; border-radius:18px; padding:12px 16px; max-width:92%; font-size:1.05rem; }
-  .controls { display:flex; gap:22px; align-items:center; justify-content:center; padding-top:8px; }
-  .btn { width:64px; height:64px; border-radius:50%; border:none; font-size:1.7rem; cursor:pointer; color:#fff; background:rgba(255,255,255,.22); }
+  #callName { font-size:1.5rem; font-weight:700; }
+  #callStatus { opacity:.85; font-size:.95rem; }
+  .bubble { background:rgba(255,255,255,.95); color:#2b1055; border-radius:18px; padding:12px 16px; width:100%; font-size:1.05rem; text-align:center; }
+  #menuJuegos { display:none; flex-direction:column; gap:10px; width:100%; margin-top:8px; }
+  .gamebtn { display:flex; align-items:center; gap:14px; background:var(--card); border:2px solid rgba(255,255,255,.3); border-radius:18px;
+             padding:14px 16px; color:#fff; font-size:1.15rem; font-weight:600; width:100%; text-align:left; cursor:pointer; }
+  .gamebtn small { display:block; font-weight:400; opacity:.85; font-size:.85rem; }
+  .gamebtn .ico { font-size:1.8rem; }
+  .gamebtn:active { transform:scale(.98); }
+  .controls { display:flex; gap:22px; align-items:center; justify-content:center; padding-top:14px; margin-top:auto; }
+  .btn { width:56px; height:56px; border-radius:50%; border:none; font-size:1.5rem; cursor:pointer; color:#fff; background:rgba(255,255,255,.22); }
   .btn:active { transform:scale(.94); }
-  .btn.end { background:#e53935; width:72px; height:72px; }
-  .btn.mic.on { background:#43a047; }
-  .label { font-size:.75rem; opacity:.8; margin-top:6px; display:block; }
+  .btn.end { background:#e53935; width:62px; height:62px; }
+  .btn.off { opacity:.45; }
+  .label { font-size:.72rem; opacity:.8; margin-top:4px; display:block; }
   .ctl { text-align:center; }
+
+  /* Juegos */
+  #game { gap:12px; }
+  .gh { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .back { background:rgba(255,255,255,.2); border:none; color:#fff; border-radius:999px; padding:10px 16px; font-size:1rem; cursor:pointer; }
+  #gBubble { font-size:1rem; padding:10px 14px; }
+  #gameBody { flex:1; display:flex; flex-direction:column; gap:12px; }
+  .info { text-align:center; margin:0; opacity:.9; }
+  .grid { display:grid; gap:10px; }
+  .carta { aspect-ratio:1; border-radius:16px; border:2px solid rgba(255,255,255,.3); background:rgba(255,255,255,.18); color:#fff;
+           padding:0; font-size:2rem; cursor:pointer; position:relative; overflow:hidden; display:grid; place-items:center; }
+  .carta .frente { display:none; width:100%; height:100%; place-items:center; font-size:2.3rem; padding:6px; }
+  .carta.abierta .frente, .carta.par .frente { display:grid; }
+  .carta.abierta .dorso, .carta.par .dorso { display:none; }
+  .carta.par { background:rgba(76,175,80,.4); border-color:#81c784; }
+  .q { font-size:1.35rem; font-weight:700; text-align:center; margin:6px 0 0; }
+  .seq { font-size:2rem; text-align:center; letter-spacing:.05em; background:rgba(255,255,255,.14); border-radius:16px; padding:14px 8px; line-height:1.5; }
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt { background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.35); color:#fff; border-radius:16px; padding:16px; font-size:1.3rem; font-weight:600; cursor:pointer; }
+  .opt:active { transform:scale(.98); }
+  .opt.ok { background:#43a047; border-color:#a5d6a7; }
+  .opt.no { background:#e53935; border-color:#ef9a9a; opacity:.7; }
+  .opt:disabled { cursor:default; }
+  .gbtn { background:#ffca28; color:#2b1055; border:none; border-radius:16px; padding:16px; font-size:1.15rem; font-weight:700; cursor:pointer; width:100%; }
+  .gbtn.sec { background:rgba(255,255,255,.2); color:#fff; }
+  .final { text-align:center; display:flex; flex-direction:column; gap:12px; align-items:stretch; padding-top:10px; }
+  .final h2 { margin:0; font-size:1.6rem; }
+  .final p { margin:0; font-size:1.1rem; }
+  .trofeo { font-size:4rem; }
 </style>
 </head>
 <body>
 
-<!-- PANTALLA DE INICIO -->
+<!-- INICIO: elegir personaje -->
 <section id="home" class="screen active">
   <h1>✨ El mundo de Alina ✨</h1>
-  <p class="sub">¿Con quién querés hablar hoy?</p>
+  <p class="sub">¿Con quién querés jugar hoy?</p>
   <div class="cards" id="cards"></div>
 </section>
 
-<!-- PANTALLA DE VIDEOLLAMADA -->
-<section id="call" class="screen">
-  <div class="topbar"><span>📹 Videollamada</span><span id="timer">00:00</span></div>
+<!-- SALA DEL PERSONAJE: saludo y menú de juegos -->
+<section id="hub" class="screen">
+  <div class="topbar"><span>📹 Videollamada</span><span id="hubHint"></span></div>
   <div class="stage" id="stage">
     <div class="ring" id="callAvatar"></div>
     <div id="callName"></div>
     <div id="callStatus">Llamando…</div>
     <div class="bubble" id="callBubble" style="display:none"></div>
   </div>
+  <div id="menuJuegos">
+    <button class="gamebtn" id="jMemoria"><span class="ico">🃏</span><span>Memoria<small>Encontrá las parejas</small></span></button>
+    <button class="gamebtn" id="jQuiz"><span class="ico">❓</span><span>Preguntas y respuestas<small>Mostrá lo que sabés</small></span></button>
+    <button class="gamebtn" id="jLogica"><span class="ico">🧩</span><span>Misiones de lógica<small>Resolvé los desafíos</small></span></button>
+  </div>
   <div class="controls">
-    <div class="ctl"><button class="btn mic" id="micBtn" aria-label="Micrófono">🎤</button><span class="label">Hablar</span></div>
+    <div class="ctl"><button class="btn" id="vozBtn" aria-label="Voz">🔊</button><span class="label">Voz</span></div>
     <div class="ctl"><button class="btn end" id="endBtn" aria-label="Finalizar">📞</button><span class="label">Cortar</span></div>
     <div class="ctl"><button class="btn" id="switchBtn" aria-label="Cambiar personaje">🔄</button><span class="label">Cambiar</span></div>
   </div>
 </section>
 
+<!-- JUEGO -->
+<section id="game" class="screen">
+  <div class="gh">
+    <button class="back" id="backBtn">← Juegos</button>
+    <div class="avatar-sm small" id="gAvatar"></div>
+  </div>
+  <div class="bubble" id="gBubble"></div>
+  <div id="gameBody"></div>
+</section>
+
 <script>
-  // Personajes (por ahora con íconos de reemplazo; después ponemos las imágenes)
-  // Archivos de imagen esperados (subirlos a la raíz del repositorio con estos nombres exactos).
-  // zoom = qué tan cerca se ve la cara; origen = punto del zoom (x% y%).
+  // ---------- Personajes ----------
+  // Las imágenes (ladybug.png, catnoir.png, tikki.png) están en la raíz del repositorio.
   const personajes = [
-    { id:"ladybug", img:"ladybug.png", zoom:1.9, origen:"50% 12%", nombre:"Ladybug", emoji:"🐞", color:"linear-gradient(135deg,#e53935,#ff8a80)",
-      desc:"Valiente, inteligente y cariñosa", saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿Lista para una aventura?" },
-    { id:"catnoir", img:"catnoir.png", zoom:1.9, origen:"50% 12%", nombre:"Cat Noir", emoji:"🐱", color:"linear-gradient(135deg,#212121,#6a1b9a)",
-      desc:"Divertido, bromista y entusiasta", saludo:"¡Hola, Alina! Tengo un chiste nuevo… ¿querés oírlo?" },
-    { id:"tikki", img:"tikki.png", zoom:1.0, origen:"50% 40%", nombre:"Tikki", emoji:"✨", color:"linear-gradient(135deg,#ff7043,#ffcc80)",
-      desc:"Dulce, tierna y sabia", saludo:"¡Hola, Alina! Me encanta que hablemos. ¿Cómo fue tu día?" }
+    { id:"ladybug", img:"ladybug.png", zoom:1.9, origen:"50% 12%", nombre:"Ladybug", emoji:"🐞",
+      color:"linear-gradient(135deg,#e53935,#ff8a80)", desc:"Valiente, inteligente y cariñosa",
+      pitch:1.35, rate:1.05,
+      saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
+      menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
+      intro:{ memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+              quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
+              logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
+      frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
+               mal:["¡Casi! Probá otra vez, vos podés.","Todavía no, pero seguro lo descubrís."],
+               fin:["¡Misión cumplida, Alina! Sos una gran heroína.","¡Qué bien jugaste! Estoy muy orgullosa de vos."] } },
+    { id:"catnoir", img:"catnoir.png", zoom:1.9, origen:"50% 12%", nombre:"Cat Noir", emoji:"🐱",
+      color:"linear-gradient(135deg,#212121,#6a1b9a)", desc:"Divertido, bromista y entusiasta",
+      pitch:0.8, rate:1.1,
+      saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
+      menu:["¿Qué juego sigue, Alina?","¡Elegí otro, que esto se pone bueno!"],
+      intro:{ memoria:"¡A buscar parejas! Ojo de gato, Alina.",
+              quiz:"¡Preguntas! Ojalá no te pongas nerviosa, yo ya me puse a ronronear.",
+              logica:"¡Desafíos de lógica! Fíjate bien, que los gatos somos muy astutos." },
+      frases:{ ok:["¡Miau-ravilloso, Alina!","¡Eso es! Sos genial.","¡Fantástico! Me impresionaste."],
+               mal:["¡Uy, casi! Hasta los gatos fallan un salto. ¡Intentá de nuevo!","Ese no era, pero seguí intentando."],
+               fin:["¡Miau-gnífico! ¡Ganaste, Alina!","¡Sos increíble! ¿Jugamos otra vez?"] } },
+    { id:"tikki", img:"tikki.png", zoom:1.0, origen:"50% 40%", nombre:"Tikki", emoji:"✨",
+      color:"linear-gradient(135deg,#ff7043,#ffcc80)", desc:"Dulce, tierna y sabia",
+      pitch:1.7, rate:0.95,
+      saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
+      menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
+      intro:{ memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
+              quiz:"Te voy a hacer unas preguntas. Pensá tranquila, no hay apuro.",
+              logica:"Son desafíos para pensar. Mirá con atención y vas a encontrar la respuesta." },
+      frases:{ ok:["¡Muy bien, Alina! ¡Qué lindo acierto!","¡Lo lograste! Estoy muy contenta.","¡Perfecto! Qué bien pensaste."],
+               mal:["No pasa nada, Alina. Probá de nuevo, tranquila.","Casi, casi. Mirá otra vez con calma."],
+               fin:["¡Estoy muy orgullosa de vos, Alina!","¡Qué bien jugaste! Fue hermoso jugar con vos."] } }
   ];
 
+  // ---------- Utilidades ----------
   const $ = id => document.getElementById(id);
+  const r = a => a[Math.floor(Math.random() * a.length)];
+  const mezclar = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  let actual = null, vozOn = true, voces = [];
 
-  // Imagen del personaje; si el archivo no existe todavía, muestra el ícono de reemplazo
+  // Imagen del personaje; si el archivo no existe, muestra el ícono de reemplazo
   function avatar(p){
     return `<div class="pic" style="background:${p.color}">
       <img src="${p.img}" alt="${p.nombre}" style="transform:scale(${p.zoom});transform-origin:${p.origen}"
-           onerror="this.remove();this.parentNode.textContent='${p.emoji}'">
+           onerror="this.parentNode.textContent='${p.emoji}'">
     </div>`;
   }
-  let actual = null, segundos = 0, reloj = null;
 
-  function mostrar(id){ document.querySelectorAll(".screen").forEach(s => s.classList.remove("active")); $(id).classList.add("active"); }
+  // ---------- Voz del celular (no usa internet ni inteligencia artificial) ----------
+  const hayVoz = 'speechSynthesis' in window;
+  function cargarVoces(){ voces = speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang)); }
+  if (hayVoz) { cargarVoces(); speechSynthesis.onvoiceschanged = cargarVoces; }
 
-  // Tarjetas de inicio
+  function hablar(texto){
+    if (!vozOn || !hayVoz || !actual) return;
+    speechSynthesis.cancel();
+    const limpio = texto
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "")
+      .replace(/\+/g, " más ").replace(/−/g, " menos ").replace(/×/g, " por ").replace(/=/g, " igual ").replace(/___/g, " ... ");
+    const u = new SpeechSynthesisUtterance(limpio);
+    const v = voces.find(v => /AR|419|MX|US/i.test(v.lang)) || voces[0];
+    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "es-AR"; }
+    u.pitch = actual.pitch; u.rate = actual.rate;
+    speechSynthesis.speak(u);
+  }
+  function decir(texto, id = "gBubble"){ $(id).textContent = texto; hablar(texto); }
+
+  function mostrar(id){
+    if (hayVoz) speechSynthesis.cancel();
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    $(id).classList.add("active");
+  }
+
+  // ---------- Inicio ----------
   personajes.forEach(p => {
     const b = document.createElement("button");
     b.className = "card";
@@ -109,35 +211,178 @@
     $("cards").appendChild(b);
   });
 
+  // ---------- Sala del personaje ----------
+  let temporizador = null;
   function llamar(p){
     actual = p;
     $("callAvatar").innerHTML = avatar(p);
     $("callName").textContent = p.nombre;
     $("callStatus").textContent = "Llamando…";
     $("callBubble").style.display = "none";
+    $("menuJuegos").style.display = "none";
     $("stage").classList.remove("talking");
-    $("micBtn").classList.remove("on");
-    mostrar("call");
-    segundos = 0; $("timer").textContent = "00:00";
-    clearInterval(reloj);
-    setTimeout(() => {
+    mostrar("hub");
+    clearTimeout(temporizador);
+    temporizador = setTimeout(() => {
       $("callStatus").textContent = "Conectada";
-      $("callBubble").textContent = p.saludo;
       $("callBubble").style.display = "block";
+      $("menuJuegos").style.display = "flex";
       $("stage").classList.add("talking");
-      reloj = setInterval(() => {
-        segundos++;
-        const m = String(Math.floor(segundos/60)).padStart(2,"0"), s = String(segundos%60).padStart(2,"0");
-        $("timer").textContent = m + ":" + s;
-      }, 1000);
-    }, 1500);
+      decir(p.saludo, "callBubble");
+    }, 1300);
   }
-
-  function colgar(){ clearInterval(reloj); mostrar("home"); }
+  function colgar(){ clearTimeout(temporizador); actual = null; mostrar("home"); }
+  function volverJuegos(){ mostrar("hub"); $("callBubble").style.display = "block"; decir(r(actual.menu), "callBubble"); }
 
   $("endBtn").onclick = colgar;
   $("switchBtn").onclick = colgar;
-  $("micBtn").onclick = () => $("micBtn").classList.toggle("on");  // por ahora solo visual
+  $("backBtn").onclick = volverJuegos;
+  $("vozBtn").onclick = () => {
+    vozOn = !vozOn;
+    $("vozBtn").classList.toggle("off", !vozOn);
+    $("vozBtn").textContent = vozOn ? "🔊" : "🔇";
+    if (!vozOn && hayVoz) speechSynthesis.cancel();
+  };
+
+  function entrarJuego(){
+    $("gAvatar").innerHTML = avatar(actual);
+    mostrar("game");
+  }
+  $("jMemoria").onclick = () => { entrarJuego(); eligeNivelMemoria(); };
+  $("jQuiz").onclick = () => { entrarJuego(); jugarPreguntas(PREGUNTAS, 6, "quiz"); };
+  $("jLogica").onclick = () => { entrarJuego(); jugarPreguntas(LOGICA, 6, "logica"); };
+
+  // ---------- Pantalla final común ----------
+  function final(titulo, detalle, otraVez){
+    $("gameBody").innerHTML = `<div class="final"><div class="trofeo">🏆</div><h2>${titulo}</h2><p>${detalle}</p>
+      <button class="gbtn" id="otra">Jugar otra vez</button><button class="gbtn sec" id="vol">Volver a los juegos</button></div>`;
+    $("otra").onclick = otraVez;
+    $("vol").onclick = volverJuegos;
+    decir(r(actual.frases.fin));
+  }
+
+  // ---------- Juego 1: Memoria ----------
+  function eligeNivelMemoria(){
+    $("gameBody").innerHTML = `<p class="q">¿Qué nivel querés?</p>
+      <button class="gbtn" id="n3">Fácil · 3 parejas</button>
+      <button class="gbtn" id="n6">Más difícil · 6 parejas</button>`;
+    $("n3").onclick = () => memoria(3);
+    $("n6").onclick = () => memoria(6);
+    decir(actual.intro.memoria);
+  }
+
+  function memoria(n){
+    const base = [...personajes.map(p => ({ k:p.id, p })), { k:"flor", e:"🌸" }, { k:"est", e:"⭐" }, { k:"trebol", e:"🍀" }].slice(0, n);
+    const cartas = mezclar([...base, ...base]);
+    let abiertas = [], hechas = 0, intentos = 0, bloqueo = false;
+    const cols = n === 3 ? 3 : 4;
+    $("gameBody").innerHTML = `<p class="info" id="info">Intentos: 0</p><div class="grid" id="grid" style="grid-template-columns:repeat(${cols},1fr)"></div>`;
+    cartas.forEach(c => {
+      const b = document.createElement("button");
+      b.className = "carta";
+      b.innerHTML = `<span class="dorso">❓</span><span class="frente">${c.p ? avatar(c.p) : c.e}</span>`;
+      b.onclick = () => {
+        if (bloqueo || b.classList.contains("abierta") || b.classList.contains("par")) return;
+        b.classList.add("abierta");
+        abiertas.push({ b, c });
+        if (abiertas.length === 2) {
+          intentos++; $("info").textContent = "Intentos: " + intentos;
+          bloqueo = true;
+          const [x, y] = abiertas;
+          if (x.c.k === y.c.k) {
+            setTimeout(() => {
+              x.b.classList.add("par"); y.b.classList.add("par");
+              abiertas = []; bloqueo = false; hechas++;
+              if (hechas === n) final("¡Encontraste todas las parejas!", `Lo lograste en ${intentos} intentos.`, () => memoria(n));
+              else decir(r(actual.frases.ok));
+            }, 500);
+          } else {
+            setTimeout(() => { x.b.classList.remove("abierta"); y.b.classList.remove("abierta"); abiertas = []; bloqueo = false; }, 900);
+          }
+        }
+      };
+      $("grid").appendChild(b);
+    });
+  }
+
+  // ---------- Juegos 2 y 3: preguntas con opciones ----------
+  // a = respuesta correcta, o = las otras dos opciones, s = secuencia o dibujo (opcional)
+  const PREGUNTAS = [
+    { q:"¿Cuántas patas tiene una araña?", a:"8", o:["6","10"] },
+    { q:"¿Cuánto es 7 + 8?", a:"15", o:["14","16"] },
+    { q:"¿Qué planeta es conocido como el planeta rojo?", a:"Marte", o:["Venus","Júpiter"] },
+    { q:"¿Cuál es el animal más grande del mundo?", a:"La ballena azul", o:["El elefante","La jirafa"] },
+    { q:"¿Cuántos días tiene una semana?", a:"7", o:["5","10"] },
+    { q:"¿Qué color se forma al mezclar azul con amarillo?", a:"Verde", o:["Naranja","Violeta"] },
+    { q:"¿Cuál es la capital de Argentina?", a:"Buenos Aires", o:["Córdoba","Rosario"] },
+    { q:"¿Cuánto es 6 × 4?", a:"24", o:["20","28"] },
+    { q:"¿Cuál de estos animales pone huevos?", a:"La gallina", o:["La vaca","El perro"] },
+    { q:"¿Cuántos lados tiene un triángulo?", a:"3", o:["4","5"] },
+    { q:"¿Qué necesitan las plantas para crecer?", a:"Sol y agua", o:["Solo caramelos","Nada"] },
+    { q:"¿Cuántos meses tiene un año?", a:"12", o:["10","11"] },
+    { q:"¿Qué instrumento tiene teclas blancas y negras?", a:"El piano", o:["El tambor","La flauta"] },
+    { q:"¿Cuánto es 20 − 9?", a:"11", o:["10","12"] },
+    { q:"¿Qué estación viene después del verano?", a:"Otoño", o:["Invierno","Primavera"] },
+    { q:"¿Cuál de estos animales es un mamífero?", a:"El delfín", o:["El tiburón","El pez payaso"] },
+    { q:"¿Cuántas horas tiene un día?", a:"24", o:["12","20"] }
+  ];
+
+  const LOGICA = [
+    { q:"¿Qué viene después?", s:"🔴 🔵 🔴 🔵 🔴 ❓", a:"🔵", o:["🔴","🟢"] },
+    { q:"¿Qué viene después?", s:"🐞 🐞 🐱 🐞 🐞 🐱 🐞 🐞 ❓", a:"🐱", o:["🐞","⭐"] },
+    { q:"¿Qué número sigue?", s:"2 · 4 · 6 · 8 · ❓", a:"10", o:["9","12"] },
+    { q:"¿Qué número sigue?", s:"5 · 10 · 15 · 20 · ❓", a:"25", o:["30","22"] },
+    { q:"¿Qué número sigue?", s:"1 · 2 · 4 · 8 · ❓", a:"16", o:["12","10"] },
+    { q:"¿Qué número sigue?", s:"3 · 6 · 9 · 12 · ❓", a:"15", o:["14","18"] },
+    { q:"¿Qué número sigue?", s:"10 · 9 · 8 · 7 · ❓", a:"6", o:["5","8"] },
+    { q:"¿Cuál no pertenece al grupo?", s:"🍎 🍌 🍇 🚗", a:"🚗", o:["🍎","🍇"] },
+    { q:"¿Cuál no pertenece al grupo?", s:"🐶 🐱 🐰 🌳", a:"🌳", o:["🐶","🐰"] },
+    { q:"¿Qué viene después?", s:"⭐ ⭐ 🌙 ⭐ ⭐ 🌙 ⭐ ⭐ ❓", a:"🌙", o:["⭐","☀️"] },
+    { q:"¿Qué viene después?", s:"🔺 🔵 🔺 🔵 🔺 ❓", a:"🔵", o:["🔺","🟢"] },
+    { q:"Si hoy es lunes, ¿qué día será dentro de dos días?", a:"Miércoles", o:["Martes","Jueves"] },
+    { q:"Tengo agujas pero no sé coser, y todos me miran para saber la hora. ¿Qué soy?", a:"Un reloj", o:["Un sombrero","Un libro"] },
+    { q:"María tiene 3 caramelos y le dan 4 más. Después se come 2. ¿Cuántos le quedan?", a:"5", o:["7","9"] },
+    { q:"7 + ___ = 12. ¿Qué número falta?", a:"5", o:["4","6"] }
+  ];
+
+  function jugarPreguntas(banco, cantidad, tipo){
+    const items = mezclar(banco).slice(0, cantidad);
+    let idx = 0, puntos = 0;
+    decir(actual.intro[tipo]);
+
+    function mostrarPregunta(){
+      const it = items[idx];
+      const opciones = mezclar([it.a, ...it.o]);
+      $("gameBody").innerHTML = `<p class="info">Pregunta ${idx + 1} de ${items.length}</p>
+        <p class="q">${it.q}</p>
+        <button class="gbtn sec" id="escuchar">🔊 Escuchar la pregunta</button>
+        ${it.s ? `<div class="seq">${it.s}</div>` : ""}
+        <div class="opts">${opciones.map(o => `<button class="opt">${o}</button>`).join("")}</div>`;
+      let primera = true;
+      $("escuchar").onclick = () => hablar(it.q);
+      document.querySelectorAll(".opt").forEach(btn => {
+        btn.onclick = () => {
+          if (btn.textContent === it.a) {
+            btn.classList.add("ok");
+            document.querySelectorAll(".opt").forEach(x => x.disabled = true);
+            if (primera) puntos++;
+            decir(r(actual.frases.ok));
+            setTimeout(() => {
+              idx++;
+              if (idx < items.length) { mostrarPregunta(); hablar(items[idx].q); }
+              else final(`¡Terminaste! ${"⭐".repeat(puntos)}`, `Acertaste ${puntos} de ${items.length} a la primera.`, () => jugarPreguntas(banco, cantidad, tipo));
+            }, 2200);
+          } else {
+            primera = false;
+            btn.classList.add("no");
+            btn.disabled = true;
+            decir(r(actual.frases.mal));
+          }
+        };
+      });
+    }
+    mostrarPregunta();
+  }
 </script>
 </body>
 </html>
