@@ -115,6 +115,8 @@
     <button class="gamebtn" id="jMemoria"><span class="ico">🃏</span><span>Memoria<small>Encontrá las parejas</small></span></button>
     <button class="gamebtn" id="jQuiz"><span class="ico">❓</span><span>Preguntas y respuestas<small>Mostrá lo que sabés</small></span></button>
     <button class="gamebtn" id="jLogica"><span class="ico">🧩</span><span>Misiones de lógica<small>Resolvé los desafíos</small></span></button>
+    <button class="gamebtn" id="jError"><span class="ico">🔍</span><span>¿Qué está mal?<small>Descubrí el error del dibujo</small></span></button>
+    <button class="gamebtn" id="jNumeros"><span class="ico">🔢</span><span>Números escondidos<small>Encontralos en orden</small></span></button>
   </div>
   <div class="controls">
     <div class="ctl"><button class="btn" id="vozBtn" aria-label="Sonido">🔊</button><span class="label">Sonido</span></div>
@@ -148,7 +150,7 @@
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
-      intro:{ memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+      intro:{ numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
               quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
               logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
@@ -164,9 +166,9 @@
       pitch:0.9, rate:0.98,
       saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
       menu:["¿Qué juego sigue, Alina?","¡Elegí otro, que esto se pone bueno!"],
-      intro:{ memoria:"¡A buscar parejas! Ojo de gato, Alina.",
+      intro:{ numeros:"¡Nueve números escondidos! Encontralos en orden, del uno al nueve. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
               quiz:"¡Preguntas! Ojalá no te pongas nerviosa, yo ya me puse a ronronear.",
-              logica:"¡Desafíos de lógica! Fíjate bien, que los gatos somos muy astutos." },
+              logica:"¡Desafíos de lógica! Fijate bien, que los gatos somos muy astutos." },
       frases:{ ok:["¡Miau-ravilloso, Alina!","¡Eso es! Sos genial.","¡Fantástico! Me impresionaste."],
                mal:["¡Uy, casi! Hasta los gatos fallan un salto. ¡Intentá de nuevo!","Ese no era, pero seguí intentando."],
                fin:["¡Miau-gnífico! ¡Ganaste, Alina!","¡Sos increíble! ¿Jugamos otra vez?"] } },
@@ -180,7 +182,7 @@
       pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
       menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
-      intro:{ memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
+      intro:{ numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
               quiz:"Te voy a hacer unas preguntas. Pensá tranquila, no hay apuro.",
               logica:"Son desafíos para pensar. Mirá con atención y vas a encontrar la respuesta." },
       frases:{ ok:["¡Muy bien, Alina! ¡Qué lindo acierto!","¡Lo lograste! Estoy muy contenta.","¡Perfecto! Qué bien pensaste."],
@@ -234,9 +236,9 @@
     speechSynthesis.speak(u);
   }
   // ---------- Audios grabados ----------
-  // Busca "<personaje>_<frase>.mp3" (o .m4a, .ogg, .wav, .aac) en la carpeta principal o en "audio/".
+  // Busca "<personaje>_<frase>.mp3" (o .m4a, .webm, .ogg, .wav, .aac) en la carpeta principal o en "audio/".
   // Si el archivo no existe, la frase se lee con la voz del celular.
-  const EXT = ["mp3", "m4a", "ogg", "wav", "aac"];
+  const EXT = ["mp3", "m4a", "webm", "ogg", "wav", "aac"];
   const hallados = {};   // clave -> dirección del audio, o null si no existe
   let turnoAudio = 0, audioActual = null;
 
@@ -245,7 +247,7 @@
     const carpetas = ["", "audio/"];
     const intentos = carpetas.flatMap(c => EXT.map(e => ({ u: c + clave + "." + e, c })));
     const res = await Promise.all(intentos.map(x =>
-      fetch(x.u).then(r => (r.ok && /audio|mpeg|mp4|ogg|wav|aac|octet/i.test(r.headers.get("content-type") || "")) ? r.blob().then(b => ({ b, c: x.c })) : null).catch(() => null)));
+      fetch(x.u).then(r => (r.ok && /audio|video|mpeg|mp4|webm|ogg|wav|aac|octet/i.test(r.headers.get("content-type") || "")) ? r.blob().then(b => ({ b, c: x.c })) : null).catch(() => null)));
     const ok = res.find(Boolean);
     hallados[clave] = ok ? URL.createObjectURL(ok.b) : null;
     return hallados[clave];
@@ -276,6 +278,64 @@
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     $(id).classList.add("active");
   }
+
+  // ---------- Música de fondo (se genera en el celular, sin archivos ni internet) ----------
+  const musica = (() => {
+    let ctx = null, master = null, timer = null, paso = 0, prox = 0, activa = false;
+    const NOTAS = { C: 261.63, D: 293.66, E: 329.63, G: 392.0, A: 440.0, c: 523.25, d: 587.33, e: 659.25 };
+    const MELODIA = "E G c G  E G A G  A c e c  A G E G  " + "G c e c  G c d c  e d c A  G E D C ".replace("C", "C");
+    const ACORDES = [["C", "E"], ["A", "E"], ["C", "G"], ["G", "D"]];
+    const mel = MELODIA.replace(/\s{2}/g, " _ ").split(/\s+/).filter(Boolean);
+    const nota = (f, t, dur, vol, tipo) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = tipo; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+    };
+    function programar(){
+      if (!activa) return;
+      const beat = 0.62; // segundos por golpe (tranquilo)
+      while (prox < ctx.currentTime + 0.6){
+        const n = mel[paso % mel.length];
+        if (n !== "_" && NOTAS[n]) nota(NOTAS[n], prox, beat * 1.7, 0.5, "triangle");
+        if (paso % 4 === 0){
+          const ac = ACORDES[Math.floor(paso / 4) % ACORDES.length];
+          ac.forEach(k => nota((NOTAS[k] || 261.63) / 2, prox, beat * 4, 0.28, "sine"));
+        }
+        prox += beat; paso++;
+      }
+    }
+    return {
+      get activa(){ return activa; },
+      iniciar(){
+        if (activa) return;
+        const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+        if (!ctx){ ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.07; master.connect(ctx.destination); }
+        ctx.resume(); activa = true; prox = ctx.currentTime + 0.1; timer = setInterval(programar, 200); programar();
+      },
+      parar(){ activa = false; clearInterval(timer); if (ctx) ctx.suspend(); }
+    };
+  })();
+  (function(){
+    const btn = document.createElement("button");
+    btn.id = "musicaBtn"; btn.setAttribute("aria-label", "Música");
+    btn.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:50;width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(43,16,85,.75);color:#fff;font-size:1.3rem;cursor:pointer";
+    document.body.appendChild(btn);
+    let quiere = true;
+    try { quiere = localStorage.getItem("musicaAlina") !== "no"; } catch(e) {}
+    const pintar = () => { btn.textContent = musica.activa ? "🎵" : "🔇"; };
+    btn.onclick = () => {
+      if (musica.activa){ musica.parar(); quiere = false; } else { musica.iniciar(); quiere = true; }
+      try { localStorage.setItem("musicaAlina", quiere ? "si" : "no"); } catch(e) {}
+      pintar();
+    };
+    // Los navegadores solo dejan sonar música después de un toque
+    document.addEventListener("pointerdown", () => { if (quiere && !musica.activa) { musica.iniciar(); pintar(); } }, { once: false });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) musica.parar(); else if (quiere) { musica.iniciar(); } pintar(); });
+    pintar();
+  })();
 
   // ---------- Instalar como app ----------
   let promptInstalar = null;
@@ -365,6 +425,8 @@
   $("jMemoria").onclick = () => { entrarJuego(); elegirModo(eligeNivelMemoria); };
   $("jQuiz").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(PREGUNTAS, 6, "quiz")); };
   $("jLogica").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(LOGICA, 6, "logica")); };
+  $("jNumeros").onclick = () => { entrarJuego(); jugarNumeros(); };
+  $("jError").onclick = () => { entrarJuego(); elegirModo(() => jugarError(5)); };
 
   // ---------- Pantalla final común ----------
   function final(titulo, detalle, otraVez, frase){
@@ -378,22 +440,26 @@
   // ---------- Juego 1: Memoria ----------
   function eligeNivelMemoria(){
     $("gameBody").innerHTML = `<p class="q">¿Qué nivel querés?</p>
-      <button class="gbtn" id="n3">Fácil · 3 parejas</button>
-      <button class="gbtn" id="n6">Más difícil · 6 parejas</button>`;
-    $("n3").onclick = () => memoria(3);
-    $("n6").onclick = () => memoria(6);
+      <button class="gbtn" id="n3">Muy fácil · 3 parejas</button>
+      <button class="gbtn" id="n6">Fácil · 6 parejas</button>
+      <button class="gbtn" id="n8">Medio · 8 parejas</button>
+      <button class="gbtn" id="n12">Difícil · 12 parejas</button>
+      <button class="gbtn" id="n16">Muy difícil · 16 parejas</button>`;
+    [3, 6, 8, 12, 16].forEach(n => { $("n" + n).onclick = () => memoria(n); });
     decir(actual.intro.memoria, "gBubble", actual.id + "_intro-memoria");
   }
 
   function memoria(n){
-    const base = [...personajes.map(p => ({ k:p.id, p })), { k:"flor", e:"🌸" }, { k:"est", e:"⭐" }, { k:"trebol", e:"🍀" }].slice(0, n);
+    const dibujos = ["🌸","⭐","🍀","🌈","🍎","🐶","🦋","🐠","🎈","🍓","🚀","🎁","🐢"];
+    const base = [...personajes.map(p => ({ k:p.id, p })), ...dibujos.map(e => ({ k:e, e }))].slice(0, n);
     const cartas = mezclar([...base, ...base]);
     const els = [];
     const contra = modo === "contra";
     let abiertas = [], hechas = 0, intentos = 0, bloqueo = false, ptsA = 0, ptsP = 0;
     const recuerdo = new Map(); // carta -> lo que el personaje "recuerda" haber visto
     const cols = n === 3 ? 3 : 4;
-    $("gameBody").innerHTML = `<div class="info" id="info"></div><div class="grid" id="grid" style="grid-template-columns:repeat(${cols},1fr)"></div>`;
+    const chico = n >= 12 ? "font-size:1.5rem;" : "";
+    $("gameBody").innerHTML = `<div class="info" id="info"></div><div class="grid" id="grid" style="grid-template-columns:repeat(${cols},1fr);${chico}"></div>`;
     const pintar = () => { $("info").innerHTML = contra ? `<div class="marcador">${spansMarcador(ptsA, ptsP)}</div>` : "Intentos: " + intentos; };
     pintar();
 
@@ -515,6 +581,278 @@
     { q:"Lucía tiene 9 lápices, regala 4 y le dan 3 más. ¿Cuántos tiene?", a:"8", o:["6","10"] },
     { q:"¿Qué número sigue?", s:"20 · 18 · 16 · 14 · ❓", a:"12", o:["10","13"] }
   ];
+
+  // ---------- Juego 4: ¿Qué está mal en el dibujo? ----------
+  // Los errores son cosas que se descubren mirando con atención y pensando un poco.
+  const rect = (x, y, w, h, f, extra = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}" ${extra}/>`;
+  const circ = (x, y, rr, f, extra = "") => `<circle cx="${x}" cy="${y}" r="${rr}" fill="${f}" ${extra}/>`;
+  const dentro = (x, y, rx, ry, rw, rh) => x >= rx && x <= rx + rw && y >= ry && y <= ry + rh;
+  const cerca = (x, y, cx, cy, rr) => Math.hypot(x - cx, y - cy) <= rr;
+  const nube = (x, y) => circ(x, y, 14, "#fff") + circ(x + 16, y - 6, 18, "#fff") + circ(x + 34, y, 14, "#fff") + rect(x, y, 34, 14, "#fff");
+  const marcaRect = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#2ecc71" fill-opacity=".25" stroke="#2ecc71" stroke-width="5"/>`;
+  const marcaCirc = (x, y, rr) => `<circle cx="${x}" cy="${y}" r="${rr}" fill="#2ecc71" fill-opacity=".25" stroke="#2ecc71" stroke-width="5"/>`;
+
+  const ESCENAS = [
+    { // 1. Semáforo
+      pista: "Pensá cómo funciona un semáforo. ¿Qué te dice cada luz?",
+      explica: "Un semáforo nunca tiene la luz roja y la verde prendidas a la vez: el rojo dice “pará” y el verde dice “pasá”.",
+      hit: (x, y) => dentro(x, y, 116, 24, 68, 142),
+      marca: marcaRect(116, 24, 68, 142),
+      dibujo: () => rect(0, 0, 300, 300, "#cfe8ff") + rect(14, 110, 72, 135, "#b0bec5") + rect(214, 90, 72, 155, "#cfd8dc")
+        + [24, 54].flatMap(x => [122, 152, 182].map(y => rect(x, y, 18, 18, "#e3f2fd"))).join("")
+        + [224, 254].flatMap(x => [104, 134, 164].map(y => rect(x, y, 18, 18, "#fffde7"))).join("")
+        + rect(0, 235, 300, 65, "#6b6f7a") + [0, 90, 180, 270].map(x => rect(x, 264, 50, 5, "#fff")).join("")
+        + rect(146, 160, 8, 80, "#444") + `<rect x="122" y="28" width="56" height="134" rx="12" fill="#2d2d33"/>`
+        + circ(150, 60, 18, "#ff3b30") + circ(150, 95, 18, "#4a4a2a") + circ(150, 130, 18, "#34c759")
+        + rect(30, 214, 92, 28, "#e53935", 'rx="8"') + rect(48, 195, 52, 24, "#ef5350", 'rx="8"') + rect(54, 200, 18, 14, "#e3f2fd") + rect(76, 200, 18, 14, "#e3f2fd")
+        + circ(55, 244, 11, "#222") + circ(100, 244, 11, "#222")
+    },
+    { // 2. Arcoíris
+      pista: "Pensá en el orden de los colores del arcoíris. ¿Hay alguno fuera de lugar?",
+      explica: "El orden del arcoíris es rojo, naranja, amarillo, verde, azul y violeta. Acá el verde y el amarillo están cambiados.",
+      hit: (x, y) => { const d = Math.hypot(x - 150, y - 230); return y <= 236 && d >= 71 && d <= 99; },
+      marca: `<path d="M 65 230 A 85 85 0 0 1 235 230" fill="none" stroke="#2ecc71" stroke-width="32" opacity=".45"/>`,
+      dibujo: () => rect(0, 0, 300, 300, "#cfe8ff") + circ(250, 45, 22, "#ffd54f") + rect(0, 230, 300, 70, "#8bc34a")
+        + ["#e53935", "#fb8c00", "#43a047", "#fdd835", "#1e88e5", "#8e24aa"].map((c, i) => { const rr = 120 - i * 14; return `<path d="M ${150 - rr} 230 A ${rr} ${rr} 0 0 1 ${150 + rr} 230" fill="none" stroke="${c}" stroke-width="14"/>`; }).join("")
+        + nube(14, 226) + nube(238, 226) + nube(40, 60)
+    },
+    { // 3. Cerca de colores (patrón)
+      pista: "Los tablones siguen un patrón de colores que se repite. Seguilo con el dedo.",
+      explica: "El patrón es rojo, amarillo, azul, y se repite una y otra vez. Ahí en lugar de amarillo hay un tablón azul.",
+      hit: (x, y) => dentro(x, y, 168, 110, 24, 135),
+      marca: marcaRect(166, 112, 28, 132),
+      dibujo: () => { const col = { R: "#e53935", Y: "#fdd835", B: "#1e88e5" }; const patron = "RYBRYBRBBRYB";
+        return rect(0, 0, 300, 300, "#cfe8ff") + circ(250, 50, 24, "#ffd54f") + nube(30, 50) + rect(0, 235, 300, 65, "#8bc34a")
+          + [...patron].map((l, i) => `<polygon points="${30 + i * 20},240 ${30 + i * 20},135 ${40 + i * 20},122 ${50 + i * 20},135 ${50 + i * 20},240" fill="${col[l]}" stroke="#fff" stroke-width="1.5"/>`).join("")
+          + rect(24, 150, 252, 10, "#8d6e63") + rect(24, 205, 252, 10, "#8d6e63"); }
+    },
+    { // 4. Mariposa simétrica
+      pista: "Las alas de una mariposa son iguales de un lado y del otro. Compará las dos.",
+      explica: "Las dos alas tienen que ser iguales, como en un espejo. Al ala derecha de abajo le falta una mancha.",
+      hit: (x, y) => cerca(x, y, 185, 190, 26),
+      marca: marcaCirc(185, 190, 24),
+      dibujo: () => rect(0, 0, 300, 300, "#dff3d0") + circ(40, 250, 18, "#f48fb1") + circ(260, 55, 14, "#ffee58")
+        + `<ellipse cx="100" cy="118" rx="58" ry="42" transform="rotate(-25 100 118)" fill="#ff9800"/><ellipse cx="200" cy="118" rx="58" ry="42" transform="rotate(25 200 118)" fill="#ff9800"/>`
+        + `<ellipse cx="112" cy="188" rx="42" ry="32" transform="rotate(20 112 188)" fill="#ffb74d"/><ellipse cx="188" cy="188" rx="42" ry="32" transform="rotate(-20 188 188)" fill="#ffb74d"/>`
+        + circ(88, 112, 13, "#7e57c2") + circ(212, 112, 13, "#7e57c2") + circ(116, 190, 11, "#7e57c2")
+        + circ(70, 135, 6, "#fff") + circ(230, 135, 6, "#fff") + circ(72, 100, 6, "#fff") + circ(228, 100, 6, "#fff")
+        + `<ellipse cx="150" cy="150" rx="7" ry="52" fill="#4e342e"/>` + circ(150, 96, 10, "#4e342e")
+        + `<path d="M146 90 Q135 65 125 62 M154 90 Q165 65 175 62" stroke="#4e342e" stroke-width="3" fill="none"/>`
+    },
+    { // 5. Reloj con números
+      pista: "Fijate bien los números del reloj. ¿Están en el orden en que los contás?",
+      explica: "En un reloj los números van en orden, del 1 al 12, siguiendo las agujas. El 5 y el 7 están cambiados de lugar.",
+      hit: (x, y) => cerca(x, y, 194, 226, 26) || cerca(x, y, 106, 226, 26),
+      marca: marcaCirc(194, 226, 24) + marcaCirc(106, 226, 24),
+      dibujo: () => { let n = ""; for (let h = 1; h <= 12; h++) { const a = h * Math.PI / 6; const num = h === 5 ? 7 : h === 7 ? 5 : h;
+          n += `<text x="${150 + 86 * Math.sin(a)}" y="${150 - 86 * Math.cos(a) + 8}" font-size="24" font-weight="700" text-anchor="middle" fill="#2b1055" font-family="system-ui,sans-serif">${num}</text>`; }
+        return rect(0, 0, 300, 300, "#fff3e0") + circ(150, 150, 124, "#fff", 'stroke="#2b1055" stroke-width="8"') + n
+          + `<line x1="150" y1="150" x2="150" y2="60" stroke="#2b1055" stroke-width="6" stroke-linecap="round"/><line x1="150" y1="150" x2="205" y2="150" stroke="#e53935" stroke-width="8" stroke-linecap="round"/>` + circ(150, 150, 8, "#2b1055"); }
+    },
+    { // 6. Tablero de ajedrez
+      pista: "En un tablero los cuadraditos se van alternando: uno claro, uno oscuro. Recorré las filas.",
+      explica: "Los colores se alternan siempre, uno claro y uno oscuro. Hay un cuadradito que tiene el color cambiado.",
+      hit: (x, y) => dentro(x, y, 10 + 4 * 35, 10 + 3 * 35, 35, 35),
+      marca: marcaRect(10 + 4 * 35 - 3, 10 + 3 * 35 - 3, 41, 41),
+      dibujo: () => { let t = rect(0, 0, 300, 300, "#5d4037");
+        for (let c = 0; c < 8; c++) for (let f = 0; f < 8; f++) { let osc = (c + (7 - f)) % 2 === 0; if (c === 4 && f === 3) osc = !osc; t += rect(10 + c * 35, 10 + f * 35, 35, 35, osc ? "#6d4c41" : "#f5deb3"); }
+        return t; }
+    },
+    { // 7. Sombras
+      pista: "El sol está a la izquierda. ¿Hacia dónde tienen que caer las sombras?",
+      explica: "Si el sol está a la izquierda, todas las sombras caen hacia la derecha. Una sombra cae para el lado del sol.",
+      hit: (x, y) => dentro(x, y, 98, 196, 70, 36),
+      marca: `<ellipse cx="132" cy="214" rx="44" ry="20" fill="#2ecc71" fill-opacity=".3" stroke="#2ecc71" stroke-width="5"/>`,
+      dibujo: () => { let t = rect(0, 0, 300, 300, "#cfe8ff") + circ(46, 44, 22, "#ffd54f") + nube(150, 40) + rect(0, 200, 300, 100, "#8bc34a");
+        for (const [x, sx] of [[90, 38], [170, -38], [250, 38]]) t += `<ellipse cx="${x + sx}" cy="214" rx="36" ry="9" fill="#000" fill-opacity=".28"/>` + rect(x - 6, 145, 12, 70, "#795548") + circ(x, 130, 34, "#388e3c") + circ(x - 14, 140, 20, "#43a047");
+        return t; }
+    },
+    { // 8. Viento
+      pista: "Fijate hacia dónde va el humo de la chimenea y hacia dónde van las demás cosas.",
+      explica: "El humo, el pasto y la bandera tienen que ir para el mismo lado, porque los empuja el viento. La bandera apunta al revés.",
+      hit: (x, y) => dentro(x, y, 176, 82, 62, 52),
+      marca: marcaRect(176, 82, 62, 52),
+      dibujo: () => rect(0, 0, 300, 300, "#cfe8ff") + nube(120, 40) + rect(0, 235, 300, 65, "#8bc34a")
+        + rect(30, 170, 100, 70, "#ef9a9a") + `<polygon points="22,172 80,120 138,172" fill="#8d6e63"/>` + rect(98, 128, 14, 34, "#795548") + rect(52, 195, 22, 45, "#6d4c41") + rect(88, 185, 24, 24, "#e3f2fd")
+        + circ(108, 118, 7, "#cfd8dc") + circ(122, 106, 9, "#cfd8dc") + circ(140, 98, 11, "#cfd8dc") + circ(162, 94, 13, "#cfd8dc")
+        + rect(228, 85, 6, 155, "#6d4c41") + `<polygon points="230,90 192,103 230,118" fill="#e53935"/>`
+        + [150, 175, 200, 260].map(x => `<path d="M${x} 240 Q${x + 4} 226 ${x + 14} 222" stroke="#558b2f" stroke-width="3" fill="none"/>`).join("")
+    },
+    { // 9. Reflejo en el lago
+      pista: "En el agua se ve lo mismo que arriba, pero dado vuelta. Compará cada cosa con su reflejo.",
+      explica: "El reflejo del agua es igual al dibujo de arriba, pero al revés. El pino se refleja como un árbol redondo, y eso no puede ser.",
+      hit: (x, y) => dentro(x, y, 188, 152, 64, 92),
+      marca: marcaRect(188, 152, 64, 92),
+      dibujo: () => { let t = rect(0, 0, 300, 150, "#cfe8ff") + circ(50, 40, 20, "#ffd54f")
+          + `<polygon points="10,150 85,70 160,150" fill="#78909c"/><polygon points="110,150 170,90 230,150" fill="#90a4ae"/>`
+          + rect(216, 110, 8, 40, "#6d4c41") + `<polygon points="220,48 192,118 248,118" fill="#2e7d32"/>`
+          + rect(0, 150, 300, 150, "#5aa9e6")
+          + `<g opacity=".55"><polygon points="10,150 85,230 160,150" fill="#78909c"/><polygon points="110,150 170,210 230,150" fill="#90a4ae"/>` + circ(50, 260, 20, "#ffd54f") + `</g>`
+          + `<g opacity=".6">` + rect(216, 150, 8, 40, "#6d4c41") + circ(220, 215, 30, "#2e7d32") + `</g>`
+          + `<path d="M20 275 h40 M120 250 h60 M200 280 h50" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>`;
+        return t; }
+    },
+    { // 10. Números de a 5
+      pista: "Contá de a 5 y fijate qué número tendría que ir en cada círculo.",
+      explica: "Los números van de 5 en 5: 5, 10, 15, 20, 25, 30, 35. Donde dice 26 tendría que decir 25.",
+      hit: (x, y) => cerca(x, y, 190, 150, 24),
+      marca: marcaCirc(190, 150, 24),
+      dibujo: () => rect(0, 0, 300, 300, "#fff8e1") + `<line x1="20" y1="150" x2="280" y2="150" stroke="#b39ddb" stroke-width="4"/>`
+        + [5, 10, 15, 20, 26, 30, 35].map((n, i) => circ(30 + i * 40, 150, 19, "#7e57c2") + `<text x="${30 + i * 40}" y="157" font-size="19" font-weight="700" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif">${n}</text>`).join("")
+    },
+    { // 11. Bandera
+      pista: "Pensá cómo es la bandera de Argentina. ¿De qué color es cada franja?",
+      explica: "La bandera argentina tiene celeste arriba, blanco al medio y celeste abajo. Acá la franja de abajo es blanca.",
+      hit: (x, y) => dentro(x, y, 30, 160, 240, 40),
+      marca: marcaRect(30, 160, 240, 40),
+      dibujo: () => rect(0, 0, 300, 300, "#e3f2fd") + rect(0, 250, 300, 50, "#8bc34a") + rect(22, 60, 8, 195, "#6d4c41")
+        + rect(30, 80, 240, 40, "#74c0fc") + rect(30, 120, 240, 40, "#ffffff") + rect(30, 160, 240, 40, "#ffffff")
+        + `<rect x="30" y="80" width="240" height="120" fill="none" stroke="#546e7a" stroke-width="2"/>` + circ(150, 140, 15, "#fdd835", 'stroke="#f9a825" stroke-width="3"')
+    },
+    { // 12. Patrón de figuras
+      pista: "Las figuras siguen un orden que se repite. Seguilo de izquierda a derecha.",
+      explica: "El orden es círculo, cuadrado, triángulo, y vuelve a empezar. En el octavo lugar tendría que ir un cuadrado.",
+      hit: (x, y) => cerca(x, y, 26 + 7 * 31, 150, 19),
+      marca: marcaCirc(26 + 7 * 31, 150, 20),
+      dibujo: () => { const f = (t, cx) => t === 0 ? circ(cx, 150, 13, "#e53935") : t === 1 ? rect(cx - 12, 138, 24, 24, "#1e88e5") : `<polygon points="${cx},136 ${cx - 14},162 ${cx + 14},162" fill="#43a047"/>`;
+        return rect(0, 0, 300, 300, "#f3e5f5") + rect(10, 110, 280, 80, "#fff", 'rx="14"') + [0, 1, 2, 0, 1, 2, 0, 2, 2].map((t, i) => f(t, 26 + i * 31)).join(""); }
+    },
+    { // 13. Piano
+      pista: "Mirá las teclas negras: van de a dos, después de a tres, y así. Fijate si hay una de más.",
+      explica: "En un piano las teclas negras van en grupos de dos y de tres, con un hueco en el medio. Acá hay una tecla negra de más en ese hueco.",
+      hit: (x, y) => dentro(x, y, 108, 80, 24, 95),
+      marca: marcaRect(106, 78, 28, 100),
+      dibujo: () => rect(0, 0, 300, 300, "#cfd8dc") + rect(14, 66, 272, 14, "#5d4037")
+        + [0, 1, 2, 3, 4, 5, 6, 7].map(i => rect(22 + i * 32, 80, 32, 150, "#fff", 'stroke="#333" stroke-width="2"')).join("")
+        + [0, 1, 2, 3, 4, 5].map(i => rect(22 + (i + 1) * 32 - 10, 80, 20, 90, "#222", 'rx="3"')).join("")
+    },
+    { // 14. Escalera de barras
+      pista: "Las barras van creciendo, una más alta que la anterior. ¿Alguna rompe la escalera?",
+      explica: "Cada barra tiene que ser más alta que la anterior. La cuarta es más baja que la tercera.",
+      hit: (x, y) => dentro(x, y, 152, 130, 38, 130),
+      marca: marcaRect(150, 188, 42, 74),
+      dibujo: () => rect(0, 0, 300, 300, "#e8f5e9") + rect(10, 260, 280, 8, "#6d4c41")
+        + [40, 65, 90, 62, 140, 165].map((h, i) => rect(20 + i * 44, 260 - h, 38, h, ["#ef5350", "#ffa726", "#fdd835", "#66bb6a", "#42a5f5", "#ab47bc"][i], 'rx="4"')).join("")
+    },
+    { // 15. Canastas de manzanas
+      pista: "Contá las manzanas de cada canasta. ¿Todas tienen la misma cantidad?",
+      explica: "Cada canasta tiene 5 manzanas, menos una que tiene solo 4.",
+      hit: (x, y) => dentro(x, y, 159, 100, 62, 115),
+      marca: marcaRect(157, 98, 66, 118),
+      dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + rect(0, 215, 300, 85, "#a1887f")
+        + [0, 1, 2, 3].map(i => { const bx = 15 + i * 72, c = bx + 31;
+          const pos = [[-18, 138], [0, 138], [18, 138], [-9, 120], [9, 120]].slice(0, i === 2 ? 4 : 5);
+          return pos.map(([dx, py]) => circ(c + dx, py, 10, "#e53935") + rect(c + dx - 1, py - 14, 2, 5, "#5d4037")).join("")
+            + rect(bx, 150, 62, 60, "#8d6e63", 'rx="8"') + rect(bx, 150, 62, 8, "#6d4c41"); }).join("")
+    }
+  ];
+
+  function jugarError(cantidad){
+    const orden = mezclar(ESCENAS).slice(0, cantidad);
+    const contra = modo === "contra";
+    let idx = 0, puntos = 0, ptsP = 0, ficha = 0;
+    decir(actual.intro.error, "gBubble", actual.id + "_intro-error");
+
+    function mostrar(){
+      const mi = ++ficha, esc = orden[idx];
+      let fallos = 0, pista = false, listo = false;
+      $("gameBody").innerHTML = `${contra ? `<div class="marcador" id="marc">${spansMarcador(puntos, ptsP)}</div>` : ""}
+        <p class="info">Dibujo ${idx + 1} de ${orden.length}</p>
+        <p class="q">¿Qué está mal en este dibujo?</p>
+        <svg id="lamina" viewBox="0 0 300 300" style="width:100%;max-width:440px;align-self:center;border-radius:18px;touch-action:manipulation;background:#fff">${esc.dibujo()}<g id="marcas"></g></svg>
+        <button class="gbtn sec" id="pistaBtn">💡 Pista</button>
+        <p class="info" id="expl" style="font-size:1.05rem;min-height:2.6em"></p>
+        <button class="gbtn" id="sigBtn" style="display:none">${idx + 1 < orden.length ? "Siguiente →" : "Ver mi resultado"}</button>`;
+
+      const terminar = (acerto) => {
+        listo = true;
+        $("pistaBtn").style.display = "none";
+        $("sigBtn").style.display = "block";
+        $("marcas").innerHTML += esc.marca;
+        if (acerto && !pista) puntos++;
+        $("expl").textContent = esc.explica;
+        setTimeout(() => { if (mi === ficha) reproducir(null, esc.explica); }, 1600);
+        if (contra) {
+          const acertoP = Math.random() < 0.6;
+          if (acertoP) ptsP++;
+          const linea = r(acertoP ? actual.vs.yoOk : actual.vs.yoMal);
+          setTimeout(() => { if (mi !== ficha) return; $("expl").textContent = esc.explica + "  —  " + actual.nombre + ": " + linea; if ($("marc")) $("marc").innerHTML = spansMarcador(puntos, ptsP); }, 4200);
+        }
+      };
+
+      $("lamina").onclick = ev => {
+        if (listo) return;
+        const b = $("lamina").getBoundingClientRect();
+        const x = (ev.clientX - b.left) / b.width * 300, y = (ev.clientY - b.top) / b.height * 300;
+        if (esc.hit(x, y)) { decirDe(actual.frases.ok, "ok"); terminar(true); return; }
+        fallos++;
+        const m = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        m.innerHTML = `<circle cx="${x}" cy="${y}" r="14" fill="none" stroke="#e53935" stroke-width="4"/><line x1="${x - 8}" y1="${y - 8}" x2="${x + 8}" y2="${y + 8}" stroke="#e53935" stroke-width="4"/><line x1="${x + 8}" y1="${y - 8}" x2="${x - 8}" y2="${y + 8}" stroke="#e53935" stroke-width="4"/>`;
+        $("marcas").appendChild(m);
+        setTimeout(() => m.remove(), 900);
+        if (fallos >= 3) { decirDe(actual.frases.mal, "mal"); terminar(false); }
+        else decirDe(actual.frases.mal, "mal");
+      };
+      $("pistaBtn").onclick = () => { pista = true; $("expl").textContent = "💡 " + esc.pista; reproducir(null, esc.pista); };
+      $("sigBtn").onclick = () => {
+        idx++;
+        if (idx < orden.length) return mostrar();
+        if (contra) {
+          const v = actual.vs;
+          const frase = puntos > ptsP ? v.ganaA : puntos < ptsP ? v.ganaP : v.empate;
+          const titulo = puntos > ptsP ? "¡Ganaste, Alina!" : puntos < ptsP ? `Ganó ${actual.nombre}` : "¡Empate!";
+          final(titulo, `Alina ${puntos} - ${actual.nombre} ${ptsP}`, () => jugarError(cantidad), frase);
+        } else final(`¡Terminaste! ${"⭐".repeat(puntos)}`, `Descubriste ${puntos} de ${orden.length} sin pedir pista.`, () => jugarError(cantidad));
+      };
+    }
+    mostrar();
+  }
+
+  // ---------- Juego 5: Números escondidos (del 1 al 9, en orden) ----------
+  function jugarNumeros(){
+    const nums = mezclar([1, 2, 3, 4, 5, 6, 7, 8, 9]); // posición fija durante toda la partida
+    let siguiente = 1, intentos = 1, bloqueado = false, mejor = 1;
+    decir(actual.intro.numeros, "gBubble", actual.id + "_intro-numeros");
+    $("gameBody").innerHTML = `<p class="info" id="nInfo"></p>
+      <div class="grid" id="nGrid" style="grid-template-columns:repeat(3,1fr);max-width:380px;width:100%;align-self:center"></div>
+      <p class="info" id="nMsg" style="min-height:1.6em"></p>`;
+    const g = $("nGrid");
+    nums.forEach((n, i) => {
+      const b = document.createElement("button");
+      b.className = "carta"; b.dataset.n = n;
+      b.innerHTML = `<span class="dorso">❔</span><span class="frente">${n}</span>`;
+      b.onclick = () => tocar(b, n);
+      g.appendChild(b);
+    });
+    const info = () => { $("nInfo").textContent = `Buscá el número ${siguiente} · Intento ${intentos}`; };
+    info();
+    function tocar(b, n){
+      if (bloqueado || b.classList.contains("par")) return;
+      if (n === siguiente){
+        b.classList.add("par");
+        if (siguiente > mejor) mejor = siguiente;
+        siguiente++;
+        if (siguiente > 9){
+          bloqueado = true;
+          setTimeout(() => final(`¡Lo lograste! ⭐`, intentos === 1 ? "¡A la primera, sin equivocarte!" : `Lo lograste en ${intentos} intentos.`, jugarNumeros), 900);
+          return;
+        }
+        $("nMsg").textContent = "";
+        if (siguiente === 2 || Math.random() < 0.35) decirDe(actual.frases.ok, "ok");
+        info();
+      } else {
+        bloqueado = true;
+        b.classList.add("abierta");
+        b.style.background = "rgba(229,57,53,.55)";
+        $("nMsg").textContent = `Ahí estaba el ${n}. ¡Se esconden todos de nuevo, empezá otra vez desde el 1!`;
+        decirDe(actual.frases.mal, "mal");
+        setTimeout(() => {
+          g.querySelectorAll(".carta").forEach(c => { c.classList.remove("par", "abierta"); c.style.background = ""; });
+          siguiente = 1; intentos++; bloqueado = false; $("nMsg").textContent = ""; info();
+        }, 1800);
+      }
+    }
+  }
 
   // Nombre del audio de cada pregunta (ver la lista del documento): q01..q22 y l01..l09
   PREGUNTAS.forEach((it, i) => { it.k = "q" + String(i + 1).padStart(2, "0"); });
