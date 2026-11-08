@@ -117,6 +117,8 @@
     <button class="gamebtn" id="jLogica"><span class="ico">🧩</span><span>Misiones de lógica<small>Resolvé los desafíos</small></span></button>
     <button class="gamebtn" id="jError"><span class="ico">🔍</span><span>¿Qué está mal?<small>Descubrí el error del dibujo</small></span></button>
     <button class="gamebtn" id="jNumeros"><span class="ico">🔢</span><span>Números escondidos<small>Encontralos en orden</small></span></button>
+    <button class="gamebtn" id="jPurificar"><span class="ico">🦋</span><span>Purificá al villano<small>Resolvé cuentas y ayudalo</small></span></button>
+    <button class="gamebtn" id="jQuien"><span class="ico">🕵️</span><span>¿Quién fue?<small>Un caso difícil de detective</small></span></button>
   </div>
   <div class="controls">
     <div class="ctl"><button class="btn" id="vozBtn" aria-label="Sonido">🔊</button><span class="label">Sonido</span></div>
@@ -150,7 +152,7 @@
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
-      intro:{ numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+      intro:{ purificar:"Un villano necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
               quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
               logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
@@ -166,7 +168,7 @@
       pitch:0.9, rate:0.98,
       saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
       menu:["¿Qué juego sigue, Alina?","¡Elegí otro, que esto se pone bueno!"],
-      intro:{ numeros:"¡Nueve números escondidos! Encontralos en orden, del uno al nueve. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
+      intro:{ purificar:"¡Hay que ayudar a un villano! Con cuentas bien resueltas lo purificamos.", quien:"¡Caso difícil, detective! Leé las pistas con ojos de gato y descubrí quién es.", numeros:"¡Nueve números escondidos! Encontralos en orden, del uno al nueve. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
               quiz:"¡Preguntas! Ojalá no te pongas nerviosa, yo ya me puse a ronronear.",
               logica:"¡Desafíos de lógica! Fijate bien, que los gatos somos muy astutos." },
       frases:{ ok:["¡Miau-ravilloso, Alina!","¡Eso es! Sos genial.","¡Fantástico! Me impresionaste."],
@@ -182,7 +184,7 @@
       pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
       menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
-      intro:{ numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
+      intro:{ purificar:"Vamos a ayudar a un villano con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
               quiz:"Te voy a hacer unas preguntas. Pensá tranquila, no hay apuro.",
               logica:"Son desafíos para pensar. Mirá con atención y vas a encontrar la respuesta." },
       frases:{ ok:["¡Muy bien, Alina! ¡Qué lindo acierto!","¡Lo lograste! Estoy muy contenta.","¡Perfecto! Qué bien pensaste."],
@@ -321,7 +323,7 @@
   (function(){
     const btn = document.createElement("button");
     btn.id = "musicaBtn"; btn.setAttribute("aria-label", "Música");
-    btn.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:50;width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(43,16,85,.75);color:#fff;font-size:1.3rem;cursor:pointer";
+    btn.style.cssText = "position:fixed;right:76px;top:22px;z-index:50;width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(43,16,85,.75);color:#fff;font-size:1.1rem;cursor:pointer;padding:0";
     document.body.appendChild(btn);
     let quiere = true;
     try { quiere = localStorage.getItem("musicaAlina") !== "no"; } catch(e) {}
@@ -425,6 +427,8 @@
   $("jMemoria").onclick = () => { entrarJuego(); elegirModo(eligeNivelMemoria); };
   $("jQuiz").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(PREGUNTAS, 6, "quiz")); };
   $("jLogica").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(LOGICA, 6, "logica")); };
+  $("jPurificar").onclick = () => { entrarJuego(); jugarPurificar(); };
+  $("jQuien").onclick = () => { entrarJuego(); jugarQuien(); };
   $("jNumeros").onclick = () => { entrarJuego(); jugarNumeros(); };
   $("jError").onclick = () => { entrarJuego(); elegirModo(() => jugarError(5)); };
 
@@ -852,6 +856,152 @@
         }, 1800);
       }
     }
+  }
+
+  // ---------- Juegos 6 y 7: villanos (purificar y ¿Quién fue?) ----------
+  // Villanos de ejemplo con nombres inventados. Para usar tus imágenes: subí villano1.png ... villano4.png
+  const VILLANOS = [
+    { nombre: "Sombra Gris",  color: "#5e35b1", img: "villano1.png", alivio: "¡Gracias! Ya me siento liviana otra vez." },
+    { nombre: "Nube Negra",   color: "#37474f", img: "villano2.png", alivio: "¡Uf! Ya no estoy enojado. ¡Gracias!" },
+    { nombre: "Señor Tormenta", color: "#1565c0", img: "villano3.png", alivio: "Me siento mucho mejor. ¡Perdón por el lío!" },
+    { nombre: "Doña Niebla",  color: "#6a1b9a", img: "villano4.png", alivio: "¡Qué alivio! Otra vez veo todo clarito." }
+  ];
+  const villanoHTML = (v, tam) => `<div class="vill" style="width:${tam}px;height:${tam}px;border-radius:50%;background:radial-gradient(circle at 35% 30%, ${v.color}, #14061f);display:grid;place-items:center;overflow:hidden;position:relative;border:3px solid rgba(255,255,255,.35)">
+      <span style="font-size:${tam * 0.5}px">🦋</span>
+      <img src="${v.img}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>`;
+
+  function jugarPurificar(){
+    const orden = mezclar(VILLANOS);
+    let vi = 0, aciertos = 0, falladas = 0;
+    decir(actual.intro.purificar, "gBubble", actual.id + "_intro-purificar");
+    const op = nivel => { // sumas y restas, cada vez un poco más difíciles
+      const max = [12, 20, 30, 50][Math.min(nivel, 3)];
+      let a, b, res, txt;
+      if (Math.random() < 0.5){ a = 2 + Math.floor(Math.random() * (max - 4)); b = 1 + Math.floor(Math.random() * (max - a)); res = a + b; txt = `${a} + ${b}`; }
+      else { a = 4 + Math.floor(Math.random() * (max - 3)); b = 1 + Math.floor(Math.random() * (a - 1)); res = a - b; txt = `${a} − ${b}`; }
+      const s = new Set([res]);
+      for (const d of mezclar([1, -1, 2, -2, 3, 10, -10])){ if (s.size >= 4) break; if (res + d >= 0) s.add(res + d); }
+      return { txt, res, ops: mezclar([...s]) };
+    };
+    function villano(){
+      const v = orden[vi]; let paso = 0; const TOT = 3;
+      const pintar = () => {
+        const q = op(vi);
+        const prog = paso / TOT;
+        $("gameBody").innerHTML = `<p class="info">Villano ${vi + 1} de ${orden.length} · ${v.nombre}</p>
+          <div style="align-self:center;transition:filter .6s;filter:grayscale(${1 - prog}) brightness(${0.55 + 0.45 * prog})">${villanoHTML(v, 130)}</div>
+          <div style="height:14px;background:rgba(255,255,255,.2);border-radius:8px;overflow:hidden"><div style="height:100%;width:${(1 - prog) * 100}%;background:#6a1b9a;transition:width .5s"></div></div>
+          <p class="info">Oscuridad: ${TOT - paso} de ${TOT}</p>
+          <p class="q" style="font-size:1.8rem">${q.txt} = ?</p>
+          <div class="grid" style="grid-template-columns:repeat(2,1fr)">${q.ops.map(o => `<button class="gbtn sec opc" data-v="${o}" style="font-size:1.5rem">${o}</button>`).join("")}</div>
+          <p class="info" id="vMsg" style="min-height:1.6em"></p>`;
+        let intento = 0;
+        document.querySelectorAll(".opc").forEach(bt => bt.onclick = () => {
+          if (+bt.dataset.v === q.res){
+            document.querySelectorAll(".opc").forEach(x => x.disabled = true);
+            bt.style.background = "#66bb6a"; paso++; aciertos++;
+            decirDe(actual.frases.ok, "ok");
+            setTimeout(paso >= TOT ? purificado : pintar, 1100);
+          } else {
+            intento++; bt.disabled = true; bt.style.opacity = .35; decirDe(actual.frases.mal, "mal");
+            if (intento >= 2){
+              falladas++; $("vMsg").textContent = `La respuesta era ${q.res}. ¡Seguimos!`;
+              document.querySelectorAll(".opc").forEach(x => { x.disabled = true; if (+x.dataset.v === q.res) x.style.background = "#66bb6a"; });
+              paso++; setTimeout(paso >= TOT ? purificado : pintar, 1800);
+            } else $("vMsg").textContent = "Probá de nuevo, ¡vos podés!";
+          }
+        });
+      };
+      pintar();
+      function purificado(){
+        $("gameBody").innerHTML = `<p class="info">¡Purificado!</p>
+          <div style="align-self:center;font-size:4rem">✨🕊️✨</div>
+          <div style="align-self:center">${villanoHTML(v, 110)}</div>
+          <p class="q">${v.alivio}</p>
+          <button class="gbtn" id="vSig">${vi + 1 < orden.length ? "Siguiente villano →" : "Terminar"}</button>`;
+        decir(v.alivio);
+        $("vSig").onclick = () => { vi++; if (vi < orden.length) villano(); else final("¡Purificaste a todos! ⭐", `Resolviste ${aciertos} de ${aciertos + falladas} cuentas sin ayuda.`, jugarPurificar); };
+      }
+    }
+    villano();
+  }
+
+  // ---------- ¿Quién fue? (difícil) ----------
+  const COL = [["rojo", "#e53935"], ["azul", "#1e88e5"], ["verde", "#43a047"], ["amarillo", "#fdd835"], ["violeta", "#8e24aa"], ["naranja", "#fb8c00"]];
+  function crearCaso(){
+    for (let intento = 0; intento < 500; intento++){
+      const cols = mezclar(COL.map((c, i) => i));
+      const S = cols.map(c => ({ c, sombrero: Math.random() < 0.5, lentes: Math.random() < 0.5 }));
+      const n = S.length, cul = Math.floor(Math.random() * n);
+      const posDe = c => S.findIndex(s => s.c === c);
+      const cand = [];
+      cand.push([i => S[i].sombrero, "lleva sombrero"], [i => !S[i].sombrero, "no lleva sombrero"], [i => S[i].lentes, "usa lentes"], [i => !S[i].lentes, "no usa lentes"]);
+      COL.forEach(([nom], c) => {
+        cand.push([i => S[i].c !== c, `no viste de ${nom}`]);
+        cand.push([i => i < posDe(c), `está más a la izquierda que quien viste de ${nom}`]);
+        cand.push([i => i > posDe(c), `está más a la derecha que quien viste de ${nom}`]);
+        cand.push([i => Math.abs(i - posDe(c)) === 1, `está justo al lado de quien viste de ${nom}`]);
+      });
+      cand.push([i => i > 0 && i < n - 1, "no está en ninguna de las puntas"], [i => i === 0 || i === n - 1, "está en una de las puntas"]);
+      cand.push([i => (i > 0 && S[i - 1].lentes) || (i < n - 1 && S[i + 1].lentes), "tiene al lado a alguien con lentes"]);
+      cand.push([i => (i > 0 && S[i - 1].sombrero) || (i < n - 1 && S[i + 1].sombrero), "tiene al lado a alguien con sombrero"]);
+      cand.push([i => !((i > 0 && S[i - 1].sombrero) || (i < n - 1 && S[i + 1].sombrero)), "no tiene al lado a nadie con sombrero"]);
+      let vivos = S.map((s, i) => i); const pistas = [];
+      while (vivos.length > 1){
+        const ok = mezclar(cand).filter(([f]) => f(cul)).map(([f, t]) => ({ f, t, rest: vivos.filter(f) })).filter(x => x.rest.length < vivos.length);
+        if (!ok.length) break;
+        const minimo = Math.min(...ok.map(x => vivos.length - x.rest.length));
+        const el = ok.filter(x => vivos.length - x.rest.length === minimo)[0];
+        pistas.push(el.t); vivos = el.rest;
+      }
+      if (vivos.length === 1 && pistas.length >= 4) return { S, cul, pistas: mezclar(pistas) };
+    }
+    return null;
+  }
+  const figura = (s, i) => {
+    const col = COL[s.c][1];
+    return `<svg viewBox="0 0 50 118" width="100%"><rect x="9" y="64" width="32" height="46" rx="10" fill="${col}"/>
+      <circle cx="25" cy="44" r="16" fill="#f1c27d"/><circle cx="19" cy="43" r="2" fill="#333"/><circle cx="31" cy="43" r="2" fill="#333"/>
+      <path d="M19 52 Q25 57 31 52" stroke="#a0522d" stroke-width="2" fill="none"/>
+      ${s.lentes ? `<circle cx="19" cy="43" r="6" fill="none" stroke="#222" stroke-width="1.8"/><circle cx="31" cy="43" r="6" fill="none" stroke="#222" stroke-width="1.8"/><line x1="25" y1="43" x2="25" y2="43" stroke="#222"/>` : ""}
+      ${s.sombrero ? `<rect x="5" y="27" width="40" height="5" rx="2.5" fill="#4e342e"/><rect x="14" y="10" width="22" height="19" rx="4" fill="#6d4c41"/>` : ""}
+      <text x="25" y="116" font-size="10" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif" font-weight="700">${i + 1}</text></svg>`;
+  };
+
+  function jugarQuien(){
+    const TOTAL = 3; let caso = 0, bien = 0;
+    decir(actual.intro.quien, "gBubble", actual.id + "_intro-quien");
+    function nuevo(){
+      const c = crearCaso();
+      let sel = -1, fallos = 0, listo = false; const descartados = new Set();
+      $("gameBody").innerHTML = `<p class="info">Caso ${caso + 1} de ${TOTAL}</p>
+        <p class="q" style="font-size:1.05rem">Una mariposa oscura se posó sobre una de estas personas. Leé las pistas y descubrí sobre quién.</p>
+        <div id="qFila" style="display:flex;gap:3px;justify-content:center">${c.S.map((s, i) => `<button class="sospe" data-i="${i}" style="flex:1;max-width:64px;padding:2px;background:rgba(255,255,255,.14);border:3px solid transparent;border-radius:12px;cursor:pointer">${figura(s, i)}</button>`).join("")}</div>
+        <div style="background:rgba(255,255,255,.14);border-radius:14px;padding:10px 14px;text-align:left"><b>Pistas — la persona buscada:</b><ol style="margin:6px 0 0 18px;padding:0;line-height:1.5">${c.pistas.map(p => `<li>${p}</li>`).join("")}</ol></div>
+        <div style="display:flex;gap:8px"><button class="gbtn sec" id="qDesc">❌ Descartar</button><button class="gbtn" id="qAcusa">👆 ¡Es esta!</button></div>
+        <p class="info" id="qMsg" style="min-height:1.6em">Tocá a una persona y después elegí qué hacer.</p>`;
+      const pintar = () => document.querySelectorAll(".sospe").forEach(b => { const i = +b.dataset.i;
+        b.style.opacity = descartados.has(i) ? .25 : 1; b.style.borderColor = i === sel ? "#ffca28" : "transparent"; });
+      document.querySelectorAll(".sospe").forEach(b => b.onclick = () => { if (listo) return; sel = +b.dataset.i; pintar(); });
+      $("qDesc").onclick = () => { if (listo || sel < 0) return; descartados.has(sel) ? descartados.delete(sel) : descartados.add(sel); pintar(); };
+      const seguir = () => { caso++; if (caso < TOTAL) nuevo(); else final(`¡Detective! ${"⭐".repeat(bien)}`, `Resolviste ${bien} de ${TOTAL} casos.`, jugarQuien); };
+      $("qAcusa").onclick = () => {
+        if (listo || sel < 0) return;
+        if (sel === c.cul){
+          listo = true; if (fallos === 0) bien++; decirDe(actual.frases.ok, "ok");
+          $("qMsg").textContent = "¡Era la persona número " + (c.cul + 1) + "! Mirá que bien pensado.";
+          $("qAcusa").textContent = "Siguiente →"; $("qAcusa").onclick = seguir; $("qDesc").style.display = "none";
+        } else {
+          fallos++; descartados.add(sel); decirDe(actual.frases.mal, "mal"); sel = -1; pintar();
+          if (fallos >= 2){
+            listo = true; sel = c.cul; pintar();
+            $("qMsg").textContent = "Era la persona número " + (c.cul + 1) + ". ¡Con el próximo caso vas a poder!";
+            $("qAcusa").textContent = "Siguiente →"; $("qAcusa").onclick = seguir; $("qDesc").style.display = "none";
+          } else $("qMsg").textContent = "No es ella. Releé las pistas y probá otra vez (te queda un intento).";
+        }
+      };
+    }
+    nuevo();
   }
 
   // Nombre del audio de cada pregunta (ver la lista del documento): q01..q22 y l01..l09
