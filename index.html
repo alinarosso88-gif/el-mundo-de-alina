@@ -170,7 +170,7 @@
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
-      intro:{ akuma:"¡Una akuma akumatizó a unas personas! Primero tenemos que ayudarlas a calmarse, y después capturar la mariposa oscura. ¡Vamos!", mision:"¡Esta es una misión de heroína! Hay que cruzar seis lugares de la ciudad. En cada uno hay un desafío. ¡Vamos a atrapar a la mariposa oscura!", purificar:"Un villano akumatizado necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+      intro:{ akuma:"¡Una akuma akumatizó a unas personas! Primero tenemos que ayudarlas a calmarse, y después capturar la mariposa oscura. ¡Vamos!", mision:"¡Esta es una misión de heroína! Hay que cruzar veinte lugares de la ciudad. En cada uno hay un desafío. ¡Vamos a atrapar a la mariposa oscura!", purificar:"Un villano akumatizado necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
               quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
               logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
@@ -444,6 +444,13 @@
     verguenza: cara("#ffc2d4", ojos(32, 8), `<path d="M27 44 Q30 41 33 44 Q36 47 38 43" fill="none" stroke="${K}" stroke-width="2"/>`, mejillas(38, 14).replace(/r="2.6"/g, 'r="4.5"')),
     soledad: cara("#cdd2e6", ojos(33, 8), `<path d="M27 45 H37" stroke="${K}" stroke-width="2.2" fill="none"/>`, `<path d="M20 25 Q24 22 28 25 M44 25 Q40 22 36 25" stroke="${K}" stroke-width="2" fill="none"/>`)
   };
+  Object.assign(DIB, {
+    aburrido: cara("#f3e7a1", `<circle cx="24" cy="33" r="2.2" fill="${K}" stroke="none"/><circle cx="40" cy="33" r="2.2" fill="${K}" stroke="none"/>`, `<path d="M26 45 Q29 43 32 45 Q35 47 38 45" fill="none" stroke="${K}" stroke-width="2"/>`, `<path d="M18 30 H30 M34 30 H46" stroke="${K}" stroke-width="3" fill="none"/>`),
+    cansado: cara("#cdbdf2", `<path d="M18 33 Q24 37 30 33 M34 33 Q40 37 46 33" fill="none" stroke="${K}" stroke-width="2.2"/>`, `<ellipse cx="32" cy="46" rx="5" ry="6" fill="${K}" stroke="none"/>`, `<path d="M18 40 Q24 43 30 40 M34 40 Q40 43 46 40" fill="none" stroke="#7a5fc0" stroke-width="2"/>`),
+    culpa: cara("#f5cfb0", `<circle cx="24" cy="35" r="2.2" fill="${K}" stroke="none"/><circle cx="40" cy="35" r="2.2" fill="${K}" stroke="none"/>`, `<path d="M27 46 Q32 42 37 46" fill="none" stroke="${K}" stroke-width="2"/>`, `<path d="M18 27 L28 24 M46 27 L36 24" stroke="${K}" stroke-width="2" fill="none"/><path d="M50 22 Q53 28 50 31 Q47 28 50 22Z" fill="#7fd1ff" stroke="none"/>`),
+    nervioso: cara("#d9f0a8", `<circle cx="24" cy="32" r="4.5" fill="#fff" stroke="${K}" stroke-width="1.8"/><circle cx="40" cy="32" r="4.5" fill="#fff" stroke="${K}" stroke-width="1.8"/><circle cx="25" cy="32" r="1.8" fill="${K}" stroke="none"/><circle cx="41" cy="32" r="1.8" fill="${K}" stroke="none"/>`, `<path d="M24 45 Q27 42 30 45 Q33 48 36 45 Q38 43 40 45" fill="none" stroke="${K}" stroke-width="2"/>`, `<path d="M8 22 Q11 28 8 31 Q5 28 8 22Z M56 26 Q59 32 56 35 Q53 32 56 26Z" fill="#7fd1ff" stroke="none"/>`),
+    desanimo: cara("#b8c6dd", `<circle cx="24" cy="34" r="2.2" fill="${K}" stroke="none"/><circle cx="40" cy="34" r="2.2" fill="${K}" stroke="none"/>`, `<path d="M26 47 Q32 41 38 47" fill="none" stroke="${K}" stroke-width="2.2"/>`, `<path d="M18 28 L29 25 M46 28 L35 25" stroke="${K}" stroke-width="2.4" fill="none"/>`)
+  });
   const ic = k => DIB[k] || k;
   // Íconos del menú de juegos
   const ICONO_JUEGO = { jMemoria: "cartas", jQuiz: "?", jLogica: "puzzle", jError: "lupa", jNumeros: "numeros", jPurificar: "oscura", jQuien: "detective", jMision: "bicho", jAkuma: "oscura", jAdivinanzas: "gato", jGalletitas: "galleta" };
@@ -691,24 +698,24 @@
   ];
 
   const LOGICA = [
-    { q:"¿Qué viene después?", s:"🔴 🔵 🔴 🔵 🔴 ❓", a:"🔵", o:["🔴","🟢"] },
-    { q:"¿Qué viene después?", s:"🐞 🐞 🐱 🐞 🐞 🐱 🐞 🐞 ❓", a:"🐱", o:["🐞","⭐"] },
-    { q:"¿Qué número sigue?", s:"2 · 4 · 6 · 8 · ❓", a:"10", o:["9","12"] },
-    { q:"¿Qué número sigue?", s:"5 · 10 · 15 · 20 · ❓", a:"25", o:["30","22"] },
-    { q:"¿Qué número sigue?", s:"1 · 3 · 5 · 7 · ❓", a:"9", o:["8","10"] },
-    { q:"¿Qué número sigue?", s:"3 · 6 · 9 · 12 · ❓", a:"15", o:["14","18"] },
-    { q:"¿Qué número sigue?", s:"10 · 9 · 8 · 7 · ❓", a:"6", o:["5","8"] },
+    { q:"¿Qué viene después?", s:"🔴 🔵 🔴 🔵 🔴 ?", a:"🔵", o:["🔴","🟢"] },
+    { q:"¿Qué viene después?", s:"🐞 🐞 🐱 🐞 🐞 🐱 🐞 🐞 ?", a:"🐱", o:["🐞","⭐"] },
+    { q:"¿Qué número sigue?", s:"2 · 4 · 6 · 8 · ?", a:"10", o:["9","12"] },
+    { q:"¿Qué número sigue?", s:"5 · 10 · 15 · 20 · ?", a:"25", o:["30","22"] },
+    { q:"¿Qué número sigue?", s:"1 · 3 · 5 · 7 · ?", a:"9", o:["8","10"] },
+    { q:"¿Qué número sigue?", s:"3 · 6 · 9 · 12 · ?", a:"15", o:["14","18"] },
+    { q:"¿Qué número sigue?", s:"10 · 9 · 8 · 7 · ?", a:"6", o:["5","8"] },
     { q:"¿Cuál no pertenece al grupo?", s:"🍎 🍌 🍇 🚗", a:"🚗", o:["🍎","🍇"] },
     { q:"¿Cuál no pertenece al grupo?", s:"🐶 🐱 🐰 🌳", a:"🌳", o:["🐶","🐰"] },
-    { q:"¿Qué viene después?", s:"⭐ ⭐ 🌙 ⭐ ⭐ 🌙 ⭐ ⭐ ❓", a:"🌙", o:["⭐","☀️"] },
-    { q:"¿Qué viene después?", s:"🔺 🔵 🔺 🔵 🔺 ❓", a:"🔵", o:["🔺","🟢"] },
+    { q:"¿Qué viene después?", s:"⭐ ⭐ 🌙 ⭐ ⭐ 🌙 ⭐ ⭐ ?", a:"🌙", o:["⭐","☀️"] },
+    { q:"¿Qué viene después?", s:"🔺 🔵 🔺 🔵 🔺 ?", a:"🔵", o:["🔺","🟢"] },
     { q:"Si hoy es lunes, ¿qué día será dentro de dos días?", a:"Miércoles", o:["Martes","Jueves"] },
     { q:"Tengo agujas pero no sé coser, y todos me miran para saber la hora. ¿Qué soy?", a:"Un reloj", o:["Un sombrero","Un libro"] },
     { q:"María tiene 3 caramelos y le dan 4 más. Después se come 2. ¿Cuántos le quedan?", a:"5", o:["7","9"] },
     { q:"7 + ___ = 12. ¿Qué número falta?", a:"5", o:["4","6"] },
     { q:"15 − ___ = 9. ¿Qué número falta?", a:"6", o:["5","7"] },
     { q:"Lucía tiene 9 lápices, regala 4 y le dan 3 más. ¿Cuántos tiene?", a:"8", o:["6","10"] },
-    { q:"¿Qué número sigue?", s:"20 · 18 · 16 · 14 · ❓", a:"12", o:["10","13"] }
+    { q:"¿Qué número sigue?", s:"20 · 18 · 16 · 14 · ?", a:"12", o:["10","13"] }
   ];
 
   // ---------- Juego 4: ¿Qué está mal en el dibujo? ----------
@@ -1166,37 +1173,72 @@
 
   // Ladybug: misión por etapas
   function jugarMision(){
-    const ETAPAS = [["🌉", "El puente roto"], ["🚪", "La puerta con candado"], ["🕳️", "El túnel oscuro"], ["🏰", "La torre de la ciudad"], ["🌳", "La plaza de las sombras"], ["🦋", "La guarida de la mariposa oscura"]];
-    const desafios = [...mezclar(LOGICA).slice(0, 3), ...mezclar(PREGUNTAS).slice(0, 3)];
-    const orden = mezclar(desafios);
-    let e = 0, bien = 0;
+    const ETAPAS = [
+      "El puente roto", "La puerta con candado", "El túnel oscuro", "La torre de la ciudad", "La plaza de las sombras",
+      "El mercado de las mariposas", "La biblioteca encantada", "El río de las estrellas", "El bosque de los acertijos", "La fuente mágica",
+      "El techo de la panadería", "El museo dormido", "La escalera del reloj", "El parque de los globos", "El barco del puerto",
+      "La montaña de nubes", "El laberinto de espejos", "El faro del mar", "El puente del arcoíris", "La guarida de la mariposa oscura"
+    ];
+    const ICONOS = ["🌈", "🍀", "⭐", "🎁", "🌸", "🦋", "🍎", "🐠", "🐢", "🍓", "🚀", "🎈", "🐶"];
+    const TOT = ETAPAS.length, GUARDADO = "misionAlina";
+    const leer = () => { try { const g = JSON.parse(localStorage.getItem(GUARDADO)); return g && g.v === 1 && g.orden && g.orden.length === TOT && g.e < TOT ? g : null; } catch(e) { return null; } };
+    const guardar = g => { try { localStorage.setItem(GUARDADO, JSON.stringify(g)); } catch(e) {} };
+    const borrar = () => { try { localStorage.removeItem(GUARDADO); } catch(e) {} };
+    const banco = ref => ref[0] === "L" ? LOGICA[ref[1]] : PREGUNTAS[ref[1]];
+    const nuevo = () => {
+      const l = mezclar(LOGICA.map((_, i) => ["L", i])).slice(0, TOT / 2);
+      const p = mezclar(PREGUNTAS.map((_, i) => ["P", i])).slice(0, TOT / 2);
+      return { v: 1, orden: mezclar([...l, ...p]), e: 0, bien: 0 };
+    };
     decir(actual.intro.mision, "gBubble", actual.id + "_intro-mision");
-    function etapa(){
-      const [ico, lugar] = ETAPAS[e], it = orden[e];
-      const camino = ETAPAS.map((x, i) => `<span class="carita" style="width:1.4em;height:1.4em">${i < e ? ic("⭐") : i === e ? ic("bicho") : `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12" fill="rgba(255,255,255,.3)"/></svg>`}</span>`).join(" ");
-      $("gameBody").innerHTML = `<p class="info">${camino}</p>
-        <p class="info">Etapa ${e + 1} de ${ETAPAS.length}</p>
-        <p class="q" style="font-size:1.3rem">${ico} ${lugar}</p>
-        <p class="info">Para seguir tenés que resolver este desafío:</p>
-        <p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
-        <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div>
-        <p class="info" id="mMsg" style="min-height:1.6em"></p>`;
-      let fallos = 0;
-      document.querySelectorAll(".opt").forEach(btn => btn.onclick = () => {
-        const sig = () => { e++; if (e < ETAPAS.length) etapa(); else final("¡Misión cumplida! 🐞", `Atrapaste a la mariposa oscura. Resolviste ${bien} de ${ETAPAS.length} desafíos al primer intento.`, jugarMision); };
-        if (btn.textContent === it.a){
-          document.querySelectorAll(".opt").forEach(x => x.disabled = true); btn.classList.add("ok");
-          if (fallos === 0) bien++; decirDe(actual.frases.ok, "ok"); setTimeout(sig, 1500);
-        } else {
-          fallos++; btn.disabled = true; btn.style.opacity = .4; decirDe(actual.frases.mal, "mal");
-          if (fallos >= 2){
-            document.querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.textContent === it.a) x.classList.add("ok"); });
-            $("mMsg").textContent = "La respuesta era " + it.a + ". ¡Seguimos con la misión!"; setTimeout(sig, 2200);
-          } else $("mMsg").textContent = "Pensalo otra vez, ¡vos podés!";
-        }
-      });
+
+    function inicio(){
+      const g = leer();
+      if (!g) return empezar(nuevo());
+      $("gameBody").innerHTML = `<p class="q">Tenés una misión empezada</p>
+        <p class="info">Ibas por la etapa ${g.e + 1} de ${TOT}: ${ETAPAS[g.e]}.</p>
+        <button class="gbtn" id="mSeguir">Seguir la misión</button>
+        <button class="gbtn sec" id="mNueva">Empezar de nuevo</button>`;
+      $("mSeguir").onclick = () => empezar(g);
+      $("mNueva").onclick = () => { borrar(); empezar(nuevo()); };
     }
-    etapa();
+    function empezar(g){
+      guardar(g);
+      const etapa = () => {
+        const e = g.e, it = banco(g.orden[e]); let fallos = 0;
+        const pct = Math.round(e / TOT * 100);
+        $("gameBody").innerHTML = `<div style="display:flex;align-items:center;gap:8px"><span class="carita" style="width:1.8em;height:1.8em">${ic("bicho")}</span>
+          <div style="flex:1;height:12px;background:rgba(255,255,255,.2);border-radius:8px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#ffca28"></div></div>
+          <span class="carita" style="width:1.8em;height:1.8em">${ic("oscura")}</span></div>
+          <p class="info">Etapa ${e + 1} de ${TOT}${e === TOT / 2 ? " · ¡ya pasaste la mitad!" : e === TOT - 1 ? " · ¡la última!" : ""}</p>
+          <div style="align-self:center;width:54px;height:54px" class="anim">${ic(ICONOS[e % ICONOS.length])}</div>
+          <p class="q" style="font-size:1.3rem">${ETAPAS[e]}</p>
+          <p class="info">Para seguir tenés que resolver este desafío:</p>
+          <p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
+          <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div>
+          <p class="info" id="mMsg" style="min-height:1.6em"></p>`;
+        const sig = () => {
+          g.e++; guardar(g);
+          if (g.e < TOT) return etapa();
+          borrar();
+          final("¡Misión cumplida! 🐞", `Atrapaste a la mariposa oscura. Resolviste ${g.bien} de ${TOT} desafíos al primer intento.`, jugarMision);
+        };
+        document.querySelectorAll(".opt").forEach(btn => btn.onclick = () => {
+          if (btn.textContent === it.a){
+            document.querySelectorAll(".opt").forEach(x => x.disabled = true); btn.classList.add("ok");
+            if (fallos === 0) g.bien++; decirDe(actual.frases.ok, "ok"); setTimeout(sig, 1300);
+          } else {
+            fallos++; btn.disabled = true; btn.style.opacity = .4; decirDe(actual.frases.mal, "mal");
+            if (fallos >= 2){
+              document.querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.textContent === it.a) x.classList.add("ok"); });
+              $("mMsg").textContent = "La respuesta era " + it.a + ". ¡Seguimos con la misión!"; setTimeout(sig, 2200);
+            } else $("mMsg").textContent = "Pensalo otra vez, ¡vos podés!";
+          }
+        });
+      };
+      etapa();
+    }
+    inicio();
   }
 
   // ---------- Atrapá la akuma: calmar a la persona y capturar la mariposa oscura ----------
@@ -1206,10 +1248,24 @@
     { ico: "celos", nombre: "Mateo", emo: "celos", sit: "Mateo siente celos porque su mejor amigo juega con otro chico.", ok: "Invitarlo a jugar entre todos", mal: ["Decirle que se aguante", "Hacerte el que no lo ves"] },
     { ico: "miedo", nombre: "Clara", emo: "miedo", sit: "Clara tiene mucho miedo de actuar frente a toda la escuela.", ok: "Decirle que la vas a acompañar y que lo va a hacer genial", mal: ["Decirle que seguro le sale mal", "Reírte de sus nervios"] },
     { ico: "verguenza", nombre: "Tomás", emo: "vergüenza", sit: "Tomás tiene vergüenza porque se tropezó adelante de todos.", ok: "Decirle que a todos nos pasa y ayudarlo a levantarse", mal: ["Reírte fuerte", "Contarle a todos lo que pasó"] },
-    { ico: "soledad", nombre: "Valeria", emo: "soledad", sit: "Valeria se siente sola porque es nueva en la escuela.", ok: "Invitarla a jugar con vos", mal: ["Decirle que es rara", "Pasar de largo sin saludarla"] }
+    { ico: "soledad", nombre: "Valeria", emo: "soledad", sit: "Valeria se siente sola porque es nueva en la escuela.", ok: "Invitarla a jugar con vos", mal: ["Decirle que es rara", "Pasar de largo sin saludarla"] },
+    { ico: "aburrido", nombre: "Bruno", emo: "aburrimiento", sit: "Bruno se aburre porque no tiene con quién jugar en el recreo.", ok: "Invitarlo a jugar con tu grupo", mal: ["Decirle que se busque algo solo", "Decirle que el recreo es aburrido"] },
+    { ico: "cansado", nombre: "Emma", emo: "cansancio", sit: "Emma está agotada porque estudió toda la tarde para una prueba.", ok: "Decirle que descanse un ratito y ofrecerle ayuda para repasar", mal: ["Decirle que siga estudiando sin parar", "Apurarla porque falta poco"] },
+    { ico: "celos", nombre: "Joaquín", emo: "envidia", sit: "Joaquín siente envidia porque su amigo ganó un premio.", ok: "Decirle que a él también le salen muy bien otras cosas", mal: ["Decirle que su amigo tuvo suerte y no merece el premio", "Decirle que no sea envidioso"] },
+    { ico: "culpa", nombre: "Martina", emo: "culpa", sit: "Martina rompió sin querer el dibujo de su compañera y se siente mal.", ok: "Animarla a pedir perdón y ofrecerse a ayudar a hacer otro", mal: ["Decirle que se haga la que no fue", "Decirle que es muy torpe"] },
+    { ico: "nervioso", nombre: "Facundo", emo: "nervios", sit: "Facundo está muy nervioso porque mañana tiene una prueba.", ok: "Decirle que respire hondo y repasar juntos un ratito", mal: ["Decirle que seguro se saca un uno", "Decirle que no estudió nada"] },
+    { ico: "desanimo", nombre: "Camila", emo: "ganas de rendirse", sit: "Camila quiere abandonar porque no le sale una cuenta.", ok: "Decirle que a todos nos cuesta y que lo intente de nuevo juntas", mal: ["Decirle que no es para ella", "Decirle que es mejor que abandone"] },
+    { ico: "triste", nombre: "Thiago", emo: "tristeza", sit: "El mejor amigo de Thiago se mudó a otra ciudad.", ok: "Proponerle mandarle un dibujo y llamarlo seguido", mal: ["Decirle que ya conocerá a otro", "Cambiar de tema enseguida"] },
+    { ico: "triste", nombre: "Julieta", emo: "tristeza", sit: "Julieta está triste porque perdió a su mascota y no la encuentra.", ok: "Acompañarla a buscarla y darle un abrazo", mal: ["Decirle que no es para tanto", "Decirle que se compre otra"] },
+    { ico: "enojo", nombre: "Lautaro", emo: "enojo", sit: "A Lautaro no lo dejaron jugar al fútbol con los demás.", ok: "Decirle que lo querés en tu equipo", mal: ["Decirle que juegue solo", "Decirle que no juega bien"] },
+    { ico: "verguenza", nombre: "Agustina", emo: "vergüenza", sit: "Agustina sacó una mala nota y no quiere que nadie se entere.", ok: "Decirle que una nota no dice cuánto vale y ofrecerle estudiar juntas", mal: ["Contarle a toda la clase", "Reírte de la nota"] },
+    { ico: "miedo", nombre: "Santino", emo: "miedo", sit: "Santino tiene miedo de dormir solo en su cuarto oscuro.", ok: "Dejarle una luz suave y quedarte un ratito charlando", mal: ["Decirle que los bebés tienen miedo", "Apagar todo y dejarlo solo"] },
+    { ico: "celos", nombre: "Olivia", emo: "celos", sit: "Olivia siente celos porque nació su hermanito y todos lo miran a él.", ok: "Darle un ratito solo para ella y decirle que la quieren igual", mal: ["Decirle que ahora el bebé es más importante", "Decirle que no moleste"] },
+    { ico: "nervioso", nombre: "Ramiro", emo: "preocupación", sit: "Ramiro está preocupado porque no encuentra su mochila antes de ir a la escuela.", ok: "Ayudarlo a buscarla con calma, lugar por lugar", mal: ["Decirle que es un desordenado", "Irte y dejarlo solo"] },
+    { ico: "enojo", nombre: "Renata", emo: "frustración", sit: "Renata está frustrada porque su torre de bloques se cayó otra vez.", ok: "Ayudarla a armarla de nuevo y decirle que a la próxima sale mejor", mal: ["Decirle que mejor no juegue más", "Romper la torre vos también"] }
   ];
   function jugarAkuma(){
-    const casos = mezclar(CASOS_AKUMA).slice(0, 4);
+    const casos = mezclar(CASOS_AKUMA).slice(0, 6);
     let i = 0, bien = 0;
     decir(actual.intro.akuma, "gBubble", actual.id + "_intro-akuma");
     function caso(){
