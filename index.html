@@ -95,6 +95,16 @@
   .carta .dorso { display:grid; place-items:center; width:100%; height:100%; }
   .carta.par .dib { animation: salta .8s ease-in-out infinite; }
   .carita { display:inline-block; width:1.5em; height:1.5em; vertical-align:middle; }
+  .tab { display:grid; grid-template-columns:repeat(6,1fr); gap:4px; width:100%; max-width:440px; align-self:center; }
+  .cas { position:relative; aspect-ratio:1; border-radius:10px; background:rgba(255,255,255,.16); border:2px solid rgba(255,255,255,.25); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .cas small { position:absolute; top:1px; left:4px; font-size:.65rem; opacity:.8; font-weight:700; }
+  .cas.bonus { background:rgba(255,214,79,.35); } .cas.trampa { background:rgba(120,60,170,.55); } .cas.meta { background:rgba(255,214,79,.55); }
+  .icc { display:block; width:55%; height:55%; } .icc:empty { display:none; }
+  .fichas { display:flex; gap:1px; justify-content:center; flex-wrap:wrap; position:absolute; bottom:1px; left:0; right:0; }
+  .salida { display:flex; align-items:center; gap:8px; align-self:flex-start; background:rgba(255,255,255,.16); border-radius:10px; padding:6px 10px; min-height:34px; position:relative; }
+  .salida .fichas { position:static; flex-wrap:nowrap; }
+  .fch { width:22px; height:22px; border-radius:50%; border:2px solid #fff; display:inline-grid; place-items:center; font-size:.7rem; font-weight:800; color:#fff; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .fch .pic { width:100%; height:100%; }
   @keyframes flota { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-4px) rotate(2deg); } }
   @keyframes aletea { from { transform:scaleX(1); } to { transform:scaleX(.7); } }
   @keyframes llama { from { transform:scaleY(.8); } to { transform:scaleY(1.15); } }
@@ -127,7 +137,7 @@
   </div>
   <div id="menuJuegos">
     <button class="gamebtn" id="jMemoria"><span class="ico">🃏</span><span>Memoria<small>Encontrá las parejas</small></span></button>
-    <button class="gamebtn" id="jQuiz"><span class="ico">❓</span><span>Preguntas y respuestas<small>Mostrá lo que sabés</small></span></button>
+    <button class="gamebtn" id="jQuiz"><span class="ico">❓</span><span>Camino de preguntas<small>Tirá el dado y llegá a la meta</small></span></button>
     <button class="gamebtn" id="jLogica"><span class="ico">🧩</span><span>Misiones de lógica<small>Resolvé los desafíos</small></span></button>
     <button class="gamebtn" id="jError"><span class="ico">🔍</span><span>¿Qué está mal?<small>Descubrí el error del dibujo</small></span></button>
     <button class="gamebtn" id="jNumeros"><span class="ico">🔢</span><span>Números escondidos<small>Encontralos en orden</small></span></button>
@@ -136,7 +146,7 @@
     <button class="gamebtn" id="jMision"><span class="ico">🐞</span><span>Misión de Ladybug<small>Una aventura por etapas</small></span></button>
     <button class="gamebtn" id="jAkuma"><span class="ico">🦋</span><span>Atrapá la akuma<small>Ayudá y purificá</small></span></button>
     <button class="gamebtn" id="jAdivinanzas"><span class="ico">🐱</span><span>Adivinanzas<small>Pensá y adiviná</small></span></button>
-    <button class="gamebtn" id="jGalletitas"><span class="ico">🍪</span><span>Las galletitas de Tikki<small>Contá y sumá galletitas</small></span></button>
+    <button class="gamebtn" id="jGalletitas"><span class="ico">🍪</span><span>Las misiones de Tikki<small>Galletitas y desafíos de lógica</small></span></button>
   </div>
   <div class="controls">
     <div class="ctl"><button class="btn" id="vozBtn" aria-label="Sonido">🔊</button><span class="label">Sonido</span></div>
@@ -202,8 +212,9 @@
       pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
       menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
-      intro:{ galletitas:"¡Mis galletitas! Ayudame a contarlas, que no quiero equivocarme.", purificar:"Vamos a ayudar a un villano akumatizado con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
+      intro:{ galletitas:"¡Mis misiones! Vamos a contar galletitas y a resolver desafíos de lógica. Pensá con calma, no hay apuro.", purificar:"Vamos a ayudar a un villano akumatizado con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
               quiz:"Te voy a hacer unas preguntas. Pensá tranquila, no hay apuro.",
+              tablero:"¡Vamos a jugar en el tablero! Tirá el dado y avanzá. Si caés en una casilla común, te hago una pregunta. ¡Llegá primero a la meta!",
               logica:"Son desafíos para pensar. Mirá con atención y vas a encontrar la respuesta." },
       frases:{ ok:["¡Muy bien, Alina! ¡Qué lindo acierto!","¡Lo lograste! Estoy muy contenta.","¡Perfecto! Qué bien pensaste."],
                mal:["No pasa nada, Alina. Probá de nuevo, tranquila.","Casi, casi. Mirá otra vez con calma."],
@@ -433,6 +444,7 @@
     gato: sv(`<path d="M10 26 L12 6 L26 16Z M54 26 L52 6 L38 16Z" fill="#6b6f87" stroke="${K}" stroke-width="2.4"/><circle cx="32" cy="34" r="23" fill="#7d8199" stroke="${K}" stroke-width="2.6"/><path d="M14 8 L22 15 L14 18Z M50 8 L42 15 L50 18Z" fill="#ff9ab0" stroke="none"/>` + ojos(32, 9, 3) + `<path d="M29 40 L35 40 L32 43Z" fill="#ff7a93" stroke="${K}" stroke-width="1.4"/><path d="M32 43 Q28 48 24 45 M32 43 Q36 48 40 45" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M6 36 H18 M6 42 L18 40 M58 36 H46 M58 42 L46 40" stroke="${K}" stroke-width="1.6" fill="none"/>`),
     galleta: sv(`<circle cx="32" cy="32" r="25" fill="#e3a65a" stroke="${K}" stroke-width="2.6"/>` + [[22, 22], [40, 20], [44, 38], [26, 42], [34, 32]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="4" ry="3.2" fill="#6b3f1d" stroke="none"/>`).join("")),
     trofeo: sv(`<path d="M18 8 H46 V26 C46 36 40 40 32 40 C24 40 18 36 18 26Z" fill="#ffd54f" stroke="${K}" stroke-width="2.6"/><path d="M18 12 H8 C8 24 12 28 20 28 M46 12 H56 C56 24 52 28 44 28" fill="none" stroke="${K}" stroke-width="2.6"/><rect x="28" y="40" width="8" height="10" fill="#e0b030" stroke="${K}" stroke-width="2.2"/><rect x="20" y="50" width="24" height="8" rx="3" fill="#7c5cff" stroke="${K}" stroke-width="2.4"/>` + ojos(22, 6, 1.8) + sonrisa(27, 3)),
+    dado: sv(`<rect x="8" y="8" width="48" height="48" rx="11" fill="#fff" stroke="${K}" stroke-width="3"/>` + [[20, 20], [44, 20], [32, 32], [20, 44], [44, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="${K}" stroke="none"/>`).join("")),
     chispa: sv(`<path d="M32 6 L37 27 L58 32 L37 37 L32 58 L27 37 L6 32 L27 27Z" fill="#fff6a8" stroke="${K}" stroke-width="2.2"/>`),
     oscura: mariposa("#5b2d8a", "#3a1a5e", K, "#d9c2ff"),
     blanca: mariposa("#ffffff", "#e9f0ff", "#7a7fa8", "#c7d2ff"),
@@ -453,7 +465,7 @@
   });
   const ic = k => DIB[k] || k;
   // Íconos del menú de juegos
-  const ICONO_JUEGO = { jMemoria: "cartas", jQuiz: "?", jLogica: "puzzle", jError: "lupa", jNumeros: "numeros", jPurificar: "oscura", jQuien: "detective", jMision: "bicho", jAkuma: "oscura", jAdivinanzas: "gato", jGalletitas: "galleta" };
+  const ICONO_JUEGO = { jMemoria: "cartas", jQuiz: "dado", jLogica: "puzzle", jError: "lupa", jNumeros: "numeros", jPurificar: "oscura", jQuien: "detective", jMision: "bicho", jAkuma: "oscura", jAdivinanzas: "gato", jGalletitas: "galleta" };
   Object.entries(ICONO_JUEGO).forEach(([id, k]) => { const el = $(id); if (el) { const ico = el.querySelector(".ico"); ico.innerHTML = ic(k); ico.classList.add("anim"); } });
 
   // ---------- Instalar como app ----------
@@ -553,14 +565,14 @@
     decir(actual.vs.elegir);
   }
   $("jMemoria").onclick = () => { entrarJuego(); elegirModo(eligeNivelMemoria); };
-  $("jQuiz").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(PREGUNTAS, 6, "quiz")); };
+  $("jQuiz").onclick = () => { entrarJuego(); elegirModo(() => jugarTablero()); };
   $("jLogica").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(LOGICA, 6, "logica")); };
   $("jPurificar").onclick = () => { entrarJuego(); jugarPurificar(); };
   $("jQuien").onclick = () => { entrarJuego(); jugarQuien(); };
   $("jAkuma").onclick = () => { entrarJuego(); jugarAkuma(); };
   $("jMision").onclick = () => { entrarJuego(); jugarMision(); };
   $("jAdivinanzas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(ADIVINANZAS, 6, "adivinanzas")); };
-  $("jGalletitas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(bancoGalletitas(), 6, "galletitas")); };
+  $("jGalletitas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(bancoMisionesTikki(), 8, "galletitas")); };
   $("jNumeros").onclick = () => { entrarJuego(); jugarNumeros(); };
   $("jError").onclick = () => { entrarJuego(); elegirModo(() => jugarError(5)); };
 
@@ -579,9 +591,8 @@
       <button class="gbtn" id="n3">Muy fácil · 3 parejas</button>
       <button class="gbtn" id="n6">Fácil · 6 parejas</button>
       <button class="gbtn" id="n8">Medio · 8 parejas</button>
-      <button class="gbtn" id="n12">Difícil · 12 parejas</button>
-      <button class="gbtn" id="n16">Muy difícil · 16 parejas</button>`;
-    [3, 6, 8, 12, 16].forEach(n => { $("n" + n).onclick = () => memoria(n); });
+      <button class="gbtn" id="n12">Difícil · 12 parejas</button>`;
+    [3, 6, 8, 12].forEach(n => { $("n" + n).onclick = () => memoria(n); });
     decir(actual.intro.memoria, "gBubble", actual.id + "_intro-memoria");
   }
 
@@ -883,6 +894,141 @@
     }
   ];
 
+  // ---------- 35 dibujos más (variantes y temas nuevos) ----------
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const COLS = { R: ["rojo", "#e53935"], Y: ["amarillo", "#fdd835"], B: ["azul", "#1e88e5"], G: ["verde", "#43a047"], P: ["violeta", "#8e24aa"], O: ["naranja", "#fb8c00"] };
+  const cielo = () => rect(0, 0, 300, 300, "#cfe8ff");
+
+  // A. Números que saltan de a N (6 variantes)
+  const escNumeros = (paso, ini, col) => {
+    const e = rnd(2, 6), off = Math.random() < 0.5 ? 1 : -1, val = i => ini + paso * i, mal = val(e) + off;
+    return { pista: `Contá de a ${paso} y fijate qué número tendría que ir en cada círculo.`,
+      explica: `Los números van de ${paso} en ${paso}: ${[0, 1, 2, 3, 4, 5, 6].map(val).join(", ")}. Donde dice ${mal} tendría que decir ${val(e)}.`,
+      hit: (x, y) => cerca(x, y, 30 + e * 40, 150, 24), marca: marcaCirc(30 + e * 40, 150, 24),
+      dibujo: () => rect(0, 0, 300, 300, "#fff8e1") + `<line x1="20" y1="150" x2="280" y2="150" stroke="#b39ddb" stroke-width="4"/>`
+        + [0, 1, 2, 3, 4, 5, 6].map(i => circ(30 + i * 40, 150, 19, col) + `<text x="${30 + i * 40}" y="157" font-size="18" font-weight="700" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif">${i === e ? mal : val(i)}</text>`).join("") };
+  };
+  // B. Cercas de colores con patrón (3 variantes)
+  const escValla = (patron, fondo) => {
+    const n = 10, e = rnd(3, 8), base = i => patron[i % patron.length];
+    const otros = Object.keys(COLS).filter(k => !patron.includes(k)), m = otros[rnd(0, otros.length - 1)];
+    return { pista: "Los tablones siguen un orden de colores que se repite. Seguilo con el dedo.",
+      explica: `Los colores van en este orden: ${[...patron].map(k => COLS[k][0]).join(", ")}, y se repite. Un tablón tiene un color que no corresponde.`,
+      hit: (x, y) => dentro(x, y, 28 + e * 24, 110, 28, 135), marca: marcaRect(28 + e * 24, 112, 28, 132),
+      dibujo: () => rect(0, 0, 300, 300, fondo) + circ(250, 50, 24, "#ffd54f") + nube(30, 50) + rect(0, 235, 300, 65, "#8bc34a")
+        + rect(24, 150, 252, 10, "#8d6e63") + rect(24, 205, 252, 10, "#8d6e63")
+        + Array.from({ length: n }, (_, i) => { const c = COLS[i === e ? m : base(i)][1]; return `<polygon points="${30 + i * 24},240 ${30 + i * 24},135 ${42 + i * 24},122 ${54 + i * 24},135 ${54 + i * 24},240" fill="${c}" stroke="#fff" stroke-width="1.5"/>`; }).join("") };
+  };
+  // C. Relojes con dos números cambiados (4 variantes)
+  const escReloj = (h1, h2, fondo) => {
+    const pos = h => { const a = h * Math.PI / 6; return [150 + 86 * Math.sin(a), 150 - 86 * Math.cos(a)]; };
+    const ha = rnd(0, 11) * 30, mi = rnd(0, 11) * 30;
+    return { pista: "Fijate bien los números del reloj. ¿Están en el orden en que los contás?",
+      explica: `En un reloj los números van en orden, del 1 al 12. El ${h1} y el ${h2} están cambiados de lugar.`,
+      hit: (x, y) => cerca(x, y, ...pos(h1), 26) || cerca(x, y, ...pos(h2), 26), marca: marcaCirc(...pos(h1), 24) + marcaCirc(...pos(h2), 24),
+      dibujo: () => { let n = ""; for (let h = 1; h <= 12; h++) { const [x, y] = pos(h), num = h === h1 ? h2 : h === h2 ? h1 : h;
+          n += `<text x="${x}" y="${y + 8}" font-size="24" font-weight="700" text-anchor="middle" fill="#2b1055" font-family="system-ui,sans-serif">${num}</text>`; }
+        return rect(0, 0, 300, 300, fondo) + circ(150, 150, 124, "#fff", 'stroke="#2b1055" stroke-width="8"') + n
+          + `<line x1="150" y1="150" x2="${150 + 50 * Math.sin(ha * Math.PI / 180)}" y2="${150 - 50 * Math.cos(ha * Math.PI / 180)}" stroke="#2b1055" stroke-width="7" stroke-linecap="round"/><line x1="150" y1="150" x2="${150 + 68 * Math.sin(mi * Math.PI / 180)}" y2="${150 - 68 * Math.cos(mi * Math.PI / 180)}" stroke="#e53935" stroke-width="5" stroke-linecap="round"/>` + circ(150, 150, 8, "#2b1055"); } };
+  };
+  // D. Tableros de ajedrez con una casilla cambiada (2 variantes)
+  const escTablero = (c0, f0, claro, oscuro) => ({
+    pista: "En un tablero los cuadraditos se alternan: uno claro, uno oscuro. Recorré las filas con el dedo.",
+    explica: "Los colores se alternan siempre, uno claro y uno oscuro. Hay un cuadradito que tiene el color cambiado.",
+    hit: (x, y) => dentro(x, y, 10 + c0 * 35, 10 + f0 * 35, 35, 35), marca: marcaRect(7 + c0 * 35, 7 + f0 * 35, 41, 41),
+    dibujo: () => { let t = rect(0, 0, 300, 300, "#5d4037");
+      for (let c = 0; c < 8; c++) for (let f = 0; f < 8; f++) { let osc = (c + (7 - f)) % 2 === 0; if (c === c0 && f === f0) osc = !osc; t += rect(10 + c * 35, 10 + f * 35, 35, 35, osc ? oscuro : claro); }
+      return t; } });
+  // E. Barras que suben o bajan (3 variantes)
+  const escBarras = (modo, n, err) => {
+    const h = Array.from({ length: n }, (_, i) => modo === "sube" ? 40 + i * (125 / (n - 1)) : 165 - i * (125 / (n - 1)));
+    h[err] = modo === "sube" ? h[err - 1] - 25 : h[err - 1] + 25;
+    const w = Math.floor(260 / n) - 6, x = i => 20 + i * (w + 6);
+    return { pista: modo === "sube" ? "Las barras van creciendo, cada una más alta que la anterior. ¿Alguna rompe la escalera?" : "Las barras van bajando, cada una más baja que la anterior. ¿Alguna rompe la escalera?",
+      explica: modo === "sube" ? "Cada barra tiene que ser más alta que la anterior. Hay una que es más baja que la de su izquierda." : "Cada barra tiene que ser más baja que la anterior. Hay una que es más alta que la de su izquierda.",
+      hit: (px, py) => dentro(px, py, x(err) - 2, 260 - h[err] - 6, w + 4, h[err] + 6), marca: marcaRect(x(err) - 3, 260 - h[err] - 6, w + 6, h[err] + 8),
+      dibujo: () => rect(0, 0, 300, 300, "#e8f5e9") + rect(10, 260, 280, 8, "#6d4c41") + h.map((v, i) => rect(x(i), 260 - v, w, v, ["#ef5350", "#ffa726", "#fdd835", "#66bb6a", "#42a5f5", "#ab47bc"][i % 6], 'rx="4"')).join("") };
+  };
+  // F. Calendario con dos días cambiados (2 variantes)
+  const DIAS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"], ABR = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
+  const escSemana = i0 => ({
+    pista: "Pensá en el orden de los días de la semana. ¿Hay dos que están al revés?",
+    explica: `Los días van en este orden: lunes, martes, miércoles, jueves, viernes, sábado y domingo. ${DIAS[i0][0].toUpperCase() + DIAS[i0].slice(1)} y ${DIAS[i0 + 1]} están cambiados.`,
+    hit: (x, y) => dentro(x, y, 8 + i0 * 40, 105, 80, 60), marca: marcaRect(8 + i0 * 40, 105, 80, 60),
+    dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + `<text x="150" y="70" font-size="26" font-weight="800" text-anchor="middle" fill="#e65100" font-family="system-ui,sans-serif">Mi semana</text>`
+      + ABR.map((d, i) => { const t = i === i0 ? ABR[i0 + 1] : i === i0 + 1 ? ABR[i0] : d; return rect(10 + i * 40, 110, 36, 50, i > 4 ? "#ffcc80" : "#fff", 'rx="6" stroke="#e65100" stroke-width="2"') + `<text x="${28 + i * 40}" y="141" font-size="12" font-weight="800" text-anchor="middle" fill="#2b1055" font-family="system-ui,sans-serif">${t}</text>`; }).join("") });
+  // G. Canastas: una tiene distinta cantidad (4 variantes)
+  const ITEM = { huevo: (x, y) => `<ellipse cx="${x}" cy="${y}" rx="7" ry="9" fill="#fffaf0" stroke="#8d6e63" stroke-width="1.5"/>`, flor: (x, y) => circ(x, y, 8, "#ff8fb8") + circ(x, y, 3, "#ffd54f"),
+    cereza: (x, y) => circ(x, y, 7, "#b71c1c") + `<path d="M${x} ${y - 6} Q${x + 3} ${y - 13} ${x + 8} ${y - 14}" stroke="#2e7d32" stroke-width="2" fill="none"/>`, naranja: (x, y) => circ(x, y, 9, "#fb8c00") + circ(x - 3, y - 3, 2, "#ffcc80") };
+  const escCanastas = (plural, item, n, mal, col) => { const e = rnd(0, 3), POS = [[-18, 140], [0, 140], [18, 140], [-18, 121], [0, 121], [18, 121]];
+    return { pista: `Contá los ${plural} de cada canasta. ¿Todas tienen la misma cantidad?`, explica: `Cada canasta tiene ${n} ${plural}, menos una que tiene ${mal}.`,
+      hit: (x, y) => dentro(x, y, 15 + e * 72, 95, 62, 120), marca: marcaRect(13 + e * 72, 93, 66, 123),
+      dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + rect(0, 215, 300, 85, "#a1887f") + [0, 1, 2, 3].map(i => { const bx = 15 + i * 72, c = bx + 31;
+        return POS.slice(0, i === e ? mal : n).map(([dx, py]) => ITEM[item](c + dx, py)).join("") + rect(bx, 150, 62, 60, col, 'rx="8"') + rect(bx, 150, 62, 8, "#5d4037"); }).join("") }; };
+  // H. Fichas de dominó que suman lo mismo (2 variantes)
+  const PIPS = { 0: [], 1: [[22, 22]], 2: [[11, 11], [33, 33]], 3: [[11, 11], [22, 22], [33, 33]], 4: [[11, 11], [33, 11], [11, 33], [33, 33]], 5: [[11, 11], [33, 11], [22, 22], [11, 33], [33, 33]], 6: [[11, 11], [33, 11], [11, 22], [33, 22], [11, 33], [33, 33]] };
+  const escDomino = S => {
+    const pares = mezclar(Array.from({ length: 7 }, (_, a) => [a, S - a]).filter(([a, b]) => b >= 0 && b <= 6)).slice(0, 4);
+    const d = Math.random() < 0.5 ? 1 : -1; let a = rnd(0, 6), b = a; for (let t = 0; t < 60; t++) { a = rnd(0, 6); b = rnd(0, 6); if (a + b === S + d) break; }
+    const e = rnd(0, 4), fichas = [...pares]; fichas.splice(e, 0, [a, b]);
+    return { pista: "Sumá los puntitos de arriba y de abajo de cada ficha.", explica: `En todas las fichas los puntos suman ${S}, menos en una, que suma ${a + b}.`,
+      hit: (x, y) => dentro(x, y, 14 + e * 56, 90, 44, 88), marca: marcaRect(11 + e * 56, 87, 50, 94),
+      dibujo: () => rect(0, 0, 300, 300, "#e0f2f1") + fichas.map(([p, q], i) => { const x0 = 14 + i * 56;
+        const pts = (v, oy) => PIPS[v].map(([px, py]) => circ(x0 + px, 90 + oy + py, 4.5, "#222")).join("");
+        return rect(x0, 90, 44, 88, "#fff", 'rx="7" stroke="#222" stroke-width="2.5"') + `<line x1="${x0 + 4}" y1="134" x2="${x0 + 40}" y2="134" stroke="#222" stroke-width="2"/>` + pts(p, 0) + pts(q, 44); }).join("") };
+  };
+  // J. Robot y casa simétricos
+  const escRobot = () => ({ pista: "El robot es igual de un lado y del otro, como en un espejo. Compará las dos mitades.", explica: "Un robot simétrico tiene todo igual a cada lado. A la antena derecha le falta la bolita.",
+    hit: (x, y) => cerca(x, y, 180, 54, 24), marca: marcaCirc(180, 54, 22),
+    dibujo: () => rect(0, 0, 300, 300, "#ede7f6") + rect(0, 255, 300, 45, "#b39ddb") + `<line x1="120" y1="90" x2="120" y2="62" stroke="${K}" stroke-width="4"/><line x1="180" y1="90" x2="180" y2="62" stroke="${K}" stroke-width="4"/>` + circ(120, 54, 8, "#ff5a5a", `stroke="${K}" stroke-width="2"`)
+      + rect(100, 90, 100, 80, "#b0bec5", `rx="12" stroke="${K}" stroke-width="3"`) + circ(130, 122, 11, "#fff", `stroke="${K}" stroke-width="2"`) + circ(170, 122, 11, "#fff", `stroke="${K}" stroke-width="2"`) + circ(130, 122, 5, K) + circ(170, 122, 5, K) + rect(125, 148, 50, 8, "#37474f", 'rx="4"')
+      + rect(110, 176, 80, 66, "#78909c", `rx="8" stroke="${K}" stroke-width="3"`) + rect(78, 182, 26, 52, "#b0bec5", `rx="8" stroke="${K}" stroke-width="3"`) + rect(196, 182, 26, 52, "#b0bec5", `rx="8" stroke="${K}" stroke-width="3"`) + circ(135, 205, 7, "#ffd54f") + circ(165, 205, 7, "#ffd54f") + rect(120, 242, 22, 14, "#455a64") + rect(158, 242, 22, 14, "#455a64") });
+  const escCasa = () => ({ pista: "Una casa simétrica tiene lo mismo a la izquierda y a la derecha. Compará las ventanas.", explica: "Las dos ventanas tienen que ser iguales. A la ventana de la derecha le faltan los palitos de la cruz.",
+    hit: (x, y) => dentro(x, y, 188, 128, 52, 52), marca: marcaRect(186, 126, 56, 56),
+    dibujo: () => cielo() + rect(0, 240, 300, 60, "#8bc34a") + nube(20, 40) + rect(50, 110, 200, 135, "#ffcc80", `stroke="${K}" stroke-width="3"`) + `<polygon points="40,112 150,40 260,112" fill="#e53935" stroke="${K}" stroke-width="3"/>` + rect(126, 175, 48, 70, "#8d6e63", `stroke="${K}" stroke-width="3"`) + circ(166, 212, 3, "#ffd54f")
+      + rect(70, 130, 48, 48, "#bde3ff", `stroke="${K}" stroke-width="3"`) + `<line x1="94" y1="130" x2="94" y2="178" stroke="${K}" stroke-width="3"/><line x1="70" y1="154" x2="118" y2="154" stroke="${K}" stroke-width="3"/>`
+      + rect(190, 130, 48, 48, "#bde3ff", `stroke="${K}" stroke-width="3"`) + circ(70, 230, 10, "#ff8fb8") + circ(230, 230, 10, "#ff8fb8") });
+  // K. Sombras con el sol a la derecha
+  const escSombrasDer = () => ({ pista: "El sol está a la derecha. ¿Hacia dónde tienen que caer las sombras?", explica: "Si el sol está a la derecha, todas las sombras caen hacia la izquierda. Una sombra cae para el lado del sol.",
+    hit: (x, y) => dentro(x, y, 132, 196, 72, 36), marca: `<ellipse cx="168" cy="214" rx="44" ry="20" fill="#2ecc71" fill-opacity=".3" stroke="#2ecc71" stroke-width="5"/>`,
+    dibujo: () => { let t = cielo() + circ(254, 44, 22, "#ffd54f") + nube(40, 40) + rect(0, 200, 300, 100, "#8bc34a");
+      for (const [x, sx] of [[50, -38], [130, 38], [210, -38]]) t += `<ellipse cx="${x + sx}" cy="214" rx="36" ry="9" fill="#000" fill-opacity=".28"/>` + rect(x - 6, 145, 12, 70, "#795548") + circ(x, 130, 34, "#388e3c") + circ(x - 14, 140, 20, "#43a047"); return t; } });
+  // N. Reflejo de una casita en el lago
+  const escReflejoCasa = () => ({ pista: "En el agua se ve lo mismo que arriba, pero dado vuelta. Compará el sol y la casa con sus reflejos.", explica: "El reflejo es igual al dibujo de arriba, pero al revés. El sol es redondo, pero su reflejo es cuadrado.",
+    hit: (x, y) => dentro(x, y, 200, 232, 60, 56), marca: marcaRect(198, 230, 64, 60),
+    dibujo: () => rect(0, 0, 300, 150, "#cfe8ff") + circ(230, 45, 22, "#ffd54f") + rect(60, 100, 70, 50, "#ffcc80") + `<polygon points="52,102 95,66 138,102" fill="#e53935"/>` + rect(86, 118, 18, 32, "#8d6e63") + rect(0, 150, 300, 150, "#5aa9e6")
+      + `<g opacity=".55">` + rect(60, 150, 70, 50, "#ffcc80") + `<polygon points="52,198 95,234 138,198" fill="#e53935"/>` + rect(86, 150, 18, 32, "#8d6e63") + rect(208, 235, 44, 44, "#ffd54f") + `</g><path d="M30 262 h40 M110 250 h50 M150 285 h60" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>` });
+  // Q. Collares de cuentas con patrón (2 variantes)
+  const escCollar = patron => { const n = 12, e = rnd(0, 11), otros = Object.keys(COLS).filter(k => !patron.includes(k)), m = otros[rnd(0, otros.length - 1)], pos = i => [150 + 90 * Math.sin(i * Math.PI / 6), 150 - 90 * Math.cos(i * Math.PI / 6)];
+    return { pista: "Las cuentas del collar siguen un orden de colores que se repite. Seguilo con el dedo.", explica: `Los colores se repiten en este orden: ${[...patron].map(k => COLS[k][0]).join(", ")}. Una cuenta tiene un color que no corresponde.`,
+      hit: (x, y) => cerca(x, y, ...pos(e), 22), marca: marcaCirc(...pos(e), 21),
+      dibujo: () => rect(0, 0, 300, 300, "#fce4ec") + `<circle cx="150" cy="150" r="90" fill="none" stroke="#8d6e63" stroke-width="3"/>` + Array.from({ length: n }, (_, i) => circ(...pos(i), 15, COLS[i === e ? m : patron[i % patron.length]][1], `stroke="${K}" stroke-width="2"`)).join("") + circ(150, 150, 8, "#f48fb1") }; };
+  // S. Mesa servida con algo que falta (2 variantes)
+  const escMesa = falta => { const e = rnd(0, 3), cx = i => 45 + i * 70;
+    return { pista: "Cada lugar de la mesa tiene que tener lo mismo. Fijate lugar por lugar.", explica: falta === "tenedor" ? "Todos los lugares tienen plato, tenedor, cuchillo y vaso. A uno le falta el tenedor." : "Todos los lugares tienen plato, tenedor, cuchillo y vaso. A uno le falta el vaso.",
+      hit: (x, y) => dentro(x, y, cx(e) - 35, 85, 70, 110), marca: marcaRect(cx(e) - 34, 85, 68, 112),
+      dibujo: () => rect(0, 0, 300, 300, "#fff8e1") + rect(0, 80, 300, 125, "#d7a86e", 'stroke="#8d6e63" stroke-width="3"') + [0, 1, 2, 3].map(i => circ(cx(i), 150, 22, "#fff", 'stroke="#90a4ae" stroke-width="3"') + circ(cx(i), 150, 13, "#e3f2fd")
+        + (falta === "tenedor" && i === e ? "" : rect(cx(i) - 34, 128, 3, 44, "#78909c") + rect(cx(i) - 38, 128, 11, 3, "#78909c") + rect(cx(i) - 38, 128, 2, 12, "#78909c") + rect(cx(i) - 29, 128, 2, 12, "#78909c"))
+        + rect(cx(i) + 30, 128, 5, 44, "#b0bec5", 'rx="2"') + (falta === "vaso" && i === e ? "" : rect(cx(i) - 8, 92, 16, 24, "#9ad4ff", 'rx="3" stroke="#4f9bd4" stroke-width="2"'))).join("") }; };
+  // V. Muñecas rusas, dos fuera de orden
+  const escMunecas = () => { const e = rnd(0, 4), t = [110, 98, 86, 74, 62, 50]; [t[e], t[e + 1]] = [t[e + 1], t[e]]; const x = i => 50 + i * 42;
+    return { pista: "Las muñecas tienen que ir de la más grande a la más chica. Compará los tamaños.", explica: "Las muñecas van de la más grande a la más chica. Hay dos que están cambiadas de lugar.",
+      hit: (px, py) => dentro(px, py, x(e) - 24, 100, 96, 150), marca: marcaRect(x(e) - 24, 100, 96, 150),
+      dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + rect(0, 245, 300, 55, "#d7ccc8") + t.map((h, i) => { const c = ["#e53935", "#1e88e5", "#43a047", "#8e24aa", "#fb8c00", "#d81b60"][i], w = h * 0.38;
+        return `<ellipse cx="${x(i)}" cy="${245 - h * 0.55}" rx="${w}" ry="${h * 0.55}" fill="${c}" stroke="${K}" stroke-width="2.5"/>` + circ(x(i), 245 - h * 1.1 - 2, w * 0.7, "#ffe0b2", `stroke="${K}" stroke-width="2"`) + circ(x(i) - w * 0.25, 245 - h * 1.1 - 4, 1.8, K) + circ(x(i) + w * 0.25, 245 - h * 1.1 - 4, 1.8, K) + `<ellipse cx="${x(i)}" cy="${245 - h * 0.6}" rx="${w * 0.55}" ry="${h * 0.2}" fill="#ffe0b2" stroke="none"/>`; }).join("") }; };
+
+  ESCENAS.push(
+    escNumeros(2, 2, "#7e57c2"), escNumeros(3, 3, "#26a69a"), escNumeros(4, 4, "#ef6c00"), escNumeros(10, 10, "#1e88e5"), escNumeros(2, 20, "#d81b60"), escNumeros(5, 15, "#43a047"),
+    escValla("RYB", "#cfe8ff"), escValla("RB", "#fff3c4"), escValla("RRB", "#e1f5e0"),
+    escReloj(2, 10, "#fff3e0"), escReloj(4, 8, "#e8f5e9"), escReloj(1, 11, "#e3f2fd"), escReloj(3, 9, "#fce4ec"),
+    escTablero(1, 5, "#f5deb3", "#6d4c41"), escTablero(6, 2, "#e0e0e0", "#455a64"),
+    escBarras("sube", 6, 2), escBarras("baja", 6, 3), escBarras("sube", 5, 1),
+    escSemana(3), escSemana(1),
+    escCanastas("huevos", "huevo", 4, 3, "#a1887f"), escCanastas("flores", "flor", 5, 4, "#66bb6a"), escCanastas("cerezas", "cereza", 3, 4, "#8d6e63"), escCanastas("naranjas", "naranja", 6, 5, "#bcaaa4"),
+    escDomino(6), escDomino(7),
+    escRobot(), escCasa(), escSombrasDer(), escReflejoCasa(), escCollar("RYB"), escCollar("RB"), escMesa("tenedor"), escMesa("vaso"), escMunecas()
+  );
+
   function jugarError(cantidad){
     const orden = mezclar(ESCENAS).slice(0, cantidad);
     const contra = modo === "contra";
@@ -1059,25 +1205,31 @@
   }
 
   // ---------- ¿Quién fue? (difícil) ----------
-  const COL = [["rojo", "#e53935"], ["azul", "#1e88e5"], ["verde", "#43a047"], ["amarillo", "#fdd835"], ["violeta", "#8e24aa"], ["naranja", "#fb8c00"]];
-  function crearCaso(){
-    for (let intento = 0; intento < 500; intento++){
-      const cols = mezclar(COL.map((c, i) => i));
+  const COL = [["rojo", "#e53935"], ["azul", "#1e88e5"], ["verde", "#43a047"], ["amarillo", "#fdd835"], ["violeta", "#8e24aa"], ["naranja", "#fb8c00"], ["rosa", "#ec407a"]];
+  // Dificultad: cantidad de personas, pistas mínimas y tipo de pistas (0 = simples, 1 = + puntas y vecinos, 2 = + izquierda/derecha de un color)
+  function crearCaso(cantidad = 6, minPistas = 4, nivel = 2){
+    for (let intento = 0; intento < 800; intento++){
+      if (intento === 400) minPistas = Math.max(2, minPistas - 1);
+      const cols = mezclar(COL.map((c, i) => i)).slice(0, cantidad);
       const S = cols.map(c => ({ c, sombrero: Math.random() < 0.5, lentes: Math.random() < 0.5 }));
       const n = S.length, cul = Math.floor(Math.random() * n);
       const posDe = c => S.findIndex(s => s.c === c);
       const cand = [];
       cand.push([i => S[i].sombrero, "lleva sombrero"], [i => !S[i].sombrero, "no lleva sombrero"], [i => S[i].lentes, "usa lentes"], [i => !S[i].lentes, "no usa lentes"]);
       COL.forEach(([nom], c) => {
+        if (posDe(c) < 0) return; // ese color no está en este caso
         cand.push([i => S[i].c !== c, `no viste de ${nom}`]);
+        if (nivel < 2) return;
         cand.push([i => i < posDe(c), `está más a la izquierda que quien viste de ${nom}`]);
         cand.push([i => i > posDe(c), `está más a la derecha que quien viste de ${nom}`]);
         cand.push([i => Math.abs(i - posDe(c)) === 1, `está justo al lado de quien viste de ${nom}`]);
       });
+      if (nivel >= 1){
       cand.push([i => i > 0 && i < n - 1, "no está en ninguna de las puntas"], [i => i === 0 || i === n - 1, "está en una de las puntas"]);
       cand.push([i => (i > 0 && S[i - 1].lentes) || (i < n - 1 && S[i + 1].lentes), "tiene al lado a alguien con lentes"]);
       cand.push([i => (i > 0 && S[i - 1].sombrero) || (i < n - 1 && S[i + 1].sombrero), "tiene al lado a alguien con sombrero"]);
       cand.push([i => !((i > 0 && S[i - 1].sombrero) || (i < n - 1 && S[i + 1].sombrero)), "no tiene al lado a nadie con sombrero"]);
+      }
       let vivos = S.map((s, i) => i); const pistas = [];
       while (vivos.length > 1){
         const ok = mezclar(cand).filter(([f]) => f(cul)).map(([f, t]) => ({ f, t, rest: vivos.filter(f) })).filter(x => x.rest.length < vivos.length);
@@ -1086,7 +1238,7 @@
         const el = ok.filter(x => vivos.length - x.rest.length === minimo)[0];
         pistas.push(el.t); vivos = el.rest;
       }
-      if (vivos.length === 1 && pistas.length >= 4) return { S, cul, pistas: mezclar(pistas) };
+      if (vivos.length === 1 && pistas.length >= minPistas) return { S, cul, pistas: mezclar(pistas) };
     }
     return null;
   }
@@ -1101,12 +1253,14 @@
   };
 
   function jugarQuien(){
-    const TOTAL = 3; let caso = 0, bien = 0;
+    const TOTAL = 5; let caso = 0, bien = 0;
+    // Cada caso es más difícil: más personas, más pistas y pistas más complicadas
+    const NIVELES = [[4, 3, 0], [5, 3, 1], [6, 4, 1], [6, 5, 2], [7, 5, 2]];
     decir(actual.intro.quien, "gBubble", actual.id + "_intro-quien");
     function nuevo(){
-      const c = crearCaso();
+      const c = crearCaso(...NIVELES[caso]);
       let sel = -1, fallos = 0, listo = false; const descartados = new Set();
-      $("gameBody").innerHTML = `<p class="info">Caso ${caso + 1} de ${TOTAL}</p>
+      $("gameBody").innerHTML = `<p class="info">Caso ${caso + 1} de ${TOTAL} · Dificultad ${"⭐".repeat(caso + 1)}</p>
         <p class="q" style="font-size:1.05rem">Una akuma, la mariposa oscura, akumatizó a una de estas personas. Leé las pistas y descubrí sobre quién.</p>
         <div id="qFila" style="display:flex;gap:3px;justify-content:center">${c.S.map((s, i) => `<button class="sospe" data-i="${i}" style="flex:1;max-width:64px;padding:2px;background:rgba(255,255,255,.14);border:3px solid transparent;border-radius:12px;cursor:pointer">${figura(s, i)}</button>`).join("")}</div>
         <div style="background:rgba(255,255,255,.14);border-radius:14px;padding:10px 14px;text-align:left"><b>Pistas — la persona buscada:</b><ol style="margin:6px 0 0 18px;padding:0;line-height:1.5">${c.pistas.map(p => `<li>${p}</li>`).join("")}</ol></div>
@@ -1154,6 +1308,115 @@
     { q: "Tiene bigotes, ronronea y le encanta el pescado.", a: "El gato", o: ["El perro", "El conejo", "El ratón"] }
   ];
 
+  // ---------- Más adivinanzas (hasta 100): animales, comidas, objetos, cuerpo, naturaleza, oficios y algunas más difíciles ----------
+  const ad = (q, a, ...o) => ({ q, a, o });
+  ADIVINANZAS.push(
+    // Animales
+    ad("Tengo una trompa larga, orejas enormes y soy el animal terrestre más grande.", "El elefante", "El hipopótamo", "El rinoceronte", "El oso"),
+    ad("Vivo en el agua, tengo aletas y escamas, y respiro con branquias.", "El pez", "El delfín", "La ballena", "El pulpo"),
+    ad("Tengo ocho patas y hago telas para atrapar a mis comidas.", "La araña", "La hormiga", "El escarabajo", "La mosca"),
+    ad("Soy pequeñita, muy trabajadora y vivo en un hormiguero.", "La hormiga", "La abeja", "La araña", "La mariposa"),
+    ad("Vivo en una colmena y hago miel.", "La abeja", "La mosca", "La hormiga", "La vaca"),
+    ad("Soy verde, salto en la laguna y hago croac.", "La rana", "El lagarto", "La tortuga", "El pez"),
+    ad("Tengo joroba y vivo en el desierto. Puedo estar muchos días sin tomar agua.", "El camello", "El caballo", "La jirafa", "La vaca"),
+    ad("Tengo el cuello larguísimo y como las hojas de los árboles más altos.", "La jirafa", "El elefante", "El oso", "El caballo"),
+    ad("Soy el rey de la selva y tengo una gran melena.", "El león", "El tigre", "El oso", "El lobo"),
+    ad("Duermo todo el invierno en una cueva y me encanta la miel.", "El oso", "El lobo", "El zorro", "El conejo"),
+    ad("Soy un ave que no puede volar y vivo en el hielo, con mi traje blanco y negro.", "El pingüino", "La gaviota", "El loro", "El pato"),
+    ad("Tengo rayas negras y blancas y me parezco a un caballo.", "La cebra", "El burro", "La vaca", "El tigre"),
+    ad("Salgo de noche, vuelo sin tener plumas y duermo cabeza abajo.", "El murciélago", "El búho", "La mariposa", "El pájaro"),
+    ad("Tengo un caparazón duro, cuatro patas y puedo vivir muchísimos años.", "La tortuga", "El caracol", "El cangrejo", "El lagarto"),
+    ad("Llevo mi casa a cuestas y dejo un caminito brillante por donde paso.", "El caracol", "La tortuga", "La lombriz", "El cangrejo"),
+    ad("Tengo ocho brazos y vivo en el fondo del mar.", "El pulpo", "El cangrejo", "La medusa", "El tiburón"),
+    ad("Soy una mamá que lleva a su bebé en una bolsa en la panza y salto muy lejos.", "El canguro", "El mono", "El oso", "El conejo"),
+    ad("Canto kikirikí cuando sale el sol.", "El gallo", "La gallina", "El pato", "El loro"),
+    ad("Me dicen el mejor amigo del hombre y muevo la cola cuando estoy contento.", "El perro", "El gato", "El caballo", "El conejo"),
+    ad("Doy leche y hago muuu.", "La vaca", "La oveja", "La cabra", "La yegua"),
+    ad("Tengo lana y hago beee.", "La oveja", "La vaca", "La cabra", "El chancho"),
+    ad("Soy rosado, vivo en el chiquero y me encanta revolcarme en el barro.", "El chancho", "La vaca", "El caballo", "La oveja"),
+    ad("Vuelo de flor en flor, tengo alas de colores y antes fui una oruga.", "La mariposa", "La abeja", "La mosca", "El murciélago"),
+    ad("En las noches de verano brillo en el jardín, soy un pequeño insecto con luz.", "La luciérnaga", "La mariposa", "La abeja", "La hormiga"),
+    ad("Soy un ave de colores que puede imitar las palabras de las personas.", "El loro", "El pato", "La paloma", "El cóndor"),
+    ad("Soy un ave grande de las montañas de los Andes y mis alas son enormes.", "El cóndor", "El pingüino", "El loro", "El hornero"),
+    ad("Hago mi casita de barro y soy el ave nacional de Argentina.", "El hornero", "El loro", "El cóndor", "El pingüino"),
+    // Frutas, verduras y comidas
+    ad("Soy naranja, crezco bajo la tierra y a los conejos les encanto.", "La zanahoria", "La naranja", "El zapallo", "La papa"),
+    ad("Soy rojo, redondo y me ponen en la ensalada. Muchos creen que soy verdura, pero soy una fruta.", "El tomate", "La manzana", "La frutilla", "La lechuga"),
+    ad("Tengo semillitas por fuera, soy roja y dulce, y me ponen en las tortas.", "La frutilla", "La cereza", "La manzana", "La uva"),
+    ad("Soy verde por fuera y roja por dentro, con semillas negras. Me comés mucho en el verano.", "La sandía", "El melón", "La uva", "La naranja"),
+    ad("Soy amarillo y muy ácido. Con mi jugo se hace la limonada.", "El limón", "La naranja", "La banana", "La manzana"),
+    ad("Crezco en racimos, puedo ser verde o violeta, y con mi jugo se hace el vino.", "La uva", "La cereza", "La ciruela", "La frutilla"),
+    ad("Soy blanca, me da la vaca y me tomás en el desayuno.", "La leche", "El jugo", "El té", "El café"),
+    ad("Soy redonda y chata, tengo salsa y queso, y me cortan en porciones.", "La pizza", "La tarta", "La torta", "La empanada"),
+    ad("Soy frío y dulce, me lamés y vengo en cucurucho o en pote.", "El helado", "El flan", "La torta", "El jugo"),
+    ad("Me rellenan con carne, cebolla y huevo, me comés con las manos y me hacen al horno.", "La empanada", "La pizza", "El sándwich", "La tarta"),
+    ad("Me tomás con bombilla y los argentinos me compartimos en ronda.", "El mate", "El té", "El café", "El chocolate"),
+    ad("Tengo ojos pero no veo. Me podés comer frito, hervido o en puré.", "La papa", "El tomate", "La zanahoria", "La cebolla"),
+    ad("Te hago llorar cuando me cortás, aunque nunca te hice nada.", "La cebolla", "El ajo", "La papa", "El zapallo"),
+    ad("Tengo una corona de hojas y mi cáscara parece de escamas, pero soy una fruta tropical.", "El ananá", "La palmera", "El cactus", "El choclo"),
+    // Objetos
+    ad("Tengo cuatro patas y una tapa, y alrededor mío se sienta toda la familia a comer.", "La mesa", "La silla", "La cama", "El sillón"),
+    ad("Te acostás encima mío para dormir y tengo sábanas y almohada.", "La cama", "El sillón", "La mesa", "El armario"),
+    ad("Tengo una puerta, hago mucho frío adentro y guardo la comida.", "La heladera", "El horno", "El lavarropas", "La alacena"),
+    ad("Te alumbro cuando se corta la luz y me llevás en la mano.", "La linterna", "El espejo", "La lámpara", "El teléfono"),
+    ad("Me ponés en los pies, tengo cordones y me usás para correr.", "Las zapatillas", "Las medias", "Los guantes", "El pantalón"),
+    ad("Cuando me abrís, hay mil historias adentro. Tengo hojas pero no soy un árbol.", "El libro", "La mochila", "La caja", "La puerta"),
+    ad("Me apoyás en la oreja y hablás conmigo con alguien que está lejos.", "El teléfono", "La radio", "La tele", "La heladera"),
+    ad("Tengo dientes pero no muerdo. Te sirvo para arreglarte el pelo.", "El peine", "El jabón", "La plancha", "El espejo"),
+    ad("Me mirás y te ves a vos mismo. No digo nada, pero siempre te muestro todo.", "El espejo", "La ventana", "El cuadro", "La tele"),
+    ad("Soy de vidrio, dejo pasar la luz y me abrís para que entre el aire.", "La ventana", "La puerta", "El espejo", "El techo"),
+    ad("Con una llave me abrís y te dejo pasar a mi casa.", "La puerta", "La ventana", "La pared", "El techo"),
+    ad("Tengo dos hojas que se abren y se cierran, y me usan para cortar papel.", "La tijera", "El cuchillo", "La regla", "El lápiz"),
+    ad("Voy y vengo por el papel y dejo mi huella gris de grafito.", "El lápiz", "La goma", "La regla", "El pincel"),
+    ad("Borro los errores del papel y cada vez soy más chiquita.", "La goma", "El lápiz", "La regla", "El sacapuntas"),
+    ad("Me usan para medir, y tengo números en fila.", "La regla", "El lápiz", "La goma", "El compás"),
+    ad("Tengo seis caras con puntitos negros y me tirás para jugar.", "El dado", "La ficha", "La carta", "La pelota"),
+    ad("Se juega en un tablero de 64 casillas blancas y negras, con torres, alfiles y un rey.", "El ajedrez", "Las damas", "El ludo", "La oca"),
+    ad("Soy una pelota, me patean, y se juega en equipos de once.", "El fútbol", "El básquet", "El tenis", "El rugby"),
+    // El cuerpo
+    ad("Tengo cinco hermanos y vivimos en la punta de tu brazo.", "La mano", "El pie", "La cara", "La rodilla"),
+    ad("Soy el motor que late y no para ni cuando dormís.", "El corazón", "El pulmón", "El cerebro", "El estómago"),
+    ad("Tenés dos y los usás para escuchar.", "Las orejas", "Los ojos", "Las manos", "Los pies"),
+    ad("Estoy dentro de tu boca, soy rosada y te ayudo a saborear y a hablar.", "La lengua", "Los dientes", "La nariz", "El labio"),
+    ad("Soy blanco y duro, vivo en tu boca y te ayudo a masticar. Cuando me caigo, viene el Ratón Pérez.", "El diente", "La uña", "El hueso", "El caramelo"),
+    ad("Te meto adentro de los zapatos y gracias a mí caminás.", "Los pies", "Las manos", "Las rodillas", "Los codos"),
+    // Naturaleza y clima
+    ad("Caigo del cielo en gotitas y hago crecer las plantas.", "La lluvia", "El granizo", "La nieve", "El viento"),
+    ad("Soy blanca y fría, y caigo en invierno sobre las montañas.", "La nieve", "La lluvia", "El viento", "La niebla"),
+    ad("Hago un ruido fuerte que se escucha después del relámpago.", "El trueno", "El viento", "La lluvia", "El granizo"),
+    ad("Soy enorme, de agua salada y tengo olas.", "El mar", "El lago", "El río", "La laguna"),
+    ad("Nazco en la montaña, voy corriendo hasta el mar y soy de agua dulce.", "El río", "El mar", "El lago", "El charco"),
+    ad("Soy una montaña que escupe fuego y lava.", "El volcán", "La montaña", "La cueva", "El valle"),
+    ad("Soy de arena, estoy junto al mar y vas a tomar sol en verano.", "La playa", "El río", "La montaña", "El campo"),
+    ad("Soy grande, caluroso y de arena. Casi no llueve y viven camellos.", "El desierto", "La selva", "La playa", "La pradera"),
+    ad("Soy un lugar con árboles altísimos, mucha lluvia y muchos animales salvajes.", "La selva", "El desierto", "El campo", "La ciudad"),
+    ad("Soy el planeta donde vivís. Tengo agua, tierra y aire.", "La Tierra", "La Luna", "Marte", "El Sol"),
+    ad("Me ves de noche, brillo chiquitito y somos millones.", "Las estrellas", "Las nubes", "Los aviones", "Las luciérnagas"),
+    ad("Soy una luz de muchos colores que aparece cuando llueve y sale el sol.", "El arcoíris", "El relámpago", "La nube", "El humo"),
+    ad("Te sigo todo el día cuando hay sol, pero nunca me podés atrapar.", "La sombra", "El eco", "El reflejo", "El viento"),
+    ad("Me hablás y yo te contesto repitiendo lo que dijiste.", "El eco", "La sombra", "El reflejo", "El trueno"),
+    ad("Soy un montón de gotitas flotando en el cielo, a veces blanca y a veces gris.", "La nube", "La niebla", "El humo", "El viento"),
+    // Transportes y oficios
+    ad("Tengo dos ruedas, pedales y manubrio.", "La bicicleta", "La moto", "El monopatín", "El triciclo"),
+    ad("Tengo dos alas grandes, vuelo muy alto y llevo gente a otros países.", "El avión", "El barco", "El tren", "El helicóptero"),
+    ad("Voy sobre rieles y hago chu-chu.", "El tren", "El colectivo", "El barco", "El avión"),
+    ad("Navego sobre el agua llevando personas y cargas.", "El barco", "El tren", "El auto", "El avión"),
+    ad("Soy rojo, tengo sirena y una escalera larga, y voy a apagar los incendios.", "El camión de bomberos", "La ambulancia", "El patrullero", "El colectivo"),
+    ad("Uso guardapolvo blanco, te reviso con un estetoscopio y cuido tu salud.", "El médico", "El maestro", "El bombero", "El panadero"),
+    ad("Te enseño en la escuela a leer, a escribir y a sumar.", "La maestra", "La doctora", "La cocinera", "La peluquera"),
+    ad("Me levanto bien temprano para hacer el pan en mi horno.", "El panadero", "El carnicero", "El médico", "El bombero"),
+    ad("Corto el pelo con mis tijeras y te peino.", "El peluquero", "El carpintero", "El panadero", "El cartero"),
+    ad("Te traigo las cartas a tu casa en mi bolso.", "El cartero", "El policía", "El bombero", "El maestro"),
+    // Más difíciles
+    ad("Sube y baja, pero no se mueve.", "La escalera", "El ascensor", "La cuesta", "El subibaja"),
+    ad("Tengo ciudades pero no casas, ríos pero no agua y montañas pero no se pueden subir.", "El mapa", "El libro", "El cuadro", "La foto"),
+    ad("Cuanto más sacás de mí, más grande me hago.", "El pozo", "La bolsa", "El vaso", "El pan"),
+    ad("Todos me tienen, es lo primero que decís cuando te presentás.", "El nombre", "La voz", "La edad", "La casa"),
+    ad("Si me nombrás, desaparezco.", "El silencio", "El eco", "La sombra", "El viento"),
+    ad("Tengo doce hojas, una por cada mes, y tengo los días y los cumpleaños.", "El calendario", "El libro", "El diario", "La revista"),
+    ad("Tengo siete hijos con nombres diferentes: lunes, martes, miércoles, jueves, viernes, sábado y domingo.", "La semana", "El mes", "El año", "El día")
+  );
+
   // Tikki: las galletitas (sumas y restas)
   function bancoGalletitas(){
     const gal = n => `<span class="carita">${ic("galleta")}</span>`.repeat(n);
@@ -1170,6 +1433,9 @@
     }
     return lista;
   }
+
+  // Misiones de Tikki: mitad cuentas con galletitas y mitad desafíos de lógica
+  const bancoMisionesTikki = () => mezclar([...mezclar(bancoGalletitas()).slice(0, 4), ...mezclar(LOGICA).slice(0, 4)]);
 
   // Ladybug: misión por etapas
   function jugarMision(){
@@ -1311,14 +1577,118 @@
 
   // Qué juegos muestra cada personaje, en este orden
   const JUEGOS_DE = {
-    ladybug: ["jMision", "jAkuma", "jQuien", "jPurificar", "jError"],
+    ladybug: ["jMision", "jAkuma", "jQuien", "jError"],
     catnoir: ["jMemoria", "jNumeros", "jAdivinanzas"],
-    tikki: ["jQuiz", "jLogica", "jGalletitas"]
+    tikki: ["jQuiz", "jGalletitas", "jPurificar"]
   };
   function armarMenu(p){
     const menu = $("menuJuegos"), lista = JUEGOS_DE[p.id] || [];
     menu.querySelectorAll(".gamebtn").forEach(b => { b.style.display = "none"; });
     lista.forEach(id => { const b = $(id); b.style.display = ""; menu.appendChild(b); });
+  }
+
+  // ---------- Camino de preguntas: juego de tablero con dado ----------
+  let sesionTablero = 0;
+  const DADO = n => `<svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="2" width="40" height="40" rx="9" fill="#fff" stroke="#2b1055" stroke-width="3"/>${PIPS[n].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.8" fill="#2b1055"/>`).join("")}</svg>`;
+  function jugarTablero(){
+    const mi = ++sesionTablero, contra = modo === "contra";
+    const META = 30, BONUS = [4, 11, 17, 24], TRAMPA = [8, 14, 20, 27];
+    const pos = { a: 0, p: 0 }; let turno = "a", turnos = 0, mazo = [];
+    const vivo = () => mi === sesionTablero && !!$("tab");
+    const espera = ms => new Promise(res => setTimeout(res, ms));
+    const sacar = () => { if (!mazo.length) mazo = mezclar([...PREGUNTAS, ...LOGICA]); return mazo.pop(); };
+    decir(actual.intro.tablero || actual.intro.quiz, "gBubble", actual.id + "_intro-tablero");
+
+    // Casillas en serpentina: la 1 abajo a la izquierda y la 30 arriba a la derecha
+    let celdas = "";
+    for (let v = 0; v < 5; v++){
+      const r = 4 - v, fila = [1, 2, 3, 4, 5, 6].map(k => r * 6 + k); if (r % 2 === 1) fila.reverse();
+      fila.forEach(n => {
+        const clase = n === META ? "meta" : BONUS.includes(n) ? "bonus" : TRAMPA.includes(n) ? "trampa" : "";
+        const icono = n === META ? ic("trofeo") : BONUS.includes(n) ? ic("⭐") : TRAMPA.includes(n) ? ic("oscura") : "";
+        celdas += `<div class="cas ${clase}" id="c${n}"><small>${n}</small><span class="icc">${icono}</span><span class="fichas"></span></div>`;
+      });
+    }
+    $("gameBody").innerHTML = `<p class="info" id="tInfo"></p>
+      <div class="tab" id="tab">${celdas}</div>
+      <div class="salida"><b>Salida</b><span id="c0" class="fichas"></span></div>
+      <p class="info" style="font-size:.85rem;margin:0">⭐ atajo: avanzás 2 · mariposa oscura: retrocedés 2</p>
+      <div id="zona"></div>`;
+    const ficha = {
+      a: Object.assign(document.createElement("span"), { className: "fch", textContent: "A" }),
+      p: Object.assign(document.createElement("span"), { className: "fch", innerHTML: avatar(actual) })
+    };
+    ficha.a.style.background = "#ff6fb5"; ficha.p.style.background = actual.color;
+    const poner = q => { const el = $("c" + pos[q]); (pos[q] === 0 ? el : el.querySelector(".fichas")).appendChild(ficha[q]); };
+    poner("a"); if (contra) poner("p");
+    const nombreDe = q => q === "a" ? "Alina" : actual.nombre;
+    const info = () => { $("tInfo").textContent = contra ? `Turno de ${nombreDe(turno)} · Alina: casilla ${pos.a} · ${actual.nombre}: casilla ${pos.p}` : `Casilla ${pos.a} de ${META} · Turno ${turnos + 1}`; };
+    const mensaje = t => { const m = $("msg"); if (m) m.textContent = t; };
+
+    async function mover(q, pasos){
+      const dir = pasos < 0 ? -1 : 1;
+      for (let i = 0; i < Math.abs(pasos); i++){
+        if (!vivo()) return;
+        const nueva = pos[q] + dir; if (nueva < 1 || nueva > META) break;
+        pos[q] = nueva; poner(q); info(); await espera(230);
+      }
+    }
+    async function tirar(){
+      $("zona").innerHTML = `<div id="dado" style="width:84px;height:84px;margin:6px auto"></div><p class="info" id="msg" style="min-height:1.6em"></p>`;
+      let n = 1;
+      for (let i = 0; i < 9; i++){ if (!vivo()) return 1; n = rnd(1, 6); $("dado").innerHTML = DADO(n); await espera(70); }
+      n = rnd(1, 6); if (vivo()) $("dado").innerHTML = DADO(n);
+      await espera(350); return n;
+    }
+    const pregunta = () => new Promise(res => {
+      const it = sacar();
+      $("zona").innerHTML = `<p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
+        <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div><p class="info" id="msg" style="min-height:1.6em"></p>`;
+      $("zona").scrollIntoView({ block: "nearest", behavior: "smooth" });
+      document.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+        const bien = b.textContent === it.a;
+        document.querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.textContent === it.a) x.classList.add("ok"); });
+        if (!bien) b.classList.add("no");
+        decirDe(bien ? actual.frases.ok : actual.frases.mal, bien ? "ok" : "mal");
+        setTimeout(() => res(bien), 1400);
+      });
+    });
+    function terminar(q){
+      const v = actual.vs;
+      if (!contra) return final("¡Llegaste a la meta! 🏆", `Lo lograste en ${turnos} turnos.`, jugarTablero);
+      if (q === "a") final("¡Ganaste, Alina!", `Llegaste primero a la meta, en ${turnos} turnos.`, jugarTablero, r(v.ganaA));
+      else final(`Ganó ${actual.nombre}`, `${actual.nombre} llegó primero a la meta.`, jugarTablero, r(v.ganaP));
+    }
+    (async () => {
+      while (vivo()){
+        const q = turno; info();
+        if (q === "a"){
+          $("zona").innerHTML = `<button class="gbtn" id="tirar" style="display:flex;align-items:center;justify-content:center;gap:10px"><span style="width:34px;height:34px;display:inline-block">${DADO(6)}</span> Tirar el dado</button>`;
+          if (contra && turnos > 0) decir(r(actual.vs.turnoA));
+          await new Promise(res => { $("tirar").onclick = res; });
+        } else { decir(r(actual.vs.turnoP)); await espera(1100); }
+        if (!vivo()) return;
+        const n = await tirar(); if (!vivo()) return;
+        mensaje(`${nombreDe(q)} sacó un ${n}`);
+        await mover(q, n); if (!vivo()) return;
+        if (pos[q] >= META) return terminar(q);
+        if (BONUS.includes(pos[q])){ mensaje("¡Atajo! Avanza 2 casillas ⭐"); await espera(700); await mover(q, 2); }
+        else if (TRAMPA.includes(pos[q])){ mensaje("¡Una mariposa oscura! Retrocede 2 casillas"); await espera(700); await mover(q, -2); }
+        else if (q === "a"){
+          const bien = await pregunta(); if (!vivo()) return;
+          if (!bien){ mensaje("Casi. Retrocedés una casilla."); await mover(q, -1); }
+        } else {
+          await espera(1000);
+          const bien = Math.random() < 0.6; decir(r(bien ? actual.vs.yoOk : actual.vs.yoMal));
+          if (!bien){ await espera(1200); await mover(q, -1); } else await espera(1200);
+        }
+        if (!vivo()) return;
+        if (pos[q] >= META) return terminar(q);
+        if (q === "a") turnos++;
+        turno = contra ? (q === "a" ? "p" : "a") : "a";
+        await espera(300);
+      }
+    })();
   }
 
   // Nombre del audio de cada pregunta (ver la lista del documento): q01..q22 y l01..l09
