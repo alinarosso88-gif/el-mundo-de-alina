@@ -84,7 +84,21 @@
   .final { text-align:center; display:flex; flex-direction:column; gap:12px; align-items:stretch; padding-top:10px; }
   .final h2 { margin:0; font-size:1.6rem; }
   .final p { margin:0; font-size:1.1rem; }
-  .trofeo { font-size:4rem; }
+  .trofeo { width:96px; height:96px; margin:0 auto; }
+  .dib { width:100%; height:100%; display:block; overflow:visible; }
+  .gamebtn .ico { width:48px; height:48px; flex:0 0 48px; display:grid; place-items:center; }
+  .anim .dib { animation: flota 2.8s ease-in-out infinite; }
+  .gamebtn:nth-child(2n) .anim .dib { animation-delay:-1s; } .gamebtn:nth-child(3n) .anim .dib { animation-delay:-1.8s; }
+  .alas { transform-box:fill-box; transform-origin:50% 50%; animation: aletea .55s ease-in-out infinite alternate; }
+  .llama { animation: llama .25s ease-in-out infinite alternate; transform-box:fill-box; transform-origin:50% 0; }
+  .carta .dib { width:72%; height:72%; margin:auto; }
+  .carta .dorso { display:grid; place-items:center; width:100%; height:100%; }
+  .carta.par .dib { animation: salta .8s ease-in-out infinite; }
+  .carita { display:inline-block; width:1.5em; height:1.5em; vertical-align:middle; }
+  @keyframes flota { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-4px) rotate(2deg); } }
+  @keyframes aletea { from { transform:scaleX(1); } to { transform:scaleX(.7); } }
+  @keyframes llama { from { transform:scaleY(.8); } to { transform:scaleY(1.15); } }
+  @keyframes salta { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px) scale(1.06); } }
   .marcador { display:flex; justify-content:space-between; gap:10px; background:rgba(255,255,255,.16); border-radius:14px; padding:10px 14px; font-size:1.05rem; }
   .marcador b { font-size:1.3rem; }
   #instalarBtn { display:none; margin:18px auto 0; background:#ffca28; color:#2b1055; border:none; border-radius:999px; padding:14px 22px; font-size:1.05rem; font-weight:700; cursor:pointer; }
@@ -340,6 +354,7 @@
     };
     function programar(){
       if (!activa) return;
+      if (ctx.state !== "running") { prox = ctx.currentTime + 0.1; return; } // todavía bloqueada: espera otro toque
       const beat = 0.30; // más rápida y alegre
       while (prox < ctx.currentTime + 0.6){
         const n = mel[paso % mel.length];
@@ -354,11 +369,13 @@
     }
     return {
       get activa(){ return activa; },
+      get estado(){ return ctx ? ctx.state : "sin-iniciar"; },
       iniciar(){
-        if (activa) return;
         const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
         if (!ctx){ ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.08; master.connect(ctx.destination); }
-        ctx.resume(); activa = true; prox = ctx.currentTime + 0.1; timer = setInterval(programar, 200); programar();
+        if (ctx.state !== "running") { try { ctx.resume(); } catch(e) {} }
+        if (activa) return;
+        activa = true; prox = ctx.currentTime + 0.1; timer = setInterval(programar, 200); programar();
       },
       parar(){ activa = false; clearInterval(timer); if (ctx) ctx.suspend(); }
     };
@@ -377,10 +394,60 @@
       pintar();
     };
     // Los navegadores solo dejan sonar música después de un toque
-    document.addEventListener("pointerdown", () => { if (quiere && !musica.activa) { musica.iniciar(); pintar(); } }, { once: false });
+    // En el celular, el audio solo se desbloquea con un toque completo (al levantar el dedo), así que se prueba en cada toque hasta que suene
+    ["click", "touchend", "pointerup", "keydown"].forEach(ev => document.addEventListener(ev, () => { if (quiere && musica.estado !== "running") { musica.iniciar(); pintar(); } }, true));
+    window.__musica = musica;
     document.addEventListener("visibilitychange", () => { if (document.hidden) musica.parar(); else if (quiere) { musica.iniciar(); } pintar(); });
     pintar();
   })();
+
+  // ---------- Dibujitos (ilustraciones propias, con animación suave) ----------
+  const K = "#2b1055"; // color del contorno
+  const sv = (x, extra = "") => `<svg class="dib" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" stroke-linecap="round" ${extra}>${x}</svg>`;
+  const ojos = (y = 30, dx = 7, r = 2.2) => `<circle cx="${32 - dx}" cy="${y}" r="${r}" fill="${K}" stroke="none"/><circle cx="${32 + dx}" cy="${y}" r="${r}" fill="${K}" stroke="none"/><circle cx="${32 - dx - 1}" cy="${y - 1}" r=".8" fill="#fff" stroke="none"/><circle cx="${32 + dx - 1}" cy="${y - 1}" r=".8" fill="#fff" stroke="none"/>`;
+  const sonrisa = (y = 36, w = 4) => `<path d="M${32 - w} ${y} Q32 ${y + 4} ${32 + w} ${y}" fill="none" stroke="${K}" stroke-width="1.8"/>`;
+  const mejillas = (y = 34, dx = 11) => `<circle cx="${32 - dx}" cy="${y}" r="2.6" fill="#ff8fa3" stroke="none" opacity=".7"/><circle cx="${32 + dx}" cy="${y}" r="2.6" fill="#ff8fa3" stroke="none" opacity=".7"/>`;
+  const mariposa = (alas, alas2, cuerpo = K, motas = "#fff") => sv(`<g class="alas"><ellipse cx="19" cy="24" rx="14" ry="11" fill="${alas}" stroke="${K}" stroke-width="2.4" transform="rotate(-20 19 24)"/><ellipse cx="45" cy="24" rx="14" ry="11" fill="${alas}" stroke="${K}" stroke-width="2.4" transform="rotate(20 45 24)"/><ellipse cx="22" cy="42" rx="10" ry="8" fill="${alas2}" stroke="${K}" stroke-width="2.4" transform="rotate(25 22 42)"/><ellipse cx="42" cy="42" rx="10" ry="8" fill="${alas2}" stroke="${K}" stroke-width="2.4" transform="rotate(-25 42 42)"/><circle cx="17" cy="23" r="3.5" fill="${motas}" stroke="none"/><circle cx="47" cy="23" r="3.5" fill="${motas}" stroke="none"/></g><ellipse cx="32" cy="33" rx="3.6" ry="14" fill="${cuerpo}" stroke="${K}" stroke-width="2"/><circle cx="32" cy="17" r="4.5" fill="${cuerpo}" stroke="${K}" stroke-width="2"/><path d="M30 14 Q26 7 22 6 M34 14 Q38 7 42 6" fill="none" stroke="${K}" stroke-width="2"/>`);
+  const cara = (fondo, ojosSvg, bocaSvg, extra = "") => sv(`<circle cx="32" cy="34" r="24" fill="${fondo}" stroke="${K}" stroke-width="2.6"/>${extra}${ojosSvg}${bocaSvg}`);
+  const DIB = {
+    "🌸": sv([[32, 14], [49, 26], [43, 46], [21, 46], [15, 26]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="11" fill="#ff8fb8" stroke="${K}" stroke-width="2.4"/>`).join("") + `<circle cx="32" cy="34" r="9" fill="#ffd54f" stroke="${K}" stroke-width="2.4"/>` + ojos(33, 3.2, 1.6) + sonrisa(37, 2.5)),
+    "⭐": sv(`<polygon points="32,5 39,24 59,25 43,38 49,58 32,46 15,58 21,38 5,25 25,24" fill="#ffd54f" stroke="${K}" stroke-width="2.6"/>` + ojos(33, 6) + sonrisa(38, 4) + mejillas(37, 11)),
+    "🍀": sv([[23, 23], [41, 23], [23, 41], [41, 41]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="12" fill="#43c463" stroke="${K}" stroke-width="2.4"/>`).join("") + `<circle cx="32" cy="32" r="6" fill="#2fa84f" stroke="none"/><path d="M34 44 Q40 54 46 58" fill="none" stroke="${K}" stroke-width="3"/>` + ojos(31, 3.5, 1.6) + sonrisa(35, 2.5)),
+    "🌈": sv([["#ff5252", 26], ["#ffa726", 21], ["#ffe14d", 16], ["#5ac96a", 11], ["#4aa3ff", 6]].map(([c, r]) => `<path d="M${32 - r} 46 A${r} ${r} 0 0 1 ${32 + r} 46" fill="none" stroke="${c}" stroke-width="5"/>`).join("") + `<ellipse cx="12" cy="48" rx="9" ry="6" fill="#fff" stroke="${K}" stroke-width="2.2"/><ellipse cx="52" cy="48" rx="9" ry="6" fill="#fff" stroke="${K}" stroke-width="2.2"/>`),
+    "🍎": sv(`<path d="M32 18 C20 10 7 18 9 34 C11 50 22 58 32 54 C42 58 53 50 55 34 C57 18 44 10 32 18Z" fill="#ff4d4d" stroke="${K}" stroke-width="2.6"/><path d="M32 18 Q31 10 36 6" fill="none" stroke="${K}" stroke-width="3"/><path d="M36 12 Q46 6 50 14 Q42 18 36 12Z" fill="#5ac96a" stroke="${K}" stroke-width="2.2"/>` + ojos(34, 7) + sonrisa(41, 4) + mejillas(40, 13)),
+    "🐶": sv(`<ellipse cx="13" cy="30" rx="8" ry="15" fill="#8a5a3c" stroke="${K}" stroke-width="2.4" transform="rotate(12 13 30)"/><ellipse cx="51" cy="30" rx="8" ry="15" fill="#8a5a3c" stroke="${K}" stroke-width="2.4" transform="rotate(-12 51 30)"/><circle cx="32" cy="32" r="20" fill="#e0a672" stroke="${K}" stroke-width="2.6"/><ellipse cx="32" cy="41" rx="11" ry="8" fill="#fff1de" stroke="${K}" stroke-width="2"/><ellipse cx="32" cy="37" rx="4" ry="3" fill="${K}"/>` + ojos(28, 8) + `<path d="M32 40 L32 43 M27 44 Q32 49 37 44" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M30 46 Q32 53 34 46Z" fill="#ff7a93" stroke="none"/>`),
+    "🦋": mariposa("#c18bff", "#ff9ad5"),
+    "🐠": sv(`<path d="M50 32 L62 20 L62 44Z" fill="#ff9a3c" stroke="${K}" stroke-width="2.4"/><ellipse cx="29" cy="32" rx="22" ry="16" fill="#ffb347" stroke="${K}" stroke-width="2.6"/><path d="M24 16 Q30 8 38 18Z" fill="#ff9a3c" stroke="${K}" stroke-width="2.2"/><path d="M26 22 Q22 32 26 42" fill="none" stroke="#fff" stroke-width="3" opacity=".7"/><circle cx="17" cy="29" r="4" fill="#fff" stroke="${K}" stroke-width="1.8"/><circle cx="16" cy="29" r="2" fill="${K}" stroke="none"/><path d="M11 38 Q15 41 18 38" fill="none" stroke="${K}" stroke-width="1.8"/>`),
+    "🎈": sv(`<path d="M32 4 C14 4 10 22 16 34 C20 41 27 45 32 46 C37 45 44 41 48 34 C54 22 50 4 32 4Z" fill="#ff5a7a" stroke="${K}" stroke-width="2.6"/><path d="M29 46 L32 51 L35 46Z" fill="#ff5a7a" stroke="${K}" stroke-width="2.2"/><path d="M32 51 Q26 56 32 60" fill="none" stroke="${K}" stroke-width="2"/><ellipse cx="22" cy="17" rx="4" ry="7" fill="#fff" opacity=".6" stroke="none" transform="rotate(25 22 17)"/>` + ojos(26, 7) + sonrisa(32, 4)),
+    "🍓": sv(`<path d="M32 58 C16 50 6 36 10 24 C14 14 26 14 32 18 C38 14 50 14 54 24 C58 36 48 50 32 58Z" fill="#ff4057" stroke="${K}" stroke-width="2.6"/><path d="M32 18 L22 10 L28 18 L32 8 L36 18 L42 10Z" fill="#5ac96a" stroke="${K}" stroke-width="2.2"/>` + [[22, 28], [42, 28], [32, 34], [24, 42], [40, 42]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.4" ry="2" fill="#ffe14d" stroke="none"/>`).join("") + ojos(30, 6, 1.9) + sonrisa(36, 3)),
+    "🚀": sv(`<path d="M32 4 C42 12 46 26 44 42 L20 42 C18 26 22 12 32 4Z" fill="#f4f6ff" stroke="${K}" stroke-width="2.6"/><path d="M32 4 C37 8 40 12 42 17 L22 17 C24 12 27 8 32 4Z" fill="#ff5a5a" stroke="${K}" stroke-width="2.2"/><circle cx="32" cy="28" r="6" fill="#7fd1ff" stroke="${K}" stroke-width="2.4"/><path d="M20 34 L10 46 L20 44Z M44 34 L54 46 L44 44Z" fill="#ff5a5a" stroke="${K}" stroke-width="2.2"/><path class="llama" d="M26 44 Q32 62 38 44Z" fill="#ffb347" stroke="${K}" stroke-width="2"/>`),
+    "🎁": sv(`<rect x="8" y="26" width="48" height="30" rx="4" fill="#7c5cff" stroke="${K}" stroke-width="2.6"/><rect x="5" y="19" width="54" height="11" rx="3" fill="#9b82ff" stroke="${K}" stroke-width="2.6"/><rect x="28" y="19" width="8" height="37" fill="#ffd54f" stroke="${K}" stroke-width="2.2"/><path d="M32 19 C20 6 10 14 20 19Z M32 19 C44 6 54 14 44 19Z" fill="#ffd54f" stroke="${K}" stroke-width="2.2"/>`),
+    "🐢": sv(`<ellipse cx="12" cy="52" rx="6" ry="5" fill="#8fd16a" stroke="${K}" stroke-width="2.2"/><ellipse cx="44" cy="52" rx="6" ry="5" fill="#8fd16a" stroke="${K}" stroke-width="2.2"/><circle cx="54" cy="36" r="8" fill="#8fd16a" stroke="${K}" stroke-width="2.4"/><path d="M6 46 C6 22 20 14 32 14 C46 14 56 26 54 46Z" fill="#4fb26a" stroke="${K}" stroke-width="2.6"/><path d="M20 40 L26 26 L38 26 L44 40Z M26 26 L32 14 M38 26 L44 16" fill="none" stroke="${K}" stroke-width="1.8"/><circle cx="56" cy="34" r="1.6" fill="${K}" stroke="none"/><path d="M52 40 Q55 42 58 40" fill="none" stroke="${K}" stroke-width="1.6"/>`),
+    "?": sv(`<circle cx="32" cy="32" r="26" fill="#9a7bff" stroke="${K}" stroke-width="2.6"/><text x="32" y="44" font-size="34" font-weight="900" text-anchor="middle" fill="#fff" stroke="none" font-family="system-ui,sans-serif">?</text>`),
+    cartas: sv(`<rect x="8" y="12" width="30" height="42" rx="5" fill="#fff" stroke="${K}" stroke-width="2.4" transform="rotate(-12 23 33)"/><rect x="26" y="10" width="30" height="42" rx="5" fill="#ffd54f" stroke="${K}" stroke-width="2.4" transform="rotate(10 41 31)"/><polygon points="41,18 44,27 53,27 46,32 49,41 41,36 33,41 36,32 29,27 38,27" fill="#ff5a7a" stroke="${K}" stroke-width="1.6" transform="rotate(10 41 31)"/>`),
+    puzzle: sv(`<path d="M8 20 H24 C22 12 38 12 36 20 H52 V34 C60 32 60 48 52 46 V58 H8Z" fill="#5ac96a" stroke="${K}" stroke-width="2.6"/>` + ojos(40, 8) + sonrisa(47, 4)),
+    lupa: sv(`<circle cx="26" cy="26" r="17" fill="#cfeeff" stroke="${K}" stroke-width="3"/><path d="M38 38 L56 56" stroke="${K}" stroke-width="9"/><path d="M38 38 L56 56" stroke="#ff9a3c" stroke-width="4.5"/><path d="M16 22 Q18 15 25 14" fill="none" stroke="#fff" stroke-width="3"/>`),
+    numeros: sv([["#ff7a8a", 6, "1"], ["#ffd54f", 24, "2"], ["#5ac9ff", 42, "3"]].map(([c, x, t]) => `<rect x="${x - 2}" y="${x === 24 ? 14 : x === 6 ? 24 : 24}" width="22" height="26" rx="5" fill="${c}" stroke="${K}" stroke-width="2.4"/><text x="${x + 9}" y="${(x === 24 ? 14 : 24) + 20}" font-size="17" font-weight="900" text-anchor="middle" fill="${K}" stroke="none" font-family="system-ui,sans-serif">${t}</text>`).join("")),
+    detective: sv(`<circle cx="32" cy="38" r="17" fill="#ffd7a8" stroke="${K}" stroke-width="2.6"/><path d="M12 26 H52 L48 18 C40 10 24 10 16 18Z" fill="#8a5a3c" stroke="${K}" stroke-width="2.6"/><rect x="10" y="24" width="44" height="5" rx="2.5" fill="#6b4329" stroke="${K}" stroke-width="2"/><circle cx="25" cy="38" r="5" fill="#fff" stroke="${K}" stroke-width="2"/><circle cx="39" cy="38" r="5" fill="#fff" stroke="${K}" stroke-width="2"/><path d="M30 38 H34" stroke="${K}" stroke-width="2"/><circle cx="25" cy="38" r="1.8" fill="${K}" stroke="none"/><circle cx="39" cy="38" r="1.8" fill="${K}" stroke="none"/>` + sonrisa(48, 4)),
+    bicho: sv(`<circle cx="32" cy="34" r="24" fill="#ff3b4d" stroke="${K}" stroke-width="2.6"/><path d="M32 10 V58" stroke="${K}" stroke-width="2.4"/><path d="M14 22 Q32 6 50 22 L50 14 Q32 0 14 14Z" fill="${K}" stroke="none"/>` + [[20, 30], [44, 30], [18, 44], [46, 44], [32, 50]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="${K}" stroke="none"/>`).join("") + `<circle cx="26" cy="20" r="2" fill="#fff" stroke="none"/><circle cx="38" cy="20" r="2" fill="#fff" stroke="none"/>`),
+    gato: sv(`<path d="M10 26 L12 6 L26 16Z M54 26 L52 6 L38 16Z" fill="#6b6f87" stroke="${K}" stroke-width="2.4"/><circle cx="32" cy="34" r="23" fill="#7d8199" stroke="${K}" stroke-width="2.6"/><path d="M14 8 L22 15 L14 18Z M50 8 L42 15 L50 18Z" fill="#ff9ab0" stroke="none"/>` + ojos(32, 9, 3) + `<path d="M29 40 L35 40 L32 43Z" fill="#ff7a93" stroke="${K}" stroke-width="1.4"/><path d="M32 43 Q28 48 24 45 M32 43 Q36 48 40 45" fill="none" stroke="${K}" stroke-width="1.8"/><path d="M6 36 H18 M6 42 L18 40 M58 36 H46 M58 42 L46 40" stroke="${K}" stroke-width="1.6" fill="none"/>`),
+    galleta: sv(`<circle cx="32" cy="32" r="25" fill="#e3a65a" stroke="${K}" stroke-width="2.6"/>` + [[22, 22], [40, 20], [44, 38], [26, 42], [34, 32]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="4" ry="3.2" fill="#6b3f1d" stroke="none"/>`).join("")),
+    trofeo: sv(`<path d="M18 8 H46 V26 C46 36 40 40 32 40 C24 40 18 36 18 26Z" fill="#ffd54f" stroke="${K}" stroke-width="2.6"/><path d="M18 12 H8 C8 24 12 28 20 28 M46 12 H56 C56 24 52 28 44 28" fill="none" stroke="${K}" stroke-width="2.6"/><rect x="28" y="40" width="8" height="10" fill="#e0b030" stroke="${K}" stroke-width="2.2"/><rect x="20" y="50" width="24" height="8" rx="3" fill="#7c5cff" stroke="${K}" stroke-width="2.4"/>` + ojos(22, 6, 1.8) + sonrisa(27, 3)),
+    chispa: sv(`<path d="M32 6 L37 27 L58 32 L37 37 L32 58 L27 37 L6 32 L27 27Z" fill="#fff6a8" stroke="${K}" stroke-width="2.2"/>`),
+    oscura: mariposa("#5b2d8a", "#3a1a5e", K, "#d9c2ff"),
+    blanca: mariposa("#ffffff", "#e9f0ff", "#7a7fa8", "#c7d2ff"),
+    // caras de las personas akumatizadas
+    triste: cara("#9ec7ff", ojos(32, 8), `<path d="M27 44 Q32 39 37 44" fill="none" stroke="${K}" stroke-width="2"/>`, `<path d="M20 22 L27 26 M44 22 L37 26" stroke="${K}" stroke-width="2" fill="none"/><path d="M22 38 Q21 44 24 46 Q27 44 26 38Z" fill="#5ab0ff" stroke="none"/>`),
+    enojo: cara("#ff8a7a", ojos(33, 8), `<path d="M26 45 Q32 40 38 45" fill="none" stroke="${K}" stroke-width="2.2"/>`, `<path d="M18 24 L28 29 M46 24 L36 29" stroke="${K}" stroke-width="3" fill="none"/>`),
+    celos: cara("#a8e6a1", `<circle cx="24" cy="32" r="2.6" fill="${K}" stroke="none"/><circle cx="40" cy="32" r="2.6" fill="${K}" stroke="none"/><circle cx="26" cy="32" r="1" fill="#fff" stroke="none"/><circle cx="42" cy="32" r="1" fill="#fff" stroke="none"/>`, `<path d="M26 44 L38 43" stroke="${K}" stroke-width="2.2" fill="none"/>`, `<path d="M19 26 L29 27 M45 26 L35 27" stroke="${K}" stroke-width="2.4" fill="none"/>`),
+    miedo: cara("#e8e1ff", `<circle cx="24" cy="31" r="5" fill="#fff" stroke="${K}" stroke-width="1.8"/><circle cx="40" cy="31" r="5" fill="#fff" stroke="${K}" stroke-width="1.8"/><circle cx="24" cy="32" r="2" fill="${K}" stroke="none"/><circle cx="40" cy="32" r="2" fill="${K}" stroke="none"/>`, `<ellipse cx="32" cy="45" rx="4" ry="5" fill="${K}" stroke="none"/>`, `<path d="M18 20 Q24 16 28 21 M46 20 Q40 16 36 21" stroke="${K}" stroke-width="2" fill="none"/>`),
+    verguenza: cara("#ffc2d4", ojos(32, 8), `<path d="M27 44 Q30 41 33 44 Q36 47 38 43" fill="none" stroke="${K}" stroke-width="2"/>`, mejillas(38, 14).replace(/r="2.6"/g, 'r="4.5"')),
+    soledad: cara("#cdd2e6", ojos(33, 8), `<path d="M27 45 H37" stroke="${K}" stroke-width="2.2" fill="none"/>`, `<path d="M20 25 Q24 22 28 25 M44 25 Q40 22 36 25" stroke="${K}" stroke-width="2" fill="none"/>`)
+  };
+  const ic = k => DIB[k] || k;
+  // Íconos del menú de juegos
+  const ICONO_JUEGO = { jMemoria: "cartas", jQuiz: "?", jLogica: "puzzle", jError: "lupa", jNumeros: "numeros", jPurificar: "oscura", jQuien: "detective", jMision: "bicho", jAkuma: "oscura", jAdivinanzas: "gato", jGalletitas: "galleta" };
+  Object.entries(ICONO_JUEGO).forEach(([id, k]) => { const el = $(id); if (el) { const ico = el.querySelector(".ico"); ico.innerHTML = ic(k); ico.classList.add("anim"); } });
 
   // ---------- Instalar como app ----------
   let promptInstalar = null;
@@ -492,7 +559,7 @@
 
   // ---------- Pantalla final común ----------
   function final(titulo, detalle, otraVez, frase){
-    $("gameBody").innerHTML = `<div class="final"><div class="trofeo">🏆</div><h2>${titulo}</h2><p>${detalle}</p>
+    $("gameBody").innerHTML = `<div class="final"><div class="trofeo anim">${ic("trofeo")}</div><h2>${titulo}</h2><p>${detalle}</p>
       <button class="gbtn" id="otra">Jugar otra vez</button><button class="gbtn sec" id="vol">Volver a los juegos</button></div>`;
     $("otra").onclick = otraVez;
     $("vol").onclick = volverJuegos;
@@ -574,7 +641,7 @@
     cartas.forEach((c, i) => {
       const b = document.createElement("button");
       b.className = "carta";
-      b.innerHTML = `<span class="dorso">❓</span><span class="frente">${c.p ? avatar(c.p) : c.e}</span>`;
+      b.innerHTML = `<span class="dorso">${ic("?")}</span><span class="frente">${c.p ? avatar(c.p) : ic(c.e)}</span>`;
       b.onclick = () => {
         if (bloqueo || !libre(i)) return;
         abrir(i); abiertas.push(i);
@@ -882,7 +949,7 @@
     nums.forEach((n, i) => {
       const b = document.createElement("button");
       b.className = "carta"; b.dataset.n = n;
-      b.innerHTML = `<span class="dorso">❔</span><span class="frente">${n}</span>`;
+      b.innerHTML = `<span class="dorso">${ic("?")}</span><span class="frente">${n}</span>`;
       b.onclick = () => tocar(b, n);
       g.appendChild(b);
     });
@@ -925,7 +992,7 @@
     { nombre: "Doña Niebla",  color: "#6a1b9a", img: "villano4.png", alivio: "¡Qué alivio! Otra vez veo todo clarito." }
   ];
   const villanoHTML = (v, tam) => `<div class="vill" style="width:${tam}px;height:${tam}px;border-radius:50%;background:radial-gradient(circle at 35% 30%, ${v.color}, #14061f);display:grid;place-items:center;overflow:hidden;position:relative;border:3px solid rgba(255,255,255,.35)">
-      <span style="font-size:${tam * 0.5}px">🦋</span>
+      <span style="width:${tam * 0.62}px;height:${tam * 0.62}px;display:block">${ic("oscura")}</span>
       <img src="${v.img}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>`;
 
   function jugarPurificar(){
@@ -973,7 +1040,7 @@
       pintar();
       function purificado(){
         $("gameBody").innerHTML = `<p class="info">¡Purificado!</p>
-          <div style="align-self:center;font-size:4rem">✨🕊️✨</div>
+          <div style="align-self:center;display:flex;gap:10px;align-items:center"><span class="anim" style="width:40px;height:40px">${ic("chispa")}</span><span class="anim" style="width:72px;height:72px">${ic("blanca")}</span><span class="anim" style="width:40px;height:40px">${ic("chispa")}</span></div>
           <div style="align-self:center">${villanoHTML(v, 110)}</div>
           <p class="q">${v.alivio}</p>
           <button class="gbtn" id="vSig">${vi + 1 < orden.length ? "Siguiente villano →" : "Terminar"}</button>`;
@@ -1082,13 +1149,13 @@
 
   // Tikki: las galletitas (sumas y restas)
   function bancoGalletitas(){
-    const gal = n => "🍪".repeat(n);
+    const gal = n => `<span class="carita">${ic("galleta")}</span>`.repeat(n);
     const al = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
     const dist = res => { const s = new Set([res]); for (const d of mezclar([1, -1, 2, -2, 3, 10, -10])){ if (s.size >= 4) break; if (res + d >= 0) s.add(res + d); } return [...s].filter(x => x !== res).slice(0, 3).map(String); };
     const lista = [];
     for (let i = 0; i < 10; i++){
       const t = i % 4; let it;
-      if (t === 0){ const a = al(3, 10), b = al(2, 8); it = { q: `Tikki tiene ${a} galletitas y Alina le regala ${b} más. ¿Cuántas tiene ahora?`, s: `${gal(a)} ➕ ${gal(b)}`, r: a + b }; }
+      if (t === 0){ const a = al(3, 10), b = al(2, 8); it = { q: `Tikki tiene ${a} galletitas y Alina le regala ${b} más. ¿Cuántas tiene ahora?`, s: `${gal(a)} <b>+</b> ${gal(b)}`, r: a + b }; }
       else if (t === 1){ const a = al(6, 14), b = al(2, a - 2); it = { q: `Tikki tenía ${a} galletitas y se comió ${b}. ¿Cuántas le quedan?`, s: gal(a), r: a - b }; }
       else if (t === 2){ const a = al(3, 9), b = al(3, 9); it = { q: `En un plato hay ${a} galletitas y en otro plato hay ${b}. ¿Cuántas hay en total?`, s: `${gal(a)} | ${gal(b)}`, r: a + b }; }
       else { const a = al(3, 9), c = a + al(2, 8); it = { q: `Tikki quiere tener ${c} galletitas y ya tiene ${a}. ¿Cuántas le faltan?`, s: gal(a), r: c - a }; }
@@ -1106,7 +1173,7 @@
     decir(actual.intro.mision, "gBubble", actual.id + "_intro-mision");
     function etapa(){
       const [ico, lugar] = ETAPAS[e], it = orden[e];
-      const camino = ETAPAS.map((x, i) => i < e ? "✅" : i === e ? "🐞" : "⚪").join(" ");
+      const camino = ETAPAS.map((x, i) => `<span class="carita" style="width:1.4em;height:1.4em">${i < e ? ic("⭐") : i === e ? ic("bicho") : `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12" fill="rgba(255,255,255,.3)"/></svg>`}</span>`).join(" ");
       $("gameBody").innerHTML = `<p class="info">${camino}</p>
         <p class="info">Etapa ${e + 1} de ${ETAPAS.length}</p>
         <p class="q" style="font-size:1.3rem">${ico} ${lugar}</p>
@@ -1134,12 +1201,12 @@
 
   // ---------- Atrapá la akuma: calmar a la persona y capturar la mariposa oscura ----------
   const CASOS_AKUMA = [
-    { ico: "😢", nombre: "Lucas", emo: "tristeza", sit: "Lucas está muy triste porque se le rompió su juguete favorito.", ok: "Ayudarlo a arreglarlo y quedarte con él", mal: ["Decirle que es un llorón", "Dejarlo solo sin decirle nada"] },
-    { ico: "😡", nombre: "Sofi", emo: "enojo", sit: "Sofi está muy enojada porque perdió en un juego.", ok: "Decirle que perder también es parte del juego y jugar otra vez juntas", mal: ["Gritarle más fuerte", "Burlarte de ella"] },
-    { ico: "😒", nombre: "Mateo", emo: "celos", sit: "Mateo siente celos porque su mejor amigo juega con otro chico.", ok: "Invitarlo a jugar entre todos", mal: ["Decirle que se aguante", "Hacerte el que no lo ves"] },
-    { ico: "😨", nombre: "Clara", emo: "miedo", sit: "Clara tiene mucho miedo de actuar frente a toda la escuela.", ok: "Decirle que la vas a acompañar y que lo va a hacer genial", mal: ["Decirle que seguro le sale mal", "Reírte de sus nervios"] },
-    { ico: "😳", nombre: "Tomás", emo: "vergüenza", sit: "Tomás tiene vergüenza porque se tropezó adelante de todos.", ok: "Decirle que a todos nos pasa y ayudarlo a levantarse", mal: ["Reírte fuerte", "Contarle a todos lo que pasó"] },
-    { ico: "😔", nombre: "Valeria", emo: "soledad", sit: "Valeria se siente sola porque es nueva en la escuela.", ok: "Invitarla a jugar con vos", mal: ["Decirle que es rara", "Pasar de largo sin saludarla"] }
+    { ico: "triste", nombre: "Lucas", emo: "tristeza", sit: "Lucas está muy triste porque se le rompió su juguete favorito.", ok: "Ayudarlo a arreglarlo y quedarte con él", mal: ["Decirle que es un llorón", "Dejarlo solo sin decirle nada"] },
+    { ico: "enojo", nombre: "Sofi", emo: "enojo", sit: "Sofi está muy enojada porque perdió en un juego.", ok: "Decirle que perder también es parte del juego y jugar otra vez juntas", mal: ["Gritarle más fuerte", "Burlarte de ella"] },
+    { ico: "celos", nombre: "Mateo", emo: "celos", sit: "Mateo siente celos porque su mejor amigo juega con otro chico.", ok: "Invitarlo a jugar entre todos", mal: ["Decirle que se aguante", "Hacerte el que no lo ves"] },
+    { ico: "miedo", nombre: "Clara", emo: "miedo", sit: "Clara tiene mucho miedo de actuar frente a toda la escuela.", ok: "Decirle que la vas a acompañar y que lo va a hacer genial", mal: ["Decirle que seguro le sale mal", "Reírte de sus nervios"] },
+    { ico: "verguenza", nombre: "Tomás", emo: "vergüenza", sit: "Tomás tiene vergüenza porque se tropezó adelante de todos.", ok: "Decirle que a todos nos pasa y ayudarlo a levantarse", mal: ["Reírte fuerte", "Contarle a todos lo que pasó"] },
+    { ico: "soledad", nombre: "Valeria", emo: "soledad", sit: "Valeria se siente sola porque es nueva en la escuela.", ok: "Invitarla a jugar con vos", mal: ["Decirle que es rara", "Pasar de largo sin saludarla"] }
   ];
   function jugarAkuma(){
     const casos = mezclar(CASOS_AKUMA).slice(0, 4);
@@ -1148,7 +1215,7 @@
     function caso(){
       const c = casos[i]; let fallos = 0;
       $("gameBody").innerHTML = `<p class="info">Persona ${i + 1} de ${casos.length} · akumatizada por ${c.emo}</p>
-        <div style="align-self:center;font-size:4.2rem;filter:grayscale(.7) brightness(.8)">${c.ico}</div>
+        <div class="anim" style="align-self:center;width:96px;height:96px;filter:saturate(.7) brightness(.9)">${ic(c.ico)}</div>
         <p class="q">${c.sit}</p>
         <p class="info">¿Cómo la ayudás a calmarse?</p>
         <div class="opts">${mezclar([c.ok, ...c.mal]).map(o => `<button class="opt">${o}</button>`).join("")}</div>
@@ -1165,7 +1232,7 @@
       function captura(){
         $("gameBody").innerHTML = `<p class="info">¡Ahora capturá la akuma antes de que se escape!</p>
           <div id="aCampo" style="position:relative;height:300px;border-radius:18px;background:rgba(0,0,0,.25);overflow:hidden;touch-action:manipulation">
-            <button id="aMar" aria-label="Akuma" style="position:absolute;left:40%;top:40%;width:64px;height:64px;border-radius:50%;border:none;font-size:2.4rem;background:radial-gradient(circle,#6a1b9a,#14061f);cursor:pointer;transition:left .8s ease-in-out, top .8s ease-in-out;padding:0">🦋</button></div>
+            <button id="aMar" aria-label="Akuma" style="position:absolute;left:40%;top:40%;width:64px;height:64px;border-radius:50%;border:none;font-size:2.4rem;background:radial-gradient(circle,#6a1b9a,#14061f);cursor:pointer;transition:left .8s ease-in-out, top .8s ease-in-out;padding:6px">${ic("oscura")}</button></div>
           <p class="info" id="aMsg2" style="min-height:1.6em">Tocala con el dedo.</p>`;
         const m = $("aMar"), campo = $("aCampo");
         const mover = () => {
@@ -1176,7 +1243,7 @@
         const t = setInterval(mover, 900); mover();
         m.onclick = () => {
           clearInterval(t); m.disabled = true;
-          m.style.background = "#fff"; m.textContent = "🕊️";
+          m.style.background = "#fff"; m.innerHTML = ic("blanca");
           $("aMsg2").textContent = `¡Akuma purificada! ${c.nombre} vuelve a estar bien.`;
           decirDe(actual.frases.ok, "ok");
           setTimeout(() => { i++; if (i < casos.length) caso(); else final("¡Salvaste a todos! ⭐", `Ayudaste bien a ${bien} de ${casos.length} personas al primer intento.`, jugarAkuma); }, 1800);
