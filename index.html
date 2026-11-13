@@ -104,7 +104,7 @@
 
 <!-- SALA DEL PERSONAJE: saludo y menú de juegos -->
 <section id="hub" class="screen">
-  <div class="topbar"><span>🎮 Sala de juegos</span><span id="hubHint"></span></div>
+  <div class="topbar"><button class="back" id="hubBack" aria-label="Volver">← Volver</button><span id="hubHint"></span></div>
   <div class="stage" id="stage">
     <div class="ring" id="callAvatar"></div>
     <div id="callName"></div>
@@ -119,6 +119,9 @@
     <button class="gamebtn" id="jNumeros"><span class="ico">🔢</span><span>Números escondidos<small>Encontralos en orden</small></span></button>
     <button class="gamebtn" id="jPurificar"><span class="ico">🦋</span><span>Purificá al villano<small>Resolvé cuentas y ayudalo</small></span></button>
     <button class="gamebtn" id="jQuien"><span class="ico">🕵️</span><span>¿Quién fue?<small>Un caso difícil de detective</small></span></button>
+    <button class="gamebtn" id="jMision"><span class="ico">🐞</span><span>Misión de Ladybug<small>Una aventura por etapas</small></span></button>
+    <button class="gamebtn" id="jAdivinanzas"><span class="ico">🐱</span><span>Adivinanzas<small>Pensá y adiviná</small></span></button>
+    <button class="gamebtn" id="jGalletitas"><span class="ico">🍪</span><span>Las galletitas de Tikki<small>Contá y sumá galletitas</small></span></button>
   </div>
   <div class="controls">
     <div class="ctl"><button class="btn" id="vozBtn" aria-label="Sonido">🔊</button><span class="label">Sonido</span></div>
@@ -131,7 +134,7 @@
 <!-- JUEGO -->
 <section id="game" class="screen">
   <div class="gh">
-    <button class="back" id="backBtn">← Juegos</button>
+    <button class="back" id="backBtn">← Volver</button>
     <div class="avatar-sm small" id="gAvatar"></div>
   </div>
   <div class="bubble" id="gBubble"></div>
@@ -152,7 +155,7 @@
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
-      intro:{ purificar:"Un villano necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+      intro:{ mision:"¡Esta es una misión de heroína! Hay que cruzar seis lugares de la ciudad. En cada uno hay un desafío. ¡Vamos a atrapar a la mariposa oscura!", purificar:"Un villano necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
               quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
               logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
@@ -168,7 +171,7 @@
       pitch:0.9, rate:0.98,
       saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
       menu:["¿Qué juego sigue, Alina?","¡Elegí otro, que esto se pone bueno!"],
-      intro:{ purificar:"¡Hay que ayudar a un villano! Con cuentas bien resueltas lo purificamos.", quien:"¡Caso difícil, detective! Leé las pistas con ojos de gato y descubrí quién es.", numeros:"¡Nueve números escondidos! Encontralos en orden, del uno al nueve. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
+      intro:{ adivinanzas:"¡Adivinanzas, mi especialidad! Leé bien y pensá, que no son fáciles.", purificar:"¡Hay que ayudar a un villano! Con cuentas bien resueltas lo purificamos.", quien:"¡Caso difícil, detective! Leé las pistas con ojos de gato y descubrí quién es.", numeros:"¡Nueve números escondidos! Encontralos en orden, del uno al nueve. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
               quiz:"¡Preguntas! Ojalá no te pongas nerviosa, yo ya me puse a ronronear.",
               logica:"¡Desafíos de lógica! Fijate bien, que los gatos somos muy astutos." },
       frases:{ ok:["¡Miau-ravilloso, Alina!","¡Eso es! Sos genial.","¡Fantástico! Me impresionaste."],
@@ -184,7 +187,7 @@
       pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
       menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
-      intro:{ purificar:"Vamos a ayudar a un villano con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
+      intro:{ galletitas:"¡Mis galletitas! Ayudame a contarlas, que no quiero equivocarme.", purificar:"Vamos a ayudar a un villano con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
               quiz:"Te voy a hacer unas preguntas. Pensá tranquila, no hay apuro.",
               logica:"Son desafíos para pensar. Mirá con atención y vas a encontrar la respuesta." },
       frases:{ ok:["¡Muy bien, Alina! ¡Qué lindo acierto!","¡Lo lograste! Estoy muy contenta.","¡Perfecto! Qué bien pensaste."],
@@ -301,7 +304,9 @@
     parar();
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     $(id).classList.add("active");
+    try { if (!atras && id !== "home") history.pushState({ s: id }, ""); } catch(e) {}
   }
+  let atras = false;
 
   // ---------- Música de fondo (se genera en el celular, sin archivos ni internet) ----------
   const musica = (() => {
@@ -318,16 +323,31 @@
       g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
     };
+    let ruido = null;
+    const bombo = t => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+      g.gain.setValueAtTime(0.9, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.2);
+    };
+    const platillo = (t, vol) => {
+      if (!ruido){ ruido = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate); const d = ruido.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+      const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      s.buffer = ruido; f.type = "highpass"; f.frequency.value = 7000;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      s.connect(f); f.connect(g); g.connect(master); s.start(t);
+    };
     function programar(){
       if (!activa) return;
-      const beat = 0.62; // segundos por golpe (tranquilo)
+      const beat = 0.30; // más rápida y alegre
       while (prox < ctx.currentTime + 0.6){
         const n = mel[paso % mel.length];
-        if (n !== "_" && NOTAS[n]) nota(NOTAS[n], prox, beat * 1.7, 0.5, "triangle");
-        if (paso % 4 === 0){
-          const ac = ACORDES[Math.floor(paso / 4) % ACORDES.length];
-          ac.forEach(k => nota((NOTAS[k] || 261.63) / 2, prox, beat * 4, 0.28, "sine"));
-        }
+        const ac = ACORDES[Math.floor(paso / 8) % ACORDES.length];
+        if (n !== "_" && NOTAS[n]) nota(NOTAS[n], prox, beat * 1.2, 0.5, "triangle");
+        if (paso % 4 === 0) bombo(prox);
+        if (paso % 2 === 1) platillo(prox, 0.22);
+        if (paso % 2 === 0) nota((NOTAS[ac[0]] || 261.63) / 2, prox, beat * 1.4, 0.38, "triangle");
+        if (paso % 8 === 0) ac.forEach(k => nota(NOTAS[k] || 261.63, prox, beat * 4, 0.12, "sine"));
         prox += beat; paso++;
       }
     }
@@ -336,7 +356,7 @@
       iniciar(){
         if (activa) return;
         const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-        if (!ctx){ ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.07; master.connect(ctx.destination); }
+        if (!ctx){ ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.08; master.connect(ctx.destination); }
         ctx.resume(); activa = true; prox = ctx.currentTime + 0.1; timer = setInterval(programar, 200); programar();
       },
       parar(){ activa = false; clearInterval(timer); if (ctx) ctx.suspend(); }
@@ -346,9 +366,9 @@
     const btn = document.createElement("button");
     btn.id = "musicaBtn"; btn.setAttribute("aria-label", "Música");
     btn.style.cssText = "position:fixed;right:76px;top:22px;z-index:50;width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(43,16,85,.75);color:#fff;font-size:1.1rem;cursor:pointer;padding:0";
+    btn.style.display = "none"; // sin botón: la música suena siempre
     document.body.appendChild(btn);
     let quiere = true;
-    try { quiere = localStorage.getItem("musicaAlina") !== "no"; } catch(e) {}
     const pintar = () => { btn.textContent = musica.activa ? "🎵" : "🔇"; };
     btn.onclick = () => {
       if (musica.activa){ musica.parar(); quiere = false; } else { musica.iniciar(); quiere = true; }
@@ -399,6 +419,7 @@
     $("callStatus").textContent = "Preparándose…";
     $("callBubble").style.display = "none";
     $("menuJuegos").style.display = "none";
+    armarMenu(p);
     $("stage").classList.remove("talking");
     mostrar("hub");
     clearTimeout(temporizador);
@@ -416,6 +437,15 @@
   $("endBtn").onclick = colgar;
   $("switchBtn").onclick = colgar;
   $("backBtn").onclick = volverJuegos;
+  $("hubBack").onclick = colgar;
+  // El botón "atrás" del celular también vuelve a la pantalla anterior
+  window.addEventListener("popstate", () => {
+    atras = true;
+    try {
+      if ($("game").classList.contains("active")) volverJuegos();
+      else if ($("hub").classList.contains("active")) colgar();
+    } finally { atras = false; }
+  });
   $("vozBtn").parentElement.style.display = "none"; $("cambiaVozBtn").parentElement.style.display = "none";
   $("vozBtn").onclick = () => {
     vozOn = !vozOn;
@@ -452,6 +482,9 @@
   $("jLogica").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(LOGICA, 6, "logica")); };
   $("jPurificar").onclick = () => { entrarJuego(); jugarPurificar(); };
   $("jQuien").onclick = () => { entrarJuego(); jugarQuien(); };
+  $("jMision").onclick = () => { entrarJuego(); jugarMision(); };
+  $("jAdivinanzas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(ADIVINANZAS, 6, "adivinanzas")); };
+  $("jGalletitas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(bancoGalletitas(), 6, "galletitas")); };
   $("jNumeros").onclick = () => { entrarJuego(); jugarNumeros(); };
   $("jError").onclick = () => { entrarJuego(); elegirModo(() => jugarError(5)); };
 
@@ -1027,6 +1060,88 @@
     nuevo();
   }
 
+  // ---------- Juegos exclusivos de cada personaje ----------
+  // Cat Noir: adivinanzas
+  const ADIVINANZAS = [
+    { q: "Blanca por dentro, verde por fuera. Si querés que te lo diga, esperá.", a: "La pera", o: ["La manzana", "La lechuga", "La banana"] },
+    { q: "Tengo agujas y no sé coser, tengo números y no sé leer.", a: "El reloj", o: ["El cactus", "La regla", "El calendario"] },
+    { q: "Vuelo sin alas, silbo sin boca, y te despeino sin tener manos.", a: "El viento", o: ["El pájaro", "La lluvia", "El avión"] },
+    { q: "Oro parece, plata no es.", a: "La banana", o: ["La pera", "El limón", "La moneda"] },
+    { q: "Tiene dientes y no come, tiene cabeza y no es una persona.", a: "El ajo", o: ["El peine", "La zanahoria", "El tenedor"] },
+    { q: "Cuanto más grande es, menos se ve.", a: "La oscuridad", o: ["La montaña", "La nube", "El mar"] },
+    { q: "Todos pasan por mí, yo no paso por ninguno. Todos preguntan por mí, yo no pregunto por ninguno.", a: "La calle", o: ["La puerta", "El puente", "La plaza"] },
+    { q: "Cuanto más me secás, más mojada estoy.", a: "La toalla", o: ["La esponja", "La lluvia", "La bañadera"] },
+    { q: "Tiene cuatro patas pero no camina, tiene respaldo pero no tiene espalda.", a: "La silla", o: ["El perro", "La cama", "La mesa"] },
+    { q: "Redonda y blanca me ves de noche, y a veces me ves nada más que un pedacito.", a: "La luna", o: ["El sol", "La estrella", "La nube"] },
+    { q: "Soy amarillo, me ves en el cielo de día y me voy cuando llega la noche.", a: "El sol", o: ["La luna", "La estrella", "El relámpago"] },
+    { q: "Tiene cáscara pero no es una fruta, adentro tiene clara y yema.", a: "El huevo", o: ["La nuez", "La naranja", "El maní"] },
+    { q: "Tiene bigotes, ronronea y le encanta el pescado.", a: "El gato", o: ["El perro", "El conejo", "El ratón"] }
+  ];
+
+  // Tikki: las galletitas (sumas y restas)
+  function bancoGalletitas(){
+    const gal = n => "🍪".repeat(n);
+    const al = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+    const dist = res => { const s = new Set([res]); for (const d of mezclar([1, -1, 2, -2, 3, 10, -10])){ if (s.size >= 4) break; if (res + d >= 0) s.add(res + d); } return [...s].filter(x => x !== res).slice(0, 3).map(String); };
+    const lista = [];
+    for (let i = 0; i < 10; i++){
+      const t = i % 4; let it;
+      if (t === 0){ const a = al(3, 10), b = al(2, 8); it = { q: `Tikki tiene ${a} galletitas y Alina le regala ${b} más. ¿Cuántas tiene ahora?`, s: `${gal(a)} ➕ ${gal(b)}`, r: a + b }; }
+      else if (t === 1){ const a = al(6, 14), b = al(2, a - 2); it = { q: `Tikki tenía ${a} galletitas y se comió ${b}. ¿Cuántas le quedan?`, s: gal(a), r: a - b }; }
+      else if (t === 2){ const a = al(3, 9), b = al(3, 9); it = { q: `En un plato hay ${a} galletitas y en otro plato hay ${b}. ¿Cuántas hay en total?`, s: `${gal(a)} | ${gal(b)}`, r: a + b }; }
+      else { const a = al(3, 9), c = a + al(2, 8); it = { q: `Tikki quiere tener ${c} galletitas y ya tiene ${a}. ¿Cuántas le faltan?`, s: gal(a), r: c - a }; }
+      lista.push({ q: it.q, s: it.s, a: String(it.r), o: dist(it.r) });
+    }
+    return lista;
+  }
+
+  // Ladybug: misión por etapas
+  function jugarMision(){
+    const ETAPAS = [["🌉", "El puente roto"], ["🚪", "La puerta con candado"], ["🕳️", "El túnel oscuro"], ["🏰", "La torre de la ciudad"], ["🌳", "La plaza de las sombras"], ["🦋", "La guarida de la mariposa oscura"]];
+    const desafios = [...mezclar(LOGICA).slice(0, 3), ...mezclar(PREGUNTAS).slice(0, 3)];
+    const orden = mezclar(desafios);
+    let e = 0, bien = 0;
+    decir(actual.intro.mision, "gBubble", actual.id + "_intro-mision");
+    function etapa(){
+      const [ico, lugar] = ETAPAS[e], it = orden[e];
+      const camino = ETAPAS.map((x, i) => i < e ? "✅" : i === e ? "🐞" : "⚪").join(" ");
+      $("gameBody").innerHTML = `<p class="info">${camino}</p>
+        <p class="info">Etapa ${e + 1} de ${ETAPAS.length}</p>
+        <p class="q" style="font-size:1.3rem">${ico} ${lugar}</p>
+        <p class="info">Para seguir tenés que resolver este desafío:</p>
+        <p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
+        <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div>
+        <p class="info" id="mMsg" style="min-height:1.6em"></p>`;
+      let fallos = 0;
+      document.querySelectorAll(".opt").forEach(btn => btn.onclick = () => {
+        const sig = () => { e++; if (e < ETAPAS.length) etapa(); else final("¡Misión cumplida! 🐞", `Atrapaste a la mariposa oscura. Resolviste ${bien} de ${ETAPAS.length} desafíos al primer intento.`, jugarMision); };
+        if (btn.textContent === it.a){
+          document.querySelectorAll(".opt").forEach(x => x.disabled = true); btn.classList.add("ok");
+          if (fallos === 0) bien++; decirDe(actual.frases.ok, "ok"); setTimeout(sig, 1500);
+        } else {
+          fallos++; btn.disabled = true; btn.style.opacity = .4; decirDe(actual.frases.mal, "mal");
+          if (fallos >= 2){
+            document.querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.textContent === it.a) x.classList.add("ok"); });
+            $("mMsg").textContent = "La respuesta era " + it.a + ". ¡Seguimos con la misión!"; setTimeout(sig, 2200);
+          } else $("mMsg").textContent = "Pensalo otra vez, ¡vos podés!";
+        }
+      });
+    }
+    etapa();
+  }
+
+  // Qué juegos muestra cada personaje, en este orden
+  const JUEGOS_DE = {
+    ladybug: ["jMision", "jQuien", "jPurificar", "jError"],
+    catnoir: ["jMemoria", "jNumeros", "jAdivinanzas"],
+    tikki: ["jQuiz", "jLogica", "jGalletitas"]
+  };
+  function armarMenu(p){
+    const menu = $("menuJuegos"), lista = JUEGOS_DE[p.id] || [];
+    menu.querySelectorAll(".gamebtn").forEach(b => { b.style.display = "none"; });
+    lista.forEach(id => { const b = $(id); b.style.display = ""; menu.appendChild(b); });
+  }
+
   // Nombre del audio de cada pregunta (ver la lista del documento): q01..q22 y l01..l09
   PREGUNTAS.forEach((it, i) => { it.k = "q" + String(i + 1).padStart(2, "0"); });
   { const vistos = []; LOGICA.forEach(it => { let j = vistos.indexOf(it.q); if (j < 0) { vistos.push(it.q); j = vistos.length - 1; } it.k = "l" + String(j + 1).padStart(2, "0"); }); }
@@ -1043,11 +1158,9 @@
       $("gameBody").innerHTML = `${contra ? `<div class="marcador" id="marc">${spansMarcador(puntos, ptsP)}</div>` : ""}
         <p class="info">Pregunta ${idx + 1} de ${items.length}</p>
         <p class="q">${it.q}</p>
-        <button class="gbtn sec" id="escuchar">🔊 Escuchar la pregunta</button>
         ${it.s ? `<div class="seq">${it.s}</div>` : ""}
         <div class="opts">${opciones.map(o => `<button class="opt">${o}</button>`).join("")}</div>`;
       let primera = true;
-      $("escuchar").onclick = () => reproducir(it.k, it.q);
       document.querySelectorAll(".opt").forEach(btn => {
         btn.onclick = () => {
           if (btn.textContent === it.a) {
