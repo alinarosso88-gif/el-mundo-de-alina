@@ -215,7 +215,10 @@
     if (/natural|neural|online|enhanced|premium/i.test(v.name)) n += 6;
     if (/google/i.test(v.name)) n += 4;
     if (!v.localService) n += 2;
-    if (/es[-_](AR|419|MX|US|CO|CL|UY)/i.test(v.lang)) n += 3;
+    if (/es[-_]AR/i.test(v.lang)) n += 12;          // acento argentino primero
+    else if (/es[-_](UY|419|US|MX|CO|CL)/i.test(v.lang)) n += 4; // acento latino
+    else if (/es[-_]ES/i.test(v.lang)) n -= 2;      // acento de España al final
+    if (/espeak|compact|festival|mbrola/i.test(v.name)) n -= 15; // las más robóticas
     if (/female|mujer|paulina|helena|sabina|monica|mónica|elena|paloma|camila|dalia|salome|salomé|elvira|lupe|valentina|laura|marisol|ximena/i.test(v.name)) n += 3;
     return n;
   }
@@ -225,17 +228,36 @@
   }
   if (hayVoz) { cargarVoces(); speechSynthesis.onvoiceschanged = cargarVoces; }
 
+  let turnoVoz = 0;
+  // Cómo se pronuncian mejor algunas palabras en español
+  const PRONUNCIA = [[/Cat Noir/g, "Cat Nuar"], [/Ladybug/g, "Leidibag"], [/Tikki/g, "Tiqui"], [/Miau-gnífico/g, "Miau, magnífico"]];
+  // Sin voz: la app solo muestra textos y música. Para volver a activar la voz, poné VOZ_ACTIVA = true.
+  const VOZ_ACTIVA = false;
   function hablar(texto){
-    if (!vozOn || !hayVoz || !actual) return;
+    if (!VOZ_ACTIVA || !vozOn || !hayVoz || !actual) return;
     speechSynthesis.cancel();
-    const limpio = texto
+    const mi = ++turnoVoz;
+    let limpio = texto
       .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "")
       .replace(/\+/g, " más ").replace(/−/g, " menos ").replace(/×/g, " por ").replace(/=/g, " igual ").replace(/___/g, " ... ");
-    const u = new SpeechSynthesisUtterance(limpio);
+    PRONUNCIA.forEach(([a, b]) => { limpio = limpio.replace(a, b); });
+    // Se parte en frases cortas, con una pausita entre una y otra, para que suene más natural
+    const trozos = limpio.match(/[^.!?¡¿,;:…]+[.!?,;:…]*/g) || [limpio];
     const v = voces[vozIdx];
-    if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "es-AR"; }
-    u.pitch = actual.pitch; u.rate = actual.rate;
-    speechSynthesis.speak(u);
+    const hablarTrozo = i => {
+      if (mi !== turnoVoz || i >= trozos.length) return;
+      const t = trozos[i].trim(); if (!t) return hablarTrozo(i + 1);
+      const u = new SpeechSynthesisUtterance(t);
+      if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "es-AR"; }
+      const fin = /[.!?…]$/.test(t), pregunta = /\?$/.test(t), coma = /[,;:]$/.test(t);
+      // Un poquito de variación en cada frase: sube en preguntas y baja al terminar
+      u.pitch = Math.max(0.5, Math.min(2, actual.pitch + (pregunta ? 0.12 : coma ? 0.04 : fin ? -0.04 : 0)));
+      u.rate = actual.rate * (t.length < 14 ? 0.95 : 1);
+      u.onend = () => setTimeout(() => hablarTrozo(i + 1), fin ? 260 : 140);
+      u.onerror = () => {};
+      speechSynthesis.speak(u);
+    };
+    hablarTrozo(0);
   }
   // ---------- Audios grabados ----------
   // Busca "<personaje>_<frase>.mp3" (o .m4a, .webm, .ogg, .wav, .aac) en la carpeta principal o en "audio/".
@@ -255,12 +277,12 @@
     return hallados[clave];
   }
   function parar(){
-    turnoAudio++;
+    turnoAudio++; turnoVoz++;
     if (audioActual) { try { audioActual.pause(); } catch(e) {} audioActual = null; }
     if (hayVoz) speechSynthesis.cancel();
   }
   async function reproducir(clave, texto){
-    if (!vozOn) return;
+    if (!VOZ_ACTIVA || !vozOn) return;
     parar();
     const ts = turnoAudio;
     const url = clave ? await cargarAudio(clave) : null;
@@ -394,6 +416,7 @@
   $("endBtn").onclick = colgar;
   $("switchBtn").onclick = colgar;
   $("backBtn").onclick = volverJuegos;
+  $("vozBtn").parentElement.style.display = "none"; $("cambiaVozBtn").parentElement.style.display = "none";
   $("vozBtn").onclick = () => {
     vozOn = !vozOn;
     $("vozBtn").classList.toggle("off", !vozOn);
