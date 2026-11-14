@@ -1029,8 +1029,27 @@
     escRobot(), escCasa(), escSombrasDer(), escReflejoCasa(), escCollar("RYB"), escCollar("RB"), escMesa("tenedor"), escMesa("vaso"), escMunecas()
   );
 
+  // Temas de los dibujos (para no mostrar dos parecidos en la misma partida)
+  const FAMILIA_ESC = (() => { const f = Array.from({ length: 50 }, (_, i) => "u" + i); const g = (n, ids) => ids.forEach(i => { f[i] = n; });
+    g("num", [9, 15, 16, 17, 18, 19, 20]); g("valla", [2, 21, 22, 23]); g("reloj", [4, 24, 25, 26, 27]); g("tablero", [5, 28, 29]); g("barras", [13, 30, 31, 32]);
+    g("semana", [33, 34]); g("canastas", [14, 35, 36, 37, 38]); g("domino", [39, 40]); g("sombras", [6, 43]); g("reflejo", [8, 44]); g("collar", [45, 46]); g("mesa", [47, 48]); return f; })();
+  // Recuerda qué dibujos ya salieron y no los repite hasta haber visto todos
+  function elegirEscenas(n){
+    const todos = ESCENAS.map((_, i) => i); let vistos = [];
+    try { vistos = (JSON.parse(localStorage.getItem("errorVistos")) || []).filter(i => i < ESCENAS.length); } catch(e) {}
+    let libres = todos.filter(i => !vistos.includes(i)), elegidos = [];
+    const tomar = lista => { for (const i of mezclar(lista)){ if (elegidos.length >= n) break; if (!elegidos.some(j => FAMILIA_ESC[j] === FAMILIA_ESC[i])) elegidos.push(i); } };
+    tomar(libres);
+    if (elegidos.length < n){ // se acabaron los dibujos nuevos: empieza una vuelta nueva
+      vistos = []; libres = todos.filter(i => !elegidos.includes(i)); tomar(libres);
+      for (const i of mezclar(libres)){ if (elegidos.length >= n) break; if (!elegidos.includes(i)) elegidos.push(i); }
+    }
+    try { localStorage.setItem("errorVistos", JSON.stringify([...vistos, ...elegidos])); } catch(e) {}
+    return mezclar(elegidos).map(i => ESCENAS[i]);
+  }
+
   function jugarError(cantidad){
-    const orden = mezclar(ESCENAS).slice(0, cantidad);
+    const orden = elegirEscenas(cantidad);
     const contra = modo === "contra";
     let idx = 0, puntos = 0, ptsP = 0, ficha = 0;
     decir(actual.intro.error, "gBubble", actual.id + "_intro-error");
@@ -1417,6 +1436,119 @@
     ad("Tengo siete hijos con nombres diferentes: lunes, martes, miércoles, jueves, viernes, sábado y domingo.", "La semana", "El mes", "El año", "El día")
   );
 
+  // ---------- 104 preguntas más, para 8 años: cálculo (solo sumas y restas), cultura general y lógica ----------
+  const pq = (q, a, ...o) => ({ q, a: String(a), o: o.map(String) });
+  const MAS_CALCULO = [
+    pq("Alina tiene 12 figuritas y le regalan 8. ¿Cuántas tiene ahora?", 20, 18, 22, 21),
+    pq("Había 25 caramelos y se comieron 9. ¿Cuántos quedan?", 16, 14, 18, 15),
+    pq("¿Cuánto es 30 + 25?", 55, 45, 65, 50),
+    pq("¿Cuánto es 64 − 20?", 44, 54, 46, 34),
+    pq("En una caja hay 18 lápices y en otra hay 17. ¿Cuántos lápices hay en total?", 35, 34, 36, 25),
+    pq("Un colectivo llevaba 40 personas y bajaron 15. ¿Cuántas quedan?", 25, 35, 55, 30),
+    pq("¿Cuánto es 100 − 1?", 99, 98, 101, 90),
+    pq("¿Cuánto es 47 + 10?", 57, 37, 67, 48),
+    pq("Tomás tiene 9 autitos y Sofi tiene 6 más que él. ¿Cuántos autitos tiene Sofi?", 15, 3, 14, 16),
+    pq("Lucía tiene 20 stickers, regala 7 y después le dan 3. ¿Cuántos tiene ahora?", 16, 10, 17, 30),
+    pq("¿Cuánto es 15 + 15?", 30, 25, 20, 35),
+    pq("En el patio hay 23 chicos y se van 8. ¿Cuántos quedan?", 15, 16, 31, 14),
+    pq("¿Qué número falta? 7 + ? = 15", 8, 7, 9, 22),
+    pq("¿Qué número falta? ? − 6 = 10", 16, 4, 15, 17),
+    pq("¿Cuánto es 50 + 50?", 100, 90, 110, 60),
+    pq("Mamá compró 35 empanadas y se comieron 12. ¿Cuántas sobraron?", 23, 47, 22, 24),
+    pq("Valentín leyó 14 páginas ayer y 16 hoy. ¿Cuántas leyó en total?", 30, 20, 28, 31),
+    pq("¿Cuánto es 90 − 45?", 45, 35, 55, 40),
+    pq("Una bolsa tiene 26 caramelos y otra tiene 14. ¿Cuántos hay entre las dos?", 40, 30, 42, 12),
+    pq("En la heladera había 12 huevos y se usaron 5. ¿Cuántos quedan?", 7, 17, 6, 8),
+    pq("¿Cuánto es 38 + 4?", 42, 32, 41, 34),
+    pq("¿Cuánto es 71 − 8?", 63, 79, 62, 73),
+    pq("El libro tiene 60 páginas y ya leí 25. ¿Cuántas me faltan?", 35, 85, 45, 25),
+    pq("Bruno juntó 19 piedritas y Emma juntó 11. ¿Cuántas juntaron entre los dos?", 30, 20, 31, 28),
+    pq("¿Cuánto es 8 + 8 + 8?", 24, 16, 26, 32),
+    pq("Tengo 3 monedas de 10 pesos. ¿Cuántos pesos tengo en total?", 30, 13, 300, 20),
+    pq("¿Cuánto es 25 + 26?", 51, 41, 50, 52),
+    pq("Tengo 45 pesos y gasto 20. ¿Cuántos pesos me quedan?", 25, 65, 35, 15),
+    pq("En un micro hay 28 chicos y suben 12. ¿Cuántos chicos hay ahora?", 40, 16, 30, 38),
+    pq("¿Cuánto es 200 + 100?", 300, 210, 400, 2000),
+    pq("¿Qué número viene justo después del 199?", 200, 190, 201, 299),
+    pq("¿Cuánto es 33 + 33?", 66, 63, 36, 76),
+    pq("La ruta tiene 80 kilómetros y ya hice 35. ¿Cuántos kilómetros me faltan?", 45, 55, 35, 115),
+    pq("¿Cuánto es 99 − 9?", 90, 89, 80, 100),
+    pq("¿Cuánto es 5 + 5 + 5 + 5?", 20, 15, 25, 10)
+  ];
+  const MAS_CULTURA = [
+    pq("¿Cuál es la capital de Argentina?", "Buenos Aires", "Córdoba", "Rosario", "Mendoza"),
+    pq("¿Qué colores tiene la bandera de Argentina?", "Celeste y blanco", "Rojo y blanco", "Verde y blanco", "Azul y amarillo"),
+    pq("¿Cuántos días tiene una semana?", 7, 5, 6, 8),
+    pq("¿Cuántos meses tiene un año?", 12, 10, 11, 13),
+    pq("¿Cómo se llama el planeta donde vivimos?", "La Tierra", "Marte", "Júpiter", "Venus"),
+    pq("¿Cuál es el animal más grande del mar?", "La ballena azul", "El tiburón blanco", "El delfín", "El pulpo"),
+    pq("¿Qué gas respiramos para poder vivir?", "El oxígeno", "El helio", "El humo", "El hidrógeno"),
+    pq("¿Cómo se llama la montaña más alta de América, que está en Mendoza?", "El Aconcagua", "El Everest", "El Fitz Roy", "El Uritorco"),
+    pq("¿Qué necesitan las plantas para crecer?", "Agua, luz y tierra", "Solo ruido", "Solo azúcar", "Solo hielo"),
+    pq("¿De qué animal sacamos la lana?", "De la oveja", "De la vaca", "Del chancho", "Del pato"),
+    pq("¿Cuál de estos animales pone huevos?", "La gallina", "La vaca", "La oveja", "La cabra"),
+    pq("¿Cuántos colores tiene el arcoíris?", 7, 5, 6, 8),
+    pq("¿Qué usamos para mirar las estrellas de cerca?", "Un telescopio", "Un microscopio", "Un termómetro", "Un reloj"),
+    pq("¿Qué usamos para saber si alguien tiene fiebre?", "El termómetro", "El telescopio", "La balanza", "La regla"),
+    pq("¿Cómo se llama el océano que está al este de Argentina?", "El Atlántico", "El Pacífico", "El Índico", "El Ártico"),
+    pq("¿Qué fruta es amarilla y tiene una cáscara que se pela?", "La banana", "La manzana", "La uva", "La frutilla"),
+    pq("¿Cuántas patas tiene una araña?", 8, 6, 4, 10),
+    pq("¿Cuántas patas tiene un insecto?", 6, 4, 8, 10),
+    pq("¿Qué estación del año viene después del invierno?", "La primavera", "El verano", "El otoño", "El invierno"),
+    pq("¿En qué estación del año se caen las hojas de los árboles?", "En otoño", "En verano", "En primavera", "En invierno"),
+    pq("¿Qué hueso protege el cerebro dentro de la cabeza?", "El cráneo", "El fémur", "La costilla", "La columna"),
+    pq("¿Qué órgano manda la sangre por todo el cuerpo?", "El corazón", "Los pulmones", "El estómago", "El cerebro"),
+    pq("¿Qué día se festeja la Independencia de Argentina?", "El 9 de julio", "El 25 de mayo", "El 20 de junio", "El 17 de agosto"),
+    pq("¿Quién creó la bandera argentina?", "Manuel Belgrano", "José de San Martín", "Domingo Sarmiento", "Juan Manuel de Rosas"),
+    pq("¿Cuál es el deporte nacional de Argentina, que se juega a caballo?", "El pato", "El fútbol", "El tenis", "El básquet"),
+    pq("¿Cuál es la capital de la provincia de Santa Fe?", "La ciudad de Santa Fe", "Rosario", "Esperanza", "Rafaela"),
+    pq("¿En qué continente está Argentina?", "En América", "En Europa", "En África", "En Asia"),
+    pq("¿Cuál es el animal terrestre más rápido?", "El guepardo", "El león", "El caballo", "El perro"),
+    pq("¿Cuál es el animal más alto del mundo?", "La jirafa", "El elefante", "El camello", "El avestruz"),
+    pq("¿Qué instrumento tiene teclas blancas y negras?", "El piano", "La guitarra", "El violín", "El tambor"),
+    pq("¿Cuántas letras tiene el abecedario en español?", 27, 26, 28, 25),
+    pq("¿Qué planeta se conoce como el planeta rojo?", "Marte", "Venus", "Júpiter", "Saturno"),
+    pq("¿Qué estrella nos da luz y calor durante el día?", "El Sol", "La Luna", "Marte", "Un satélite"),
+    pq("¿Qué color del semáforo nos dice que podemos cruzar con el auto?", "Verde", "Rojo", "Amarillo", "Azul"),
+    pq("¿Cuántos lados tiene un cuadrado?", 4, 3, 5, 6),
+    pq("¿Qué forma tiene una pelota?", "De esfera", "De cubo", "De triángulo", "De cilindro")
+  ];
+  const MAS_LOGICA = [
+    pq("1, 3, 5, 7, ¿cuál sigue?", 9, 8, 10, 11),
+    pq("5, 10, 15, 20, ¿cuál sigue?", 25, 30, 22, 24),
+    pq("10, 20, 30, 40, ¿cuál sigue?", 50, 45, 60, 41),
+    pq("3, 6, 9, 12, ¿cuál sigue?", 15, 14, 16, 18),
+    pq("20, 18, 16, 14, ¿cuál sigue?", 12, 13, 10, 11),
+    pq("100, 90, 80, 70, ¿cuál sigue?", 60, 65, 50, 75),
+    pq("1, 2, 4, 8, ¿cuál sigue?", 16, 10, 12, 14),
+    pq("¿Cuál no pertenece al grupo? Perro, gato, caballo, mesa", "Mesa", "Perro", "Gato", "Caballo"),
+    pq("¿Cuál no pertenece al grupo? Rojo, azul, verde, pera", "Pera", "Rojo", "Azul", "Verde"),
+    pq("¿Cuál no pertenece al grupo? Manzana, naranja, lechuga, uva", "Lechuga", "Manzana", "Naranja", "Uva"),
+    pq("¿Cuál no pertenece al grupo? Lunes, martes, enero, viernes", "Enero", "Lunes", "Martes", "Viernes"),
+    pq("¿Cuál no pertenece al grupo? Auto, avión, barco, zapato", "Zapato", "Auto", "Avión", "Barco"),
+    pq("Si hoy es lunes, ¿qué día es pasado mañana?", "Miércoles", "Martes", "Jueves", "Domingo"),
+    pq("Si hoy es viernes, ¿qué día fue ayer?", "Jueves", "Sábado", "Miércoles", "Domingo"),
+    pq("Si hoy es sábado, ¿qué día va a ser dentro de 2 días?", "Lunes", "Domingo", "Martes", "Viernes"),
+    pq("¿Cuántos días tiene un fin de semana?", 2, 1, 3, 7),
+    pq("Ana es más alta que Beto, y Beto es más alto que Carlos. ¿Quién es el más bajo?", "Carlos", "Ana", "Beto", "Los tres son iguales"),
+    pq("Ana es más alta que Beto, y Beto es más alto que Carlos. ¿Quién es la más alta?", "Ana", "Beto", "Carlos", "No se sabe"),
+    pq("Tengo 3 caramelos: uno rojo, uno verde y uno azul. Si me como el verde, ¿cuántos me quedan?", 2, 1, 3, 0),
+    pq("Lunes, martes, miércoles… ¿qué día sigue?", "Jueves", "Viernes", "Domingo", "Sábado"),
+    pq("Enero, febrero, marzo… ¿qué mes sigue?", "Abril", "Mayo", "Junio", "Diciembre"),
+    pq("Si un reloj marca las 3 en punto, ¿dónde apunta la aguja larga?", "Al 12", "Al 3", "Al 6", "Al 9"),
+    pq("El pez es al agua como el pájaro es al…", "Aire", "Fuego", "Tierra", "Arena"),
+    pq("La mano es al guante como el pie es al…", "Zapato", "Sombrero", "Bufanda", "Anillo"),
+    pq("El frío es al calor como el día es a la…", "Noche", "Luz", "Tarde", "Mañana"),
+    pq("Tengo 2 manos y cada mano tiene 5 dedos. ¿Cuántos dedos tengo en total?", 10, 7, 12, 5),
+    pq("Luisa está primera en la fila y Mateo está tercero. Entre ellos hay una persona. ¿En qué lugar está esa persona?", "Segundo", "Primero", "Tercero", "Cuarto"),
+    pq("Una caja tiene 4 bolitas rojas y 1 azul. Si saco una sin mirar, ¿cuál es más probable que salga?", "Una roja", "Una azul", "Las dos son iguales", "Ninguna"),
+    pq("¿Cuál es el número mayor? 59 · 95 · 49", 95, 59, 49, "Son iguales"),
+    pq("¿Cuál es el número menor? 38 · 83 · 28", 28, 38, 83, "Son iguales"),
+    pq("Cada gato tiene 4 patas. ¿Cuántas patas tienen 2 gatos juntos?", 8, 6, 4, 12),
+    pq("Había 5 pájaros en una rama. Se volaron 2 y llegaron 4. ¿Cuántos hay ahora?", 7, 6, 9, 11),
+    pq("¿Qué figura tiene 3 lados?", "El triángulo", "El cuadrado", "El círculo", "El rectángulo"),
+    pq("Dos números suman 10. Si uno es 4, ¿cuál es el otro?", 6, 5, 14, 7)
+  ];
   // Tikki: las galletitas (sumas y restas)
   function bancoGalletitas(){
     const gal = n => `<span class="carita">${ic("galleta")}</span>`.repeat(n);
@@ -1435,7 +1567,7 @@
   }
 
   // Misiones de Tikki: mitad cuentas con galletitas y mitad desafíos de lógica
-  const bancoMisionesTikki = () => mezclar([...mezclar(bancoGalletitas()).slice(0, 4), ...mezclar(LOGICA).slice(0, 4)]);
+  const bancoMisionesTikki = () => mezclar([...mezclar(bancoGalletitas()).slice(0, 4), ...mezclar([...LOGICA, ...MAS_LOGICA]).slice(0, 4)]);
 
   // Ladybug: misión por etapas
   function jugarMision(){
@@ -1587,41 +1719,75 @@
     lista.forEach(id => { const b = $(id); b.style.display = ""; menu.appendChild(b); });
   }
 
-  // ---------- Camino de preguntas: juego de tablero con dado ----------
+  // ---------- Camino de preguntas: un camino largo y con curvas, con dado ----------
   let sesionTablero = 0;
-  const DADO = n => `<svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="2" width="40" height="40" rx="9" fill="#fff" stroke="#2b1055" stroke-width="3"/>${PIPS[n].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.8" fill="#2b1055"/>`).join("")}</svg>`;
+  const DADO = n => `<svg viewBox="0 0 52 52" width="100%" height="100%" style="overflow:visible"><defs>
+    <linearGradient id="dgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#f1ece4"/><stop offset="1" stop-color="#cfc6b8"/></linearGradient>
+    <radialGradient id="dgP" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#5a4a78"/><stop offset="1" stop-color="#150a2e"/></radialGradient></defs>
+    <ellipse cx="27" cy="49" rx="19" ry="3.5" fill="rgba(0,0,0,.28)"/>
+    <rect x="4" y="4" width="42" height="42" rx="10" fill="#b9ae9c"/>
+    <rect x="3" y="2" width="42" height="42" rx="10" fill="url(#dgC)" stroke="#8d8374" stroke-width="1.5"/>
+    <rect x="6" y="4.5" width="36" height="18" rx="8" fill="rgba(255,255,255,.55)"/>
+    ${PIPS[n].map(([x, y]) => `<circle cx="${x * 0.95 + 1.2}" cy="${y * 0.95 + 0.2}" r="4" fill="url(#dgP)"/>`).join("")}</svg>`;
+  if (!document.getElementById("dadoCss")) { const st = document.createElement("style"); st.id = "dadoCss";
+    st.textContent = "@keyframes dadoRueda{0%{transform:translateY(0) rotate(0) scale(1)}25%{transform:translateY(-26px) rotate(150deg) scale(1.08)}50%{transform:translateY(0) rotate(300deg) scale(1)}75%{transform:translateY(-14px) rotate(450deg) scale(1.05)}100%{transform:translateY(0) rotate(720deg) scale(1)}}@keyframes dadoRebote{0%{transform:translateY(-12px) scale(1.12)}50%{transform:translateY(0) scale(.96)}100%{transform:translateY(0) scale(1)}}.dadoRueda{animation:dadoRueda .75s ease-in-out}.dadoRebote{animation:dadoRebote .35s ease-out}";
+    document.head.appendChild(st); }
+  // Puntos del camino (siempre iguales): una "S" larga de abajo hacia arriba, con las casillas a distancias parejas
+  const CAMINO_W = 360, CAMINO_H = 1500, META_C = 60;
+  const PUNTOS_CAMINO = (() => {
+    const f = t => [CAMINO_W / 2 + 118 * Math.sin(2 * Math.PI * 3.5 * t), CAMINO_H - 70 - t * (CAMINO_H - 150)];
+    const muestra = []; let largo = 0, ant = f(0); muestra.push([...ant, 0]);
+    for (let i = 1; i <= 4000; i++){ const p = f(i / 4000); largo += Math.hypot(p[0] - ant[0], p[1] - ant[1]); muestra.push([...p, largo]); ant = p; }
+    const pts = []; let j = 0;
+    for (let k = 0; k <= META_C; k++){ const objetivo = largo * k / META_C; while (j < muestra.length - 1 && muestra[j][2] < objetivo) j++; pts.push([muestra[j][0], muestra[j][1]]); }
+    return pts;
+  })();
   function jugarTablero(){
     const mi = ++sesionTablero, contra = modo === "contra";
-    const META = 30, BONUS = [4, 11, 17, 24], TRAMPA = [8, 14, 20, 27];
-    const pos = { a: 0, p: 0 }; let turno = "a", turnos = 0, mazo = [];
-    const vivo = () => mi === sesionTablero && !!$("tab");
+    const META = META_C, BONUS = [5, 13, 22, 31, 40, 49, 56], TRAMPA = [9, 17, 26, 35, 44, 52, 58];
+    const pos = { a: 0, p: 0 }; let turno = "a", turnos = 0, mazo = [], preguntas = 0;
+    const vivo = () => mi === sesionTablero && !!$("mapa");
     const espera = ms => new Promise(res => setTimeout(res, ms));
-    const sacar = () => { if (!mazo.length) mazo = mezclar([...PREGUNTAS, ...LOGICA]); return mazo.pop(); };
+    const sacar = () => { if (!mazo.length) mazo = mezclar([...PREGUNTAS, ...LOGICA, ...MAS_CALCULO, ...MAS_CULTURA, ...MAS_LOGICA]); return mazo.pop(); };
     decir(actual.intro.tablero || actual.intro.quiz, "gBubble", actual.id + "_intro-tablero");
 
-    // Casillas en serpentina: la 1 abajo a la izquierda y la 30 arriba a la derecha
-    let celdas = "";
-    for (let v = 0; v < 5; v++){
-      const r = 4 - v, fila = [1, 2, 3, 4, 5, 6].map(k => r * 6 + k); if (r % 2 === 1) fila.reverse();
-      fila.forEach(n => {
-        const clase = n === META ? "meta" : BONUS.includes(n) ? "bonus" : TRAMPA.includes(n) ? "trampa" : "";
-        const icono = n === META ? ic("trofeo") : BONUS.includes(n) ? ic("⭐") : TRAMPA.includes(n) ? ic("oscura") : "";
-        celdas += `<div class="cas ${clase}" id="c${n}"><small>${n}</small><span class="icc">${icono}</span><span class="fichas"></span></div>`;
-      });
+    // Dibujo del camino
+    const pts = PUNTOS_CAMINO;
+    const linea = pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+    let deco = "";
+    for (let i = 0; i < 26; i++){
+      const y = 60 + (i * 53) % (CAMINO_H - 120), cercano = pts.reduce((m, p) => Math.abs(p[1] - y) < Math.abs(m[1] - y) ? p : m, pts[0]);
+      const lado = i % 2 ? 1 : -1, x = Math.max(22, Math.min(CAMINO_W - 22, cercano[0] + lado * (62 + (i * 17) % 40)));
+      if (Math.abs(x - cercano[0]) < 52) continue;
+      deco += i % 3 === 0 ? `<g transform="translate(${x - 14},${y - 14})" style="width:28px"><svg width="28" height="28" viewBox="0 0 64 64">${DIB["🌸"].replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg></g>`
+        : `<circle cx="${x}" cy="${y}" r="15" fill="#2e8b3d"/><circle cx="${x - 5}" cy="${y - 5}" r="9" fill="#3fae50"/><rect x="${x - 2.5}" y="${y + 13}" width="5" height="9" fill="#6d4c41"/>`;
     }
+    let nodos = "";
+    pts.forEach(([x, y], n) => {
+      if (n === 0) { nodos += `<g transform="translate(${x},${y})"><rect x="-34" y="-17" width="68" height="34" rx="10" fill="#fff" stroke="#2b1055" stroke-width="3"/><text y="6" text-anchor="middle" font-size="16" font-weight="800" fill="#2b1055" font-family="system-ui,sans-serif">Salida</text></g>`; return; }
+      if (n === META) { nodos += `<g transform="translate(${x - 28},${y - 28})"><svg width="56" height="56" viewBox="0 0 64 64">${DIB.trofeo.replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg></g><text x="${x}" y="${y + 44}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" stroke="#2b1055" stroke-width="3" paint-order="stroke" font-family="system-ui,sans-serif">¡Meta!</text>`; return; }
+      const esB = BONUS.includes(n), esT = TRAMPA.includes(n);
+      nodos += `<g transform="translate(${x},${y})"><circle r="16" fill="${esB ? "#ffd54f" : esT ? "#7b3fb0" : "#fff"}" stroke="#2b1055" stroke-width="3"/>`
+        + (esB ? `<g transform="translate(-11,-11)"><svg width="22" height="22" viewBox="0 0 64 64">${DIB["⭐"].replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg></g>` : esT ? `<g transform="translate(-11,-11)"><svg width="22" height="22" viewBox="0 0 64 64">${DIB.oscura.replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg></g>` : `<text y="5" text-anchor="middle" font-size="13" font-weight="800" fill="#2b1055" font-family="system-ui,sans-serif">${n}</text>`) + `</g>`;
+    });
+    const fichaSvg = (id, color, interior) => `<g id="f${id}" style="transition:transform .22s ease-out" transform="translate(0,0)"><circle r="15" fill="${color}" stroke="#fff" stroke-width="3.5"/><clipPath id="cp${id}"><circle r="12"/></clipPath>${interior}</g>`;
     $("gameBody").innerHTML = `<p class="info" id="tInfo"></p>
-      <div class="tab" id="tab">${celdas}</div>
-      <div class="salida"><b>Salida</b><span id="c0" class="fichas"></span></div>
+      <div id="mapa" style="height:340px;overflow-y:auto;border-radius:16px;border:3px solid rgba(255,255,255,.35);background:#6bbf59;scroll-behavior:smooth">
+        <svg viewBox="0 0 ${CAMINO_W} ${CAMINO_H}" style="width:100%;display:block" id="mapaSvg"><rect width="${CAMINO_W}" height="${CAMINO_H}" fill="#6bbf59"/>${deco}
+          <polyline points="${linea}" fill="none" stroke="#7a5a3a" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="${linea}" fill="none" stroke="#e8d3a8" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>${nodos}
+          ${fichaSvg("a", "#ff6fb5", `<text y="6" text-anchor="middle" font-size="16" font-weight="800" fill="#fff" font-family="system-ui,sans-serif">A</text>`)}
+          ${contra ? fichaSvg("p", actual.color, `<image href="${actual.img}" x="-12" y="-12" width="24" height="24" clip-path="url(#cpp)" preserveAspectRatio="xMidYMid slice"/>`) : ""}</svg></div>
       <p class="info" style="font-size:.85rem;margin:0">⭐ atajo: avanzás 2 · mariposa oscura: retrocedés 2</p>
       <div id="zona"></div>`;
-    const ficha = {
-      a: Object.assign(document.createElement("span"), { className: "fch", textContent: "A" }),
-      p: Object.assign(document.createElement("span"), { className: "fch", innerHTML: avatar(actual) })
-    };
-    ficha.a.style.background = "#ff6fb5"; ficha.p.style.background = actual.color;
-    const poner = q => { const el = $("c" + pos[q]); (pos[q] === 0 ? el : el.querySelector(".fichas")).appendChild(ficha[q]); };
-    poner("a"); if (contra) poner("p");
     const nombreDe = q => q === "a" ? "Alina" : actual.nombre;
+    const poner = (q, rapido) => {
+      const [x, y] = pts[pos[q]], dx = contra ? (q === "a" ? -9 : 9) : 0, g = $("f" + q); if (!g) return;
+      g.setAttribute("transform", `translate(${x + dx},${y})`);
+      const mapa = $("mapa"), sv = $("mapaSvg");
+      if (q === turno || rapido) mapa.scrollTo({ top: Math.max(0, y * sv.clientHeight / CAMINO_H - mapa.clientHeight / 2), behavior: rapido ? "auto" : "smooth" });
+    };
+    poner("a", true); if (contra) poner("p", true);
     const info = () => { $("tInfo").textContent = contra ? `Turno de ${nombreDe(turno)} · Alina: casilla ${pos.a} · ${actual.nombre}: casilla ${pos.p}` : `Casilla ${pos.a} de ${META} · Turno ${turnos + 1}`; };
     const mensaje = t => { const m = $("msg"); if (m) m.textContent = t; };
 
@@ -1634,14 +1800,14 @@
       }
     }
     async function tirar(){
-      $("zona").innerHTML = `<div id="dado" style="width:84px;height:84px;margin:6px auto"></div><p class="info" id="msg" style="min-height:1.6em"></p>`;
-      let n = 1;
-      for (let i = 0; i < 9; i++){ if (!vivo()) return 1; n = rnd(1, 6); $("dado").innerHTML = DADO(n); await espera(70); }
-      n = rnd(1, 6); if (vivo()) $("dado").innerHTML = DADO(n);
-      await espera(350); return n;
+      $("zona").innerHTML = `<div id="dado" style="width:96px;height:96px;margin:10px auto"></div><p class="info" id="msg" style="min-height:1.6em"></p>`;
+      let n = 1; $("dado").classList.add("dadoRueda");
+      for (let i = 0; i < 9; i++){ if (!vivo()) return 1; n = rnd(1, 6); $("dado").innerHTML = DADO(n); await espera(80); }
+      n = rnd(1, 6); if (vivo()){ $("dado").innerHTML = DADO(n); $("dado").classList.remove("dadoRueda"); $("dado").classList.add("dadoRebote"); }
+      await espera(450); return n;
     }
     const pregunta = () => new Promise(res => {
-      const it = sacar();
+      const it = sacar(); preguntas++;
       $("zona").innerHTML = `<p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
         <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div><p class="info" id="msg" style="min-height:1.6em"></p>`;
       $("zona").scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -1655,7 +1821,7 @@
     });
     function terminar(q){
       const v = actual.vs;
-      if (!contra) return final("¡Llegaste a la meta! 🏆", `Lo lograste en ${turnos} turnos.`, jugarTablero);
+      if (!contra) return final("¡Llegaste a la meta! 🏆", `Lo lograste en ${turnos} turnos y respondiste ${preguntas} preguntas.`, jugarTablero);
       if (q === "a") final("¡Ganaste, Alina!", `Llegaste primero a la meta, en ${turnos} turnos.`, jugarTablero, r(v.ganaA));
       else final(`Ganó ${actual.nombre}`, `${actual.nombre} llegó primero a la meta.`, jugarTablero, r(v.ganaP));
     }
