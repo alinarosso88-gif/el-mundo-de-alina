@@ -115,6 +115,9 @@
   #instalarAyuda { display:none; text-align:center; font-size:.9rem; opacity:.9; margin:14px 8px 0; }
 </style>
 <style>
+.escMision{position:relative;border-radius:20px;overflow:hidden;border:4px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.35);animation:entraMision .5s ease-out;max-width:420px;width:100%;align-self:center}
+.escMision .nEtapa{position:absolute;top:8px;left:8px;width:34px;height:34px;border-radius:50%;background:#e53935;color:#fff;font-weight:900;display:grid;place-items:center;border:3px solid #fff;font-size:1rem}
+@keyframes entraMision{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 #cumple{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(20,8,50,.72);animation:cumpleIn .5s ease-out}
 #cumple .cartel{background:linear-gradient(160deg,#fff,#ffe6f2);color:#2b1055;border-radius:26px;padding:28px 22px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.45);border:4px solid #ff6fb5;position:relative;overflow:hidden}
 #cumple h2{margin:6px 0 12px;font-size:1.7rem;line-height:1.2;color:#d81b60}
@@ -191,7 +194,7 @@
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
-      intro:{ akuma:"¡Una akuma akumatizó a unas personas! Primero tenemos que ayudarlas a calmarse, y después capturar la mariposa oscura. ¡Vamos!", mision:"¡Esta es una misión de heroína! Hay que cruzar veinte lugares de la ciudad. En cada uno hay un desafío. ¡Vamos a atrapar a la mariposa oscura!", purificar:"Un villano akumatizado necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay nueve números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+      intro:{ akuma:"¡Una akuma akumatizó a unas personas! Primero tenemos que ayudarlas a calmarse, y después capturar la mariposa oscura. ¡Vamos!", mision:"¡Esta es una misión de heroína! Hay que cruzar veinte lugares de la ciudad. En cada uno hay un desafío. ¡Vamos a atrapar a la mariposa oscura!", purificar:"Un villano akumatizado necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
               quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
               logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
@@ -207,7 +210,7 @@
       pitch:0.9, rate:0.98,
       saludo:"¡Hola, Alina! Estoy listo para divertirnos. ¿A qué jugamos?",
       menu:["¿Qué juego sigue, Alina?","¡Elegí otro, que esto se pone bueno!"],
-      intro:{ adivinanzas:"¡Adivinanzas, mi especialidad! Leé bien y pensá, que no son fáciles.", purificar:"¡Hay que ayudar a un villano akumatizado! Con cuentas bien resueltas lo purificamos.", quien:"¡Caso difícil, detective! Leé las pistas con ojos de gato y descubrí quién es.", numeros:"¡Nueve números escondidos! Encontralos en orden, del uno al nueve. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
+      intro:{ adivinanzas:"¡Adivinanzas, mi especialidad! Leé bien y pensá, que no son fáciles.", purificar:"¡Hay que ayudar a un villano akumatizado! Con cuentas bien resueltas lo purificamos.", quien:"¡Caso difícil, detective! Leé las pistas con ojos de gato y descubrí quién es.", numeros:"¡Números escondidos! Encontralos en orden, empezando por el uno. Si fallás, ¡todos se esconden otra vez!", error:"¡A abrir bien los ojos de gato! En cada dibujo hay algo que no está bien.", memoria:"¡A buscar parejas! Ojo de gato, Alina.",
               quiz:"¡Preguntas! Ojalá no te pongas nerviosa, yo ya me puse a ronronear.",
               logica:"¡Desafíos de lógica! Fijate bien, que los gatos somos muy astutos." },
       frases:{ ok:["¡Miau-ravilloso, Alina!","¡Eso es! Sos genial.","¡Fantástico! Me impresionaste."],
@@ -223,7 +226,7 @@
       pitch:1.25, rate:0.85,
       saludo:"¡Hola, Alina! Me encanta que estemos juntas. ¿A qué querés jugar?",
       menu:["¿A qué jugamos ahora, Alina?","Elegí el que más te guste."],
-      intro:{ galletitas:"¡Mis misiones! Vamos a contar galletitas y a resolver desafíos de lógica. Pensá con calma, no hay apuro.", purificar:"Vamos a ayudar a un villano akumatizado con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos del uno al nueve. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
+      intro:{ galletitas:"¡Mis misiones! Vamos a contar galletitas y a resolver desafíos de lógica. Pensá con calma, no hay apuro.", purificar:"Vamos a ayudar a un villano akumatizado con cuentas, despacito y con cariño.", quien:"Este caso es difícil. Leé cada pista con calma y pensalo todo.", numeros:"Hay números escondidos. Buscalos en orden y con calma. Si te equivocás, volvemos a empezar.", error:"Mirá cada dibujo con calma y pensá un ratito. Hay algo que no encaja.", memoria:"Vamos a buscar parejas, con calma. Fijate bien en cada carta.",
               quiz:"Te voy a hacer unas preguntas. Pensá tranquila, no hay apuro.",
               tablero:"¡Vamos a jugar en el tablero! Tirá el dado y avanzá. Si caés en una casilla común, te hago una pregunta. ¡Llegá primero a la meta!",
               logica:"Son desafíos para pensar. Mirá con atención y vas a encontrar la respuesta." },
@@ -584,7 +587,7 @@
   $("jMision").onclick = () => { entrarJuego(); jugarMision(); };
   $("jAdivinanzas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(ADIVINANZAS, 6, "adivinanzas")); };
   $("jGalletitas").onclick = () => { entrarJuego(); elegirModo(() => jugarPreguntas(bancoMisionesTikki(), 8, "galletitas")); };
-  $("jNumeros").onclick = () => { entrarJuego(); jugarNumeros(); };
+  $("jNumeros").onclick = () => { entrarJuego(); eligeCantNumeros(); };
   $("jError").onclick = () => { entrarJuego(); elegirModo(() => jugarError(5)); };
 
   // ---------- Pantalla final común ----------
@@ -1121,12 +1124,18 @@
   }
 
   // ---------- Juego 5: Números escondidos (del 1 al 9, en orden) ----------
-  function jugarNumeros(){
-    const nums = mezclar([1, 2, 3, 4, 5, 6, 7, 8, 9]); // posición fija durante toda la partida
-    let siguiente = 1, intentos = 1, bloqueado = false, mejor = 1;
+  function eligeCantNumeros(){
     decir(actual.intro.numeros, "gBubble", actual.id + "_intro-numeros");
+    $("gameBody").innerHTML = `<p class="q">¿Cuántos números querés buscar?</p>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);max-width:380px;width:100%;align-self:center">${[4, 5, 6, 7, 8, 9].map(n => `<button class="gbtn" data-n="${n}" style="font-size:1.6rem">${n}</button>`).join("")}</div>
+      <p class="info">Elegí del 4 al 9. ¡Con 9 es más difícil!</p>`;
+    document.querySelectorAll("#gameBody [data-n]").forEach(b => b.onclick = () => jugarNumeros(+b.dataset.n));
+  }
+  function jugarNumeros(cant = 9){
+    const nums = mezclar(Array.from({ length: cant }, (_, i) => i + 1)); // posición fija durante toda la partida
+    let siguiente = 1, intentos = 1, bloqueado = false, mejor = 1;
     $("gameBody").innerHTML = `<p class="info" id="nInfo"></p>
-      <div class="grid" id="nGrid" style="grid-template-columns:repeat(3,1fr);max-width:380px;width:100%;align-self:center"></div>
+      <div class="grid" id="nGrid" style="grid-template-columns:repeat(${cant === 4 ? 2 : 3},1fr);max-width:380px;width:100%;align-self:center"></div>
       <p class="info" id="nMsg" style="min-height:1.6em"></p>`;
     const g = $("nGrid");
     nums.forEach((n, i) => {
@@ -1144,9 +1153,9 @@
         b.classList.add("par");
         if (siguiente > mejor) mejor = siguiente;
         siguiente++;
-        if (siguiente > 9){
+        if (siguiente > cant){
           bloqueado = true;
-          setTimeout(() => final(`¡Lo lograste! ⭐`, intentos === 1 ? "¡A la primera, sin equivocarte!" : `Lo lograste en ${intentos} intentos.`, jugarNumeros), 900);
+          setTimeout(() => final(`¡Lo lograste! ⭐`, intentos === 1 ? "¡A la primera, sin equivocarte!" : `Lo lograste en ${intentos} intentos.`, eligeCantNumeros), 900);
           return;
         }
         $("nMsg").textContent = "";
@@ -1580,6 +1589,97 @@
   // Misiones de Tikki: mitad cuentas con galletitas y mitad desafíos de lógica
   const bancoMisionesTikki = () => mezclar([...mezclar(bancoGalletitas()).slice(0, 4), ...mezclar([...LOGICA, ...MAS_LOGICA]).slice(0, 4)]);
 
+  // Escenas dibujadas de cada etapa de la Misión de Ladybug (320 x 160)
+  const ESC_M = (() => {
+    const L = `stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+    let nCielo = 0; const cielo = (a, b) => { const id = "gm" + (++nCielo); return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="320" height="160" fill="url(#${id})"/>`; };
+    const nube = (x, y, s = 1, c = "#fff") => `<g transform="translate(${x},${y}) scale(${s})" fill="${c}" ${L} stroke-width="2.5"><path d="M-26 8a12 12 0 0 1 4-23 16 16 0 0 1 30-2 13 13 0 0 1 20 11 9 9 0 0 1-2 14z"/></g>`;
+    const brillo = (x, y, r = 5, c = "#fff") => `<path d="M${x} ${y - r}l${r * .3} ${r * .7} ${r * .7} ${r * .3}-${r * .7} ${r * .3}-${r * .3} ${r * .7}-${r * .3}-${r * .7}-${r * .7}-${r * .3} ${r * .7}-${r * .3}z" fill="${c}"/>`;
+    const estrella = (x, y, r = 8, c = "#ffd54f") => { let d = ""; for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; d += (i ? "L" : "M") + (x + rr * Math.cos(a)).toFixed(1) + " " + (y + rr * Math.sin(a)).toFixed(1); } return `<path d="${d}Z" fill="${c}" ${L} stroke-width="2"/>`; };
+    const arbol = (x, y, s = 1, c = "#3fae50") => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-5" y="-4" width="10" height="26" rx="3" fill="#8d5a3b" ${L} stroke-width="2.5"/><circle cy="-18" r="22" fill="${c}" ${L}/><circle cx="-7" cy="-24" r="8" fill="rgba(255,255,255,.28)"/></g>`;
+    const pasto = (y, c = "#5cc25f") => `<path d="M0 ${y}q40-14 90 0t110 0 120-4V160H0z" fill="${c}" ${L}/>`;
+    const mariposa = (x, y, s = 1, c = "#ff6fb5", c2 = "#ffd1e8") => `<g transform="translate(${x},${y}) scale(${s})" ${L} stroke-width="2.4"><path d="M0 0C-8-22-30-22-28-6-27 6-10 8 0 2z" fill="${c}"/><path d="M0 0C8-22 30-22 28-6 27 6 10 8 0 2z" fill="${c}"/><path d="M0 2C-6 10-22 16-18 26-14 32-2 22 0 6z" fill="${c2}"/><path d="M0 2C6 10 22 16 18 26 14 32 2 22 0 6z" fill="${c2}"/><rect x="-2" y="-6" width="4" height="22" rx="2" fill="${K}"/></g>`;
+    const globo = (x, y, c, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M0 28q-3 10 2 16" fill="none" stroke="${K}" stroke-width="2"/><ellipse rx="14" ry="17" fill="${c}" ${L} stroke-width="2.5"/><ellipse cx="-5" cy="-6" rx="3.5" ry="5.5" fill="rgba(255,255,255,.6)"/><path d="M-3 17h6l-3 5z" fill="${c}" ${L} stroke-width="2"/></g>`;
+    return [
+      // 1 El puente roto
+      () => cielo("#8fd3ff", "#e6f6ff") + nube(70, 38) + nube(250, 28, .8) + `<rect y="110" width="320" height="50" fill="#3aa0e6"/><path d="M0 118q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="none" stroke="#9fdcff" stroke-width="3"/>
+        <path d="M0 80h90v80H0z" fill="#8d6e4a" ${L}/><path d="M230 80h90v80h-90z" fill="#8d6e4a" ${L}/><path d="M0 80h90v10H0zM230 80h90v10h-90z" fill="#5cc25f" ${L}/>
+        <g fill="#d8a45f" ${L}><rect x="90" y="76" width="28" height="10" rx="2"/><rect x="120" y="78" width="24" height="10" rx="2" transform="rotate(8 132 83)"/><rect x="176" y="80" width="24" height="10" rx="2" transform="rotate(-10 188 85)"/><rect x="202" y="76" width="28" height="10" rx="2"/><rect x="146" y="118" width="26" height="9" rx="2" transform="rotate(25 160 122)"/></g>
+        <path d="M92 76V54M228 76V54" ${L}/><path d="M92 56q68 18 136 0" fill="none" ${L} stroke-width="2.5"/>` + arbol(30, 66, .8),
+      // 2 La puerta con candado
+      () => cielo("#7a6bb5", "#b9a8e8") + `<rect y="110" width="320" height="50" fill="#8d8a99"/><g fill="#c76b4a" ${L} stroke-width="2"><rect x="0" y="0" width="320" height="110" opacity=".0"/></g>
+        <rect x="70" y="14" width="180" height="116" rx="6" fill="#d38b5d" ${L}/><path d="M70 40h180M70 66h180M70 92h180M115 14v26M160 40v26M205 14v26M115 66v26M205 66v26M160 92v38" stroke="#a65f3a" stroke-width="2.5" fill="none"/>
+        <path d="M110 130V70a50 50 0 0 1 100 0v60z" fill="#8a5a3b" ${L}/><path d="M120 130V72a40 40 0 0 1 80 0v58z" fill="#a8704a" stroke="${K}" stroke-width="2"/><path d="M160 32v98" stroke="${K}" stroke-width="2.5"/>
+        <path d="M148 88a12 12 0 0 1 24 0v10h-24z" fill="none" stroke="#ffca28" stroke-width="7"/><rect x="140" y="96" width="40" height="32" rx="7" fill="#ffca28" ${L}/><circle cx="160" cy="108" r="5" fill="${K}"/><path d="M160 110v10" ${L}/>` + brillo(196, 86, 8) + brillo(124, 100, 6),
+      // 3 El túnel oscuro
+      () => `<rect width="320" height="160" fill="#3b4a6b"/><path d="M0 160V70a160 90 0 0 1 320 0v90z" fill="#6c7a99" ${L}/><path d="M40 160V84a120 78 0 0 1 240 0v76z" fill="#1a1033" ${L}/><path d="M80 160V100a80 62 0 0 1 160 0v60z" fill="#0b0618"/>
+        <path d="M120 160l20-60h40l20 60" fill="#16102a"/><path d="M110 160l25-60M210 160l-25-60" stroke="#8d6e4a" stroke-width="4"/><path d="M118 144h84M126 126h68M134 110h52" stroke="#8d6e4a" stroke-width="4"/>
+        <g fill="#ffe066"><circle cx="146" cy="76" r="4"/><circle cx="174" cy="76" r="4"/></g><g ${L} stroke-width="2.5"><rect x="52" y="52" width="12" height="18" rx="3" fill="#ffca28"/><rect x="256" y="52" width="12" height="18" rx="3" fill="#ffca28"/></g><circle cx="58" cy="61" r="22" fill="rgba(255,224,102,.18)"/><circle cx="262" cy="61" r="22" fill="rgba(255,224,102,.18)"/>` + brillo(160, 40, 6, "#ffe066"),
+      // 4 La torre de la ciudad
+      () => cielo("#7ec8ff", "#d9f0ff") + nube(60, 40) + nube(260, 60, .9) + `<rect y="124" width="320" height="36" fill="#6a6a85" ${L}/><g fill="#b9b6d0" ${L}><rect x="24" y="86" width="40" height="40"/><rect x="258" y="94" width="40" height="32"/></g>
+        <path d="M140 124l8-82h24l8 82z" fill="#e8dcc6" ${L}/><path d="M134 42h52l-6-14h-40z" fill="#c76b4a" ${L}/><path d="M160 28V6" ${L}/><path d="M160 6l24 7-24 7z" fill="#ff6fb5" ${L} stroke-width="2.5"/>
+        <g fill="#5ab0ff" ${L} stroke-width="2.5"><rect x="154" y="56" width="12" height="16" rx="6"/><rect x="154" y="86" width="12" height="16" rx="6"/></g><path d="M148 124v-12a12 12 0 0 1 24 0v12z" fill="#8a5a3b" ${L} stroke-width="2.5"/>`,
+      // 5 La plaza de las sombras
+      () => cielo("#4a2a7a", "#c77dba") + `<circle cx="250" cy="44" r="22" fill="#ffe9a8"/>` + estrella(60, 30, 6) + estrella(120, 18, 5) + estrella(200, 34, 4) + `<rect y="104" width="320" height="56" fill="#7a6aa5" ${L}/>
+        <g ${L} stroke-width="2.5"><path d="M70 104V50M250 104V50" /><circle cx="70" cy="44" r="9" fill="#ffe066"/><circle cx="250" cy="44" r="9" fill="#ffe066"/></g>
+        <g fill="#2b1055" opacity=".55"><ellipse cx="120" cy="136" rx="60" ry="9"/><ellipse cx="210" cy="148" rx="42" ry="7"/></g>` + arbol(120, 98, 1, "#2e7d6b") + arbol(205, 100, .8, "#2e7d6b") + `<g fill="#ffe066" opacity=".9"><circle cx="150" cy="70" r="2.5"/><circle cx="170" cy="84" r="2.5"/><circle cx="96" cy="76" r="2.5"/></g>`,
+      // 6 El mercado de las mariposas
+      () => cielo("#ffe3a8", "#fff6dd") + `<rect y="118" width="320" height="42" fill="#d9b779" ${L}/>
+        ${[[20, "#ff6f91"], [112, "#4fc3f7"], [204, "#ffca28"]].map(([x, c]) => `<g ${L}><rect x="${x}" y="72" width="96" height="46" fill="#a8704a"/><path d="M${x - 6} 72l10-34h72l10 34z" fill="${c}"/><path d="M${x + 14} 38l-4 34M${x + 38} 38l-2 34M${x + 62} 38l2 34M${x + 86} 38l4 34" stroke="#fff" stroke-width="5" fill="none"/><circle cx="${x + 24}" cy="66" r="7" fill="#ff6f6f" stroke-width="2"/><circle cx="${x + 44}" cy="66" r="7" fill="#ffd54f" stroke-width="2"/><circle cx="${x + 64}" cy="66" r="7" fill="#7bd36f" stroke-width="2"/></g>`).join("")}` + mariposa(70, 28, .8, "#ff6fb5") + mariposa(160, 20, .7, "#4fc3f7", "#c5eaff") + mariposa(260, 26, .8, "#ffca28", "#fff0b0") + mariposa(210, 140, .6, "#9b6ae8", "#dccaff"),
+      // 7 La biblioteca encantada
+      () => `<rect width="320" height="160" fill="#6a4a3a"/><rect y="132" width="320" height="28" fill="#4a3226" ${L}/>
+        ${[0, 1].map(f => { const y = 16 + f * 56; const cs = ["#e53935", "#ffca28", "#43a047", "#1e88e5", "#8e24aa", "#fb8c00"]; let x = 12, s = ""; for (let i = 0; i < 12; i++){ const w = 14 + (i * 7) % 10, h = 30 + (i * 11) % 14; s += `<rect x="${x}" y="${y + 44 - h}" width="${w}" height="${h}" fill="${cs[(i + f * 2) % 6]}" ${L} stroke-width="2"/>`; x += w + 2; } return s + `<rect x="4" y="${y + 44}" width="312" height="8" fill="#8d5a3b" ${L}/>`; }).join("")}
+        <g transform="translate(160,98)"><path d="M0 6C-20-8-44-4-52 4v30c10-6 32-8 52 4z" fill="#fff6dd" ${L}/><path d="M0 6C20-8 44-4 52 4v30c-10-6-32-8-52 4z" fill="#ffeab0" ${L}/><path d="M-40 12q16-4 32 2M-40 20q16-4 32 2M8 14q16-6 32-2M8 22q16-6 32-2" stroke="#b08a6a" stroke-width="2" fill="none"/></g>` + brillo(120, 84, 8, "#ffe066") + brillo(205, 80, 10, "#ffe066") + brillo(160, 70, 6, "#fff"),
+      // 8 El río de las estrellas
+      () => cielo("#1a1b5e", "#4c5bd4") + [[30, 20], [90, 40], [150, 14], [220, 30], [280, 18], [260, 56], [60, 62]].map(([x, y]) => estrella(x, y, 6)).join("") + `<path d="M0 100q60-20 120 0t120 0 80 0V160H0z" fill="#2a8fe0" ${L}/><path d="M0 120q60-14 120 0t120 0 80 0" fill="none" stroke="#9fdcff" stroke-width="3"/>
+        <path d="M0 96q40-30 90-14t120 8 110-14V104H0z" fill="#2e7d6b" ${L} opacity=".0"/>` + estrella(70, 132, 7, "#fff3a0") + estrella(150, 140, 6, "#fff3a0") + estrella(220, 128, 8, "#fff3a0") + estrella(280, 144, 5, "#fff3a0") + `<path d="M250 20l-60 50" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/>` + estrella(252, 18, 9, "#fff") + `<g ${L}><path d="M0 100q30-26 70-12v14H0z" fill="#5cc25f"/><path d="M250 98q30-14 70-6v14h-70z" fill="#5cc25f"/></g>`,
+      // 9 El bosque de los acertijos
+      () => cielo("#b4e8a8", "#e9f9d8") + pasto(112, "#4eb25a") + arbol(30, 100, 1.2, "#2e8b4a") + arbol(290, 100, 1.2, "#2e8b4a") + arbol(90, 108, .9, "#3fae50") + arbol(240, 108, .9, "#3fae50") +
+        `<g transform="translate(160,70)"><rect x="-6" y="14" width="12" height="60" fill="#8d5a3b" ${L}/><ellipse cy="0" rx="26" ry="28" fill="#b98a5e" ${L}/><ellipse cy="8" rx="16" ry="16" fill="#f1dcc0" stroke="${K}" stroke-width="2"/><circle cx="-10" cy="-8" r="10" fill="#fff" ${L} stroke-width="2.5"/><circle cx="10" cy="-8" r="10" fill="#fff" ${L} stroke-width="2.5"/><circle cx="-9" cy="-7" r="4" fill="${K}"/><circle cx="9" cy="-7" r="4" fill="${K}"/><path d="M-4 0l4 7 4-7z" fill="#ffb300" ${L} stroke-width="2"/><path d="M-22-20l6 10M22-20l-6 10" ${L}/></g>
+        <text x="214" y="46" font-size="40" font-weight="900" fill="#ffca28" stroke="${K}" stroke-width="3" paint-order="stroke" font-family="system-ui,sans-serif">?</text><text x="98" y="56" font-size="26" font-weight="900" fill="#ff8aa0" stroke="${K}" stroke-width="2.5" paint-order="stroke" font-family="system-ui,sans-serif">?</text>`,
+      // 10 La fuente mágica
+      () => cielo("#a5e4ff", "#e4f8ff") + `<rect y="120" width="320" height="40" fill="#c8c2d8" ${L}/>` + arbol(36, 104, 1) + arbol(284, 104, 1) +
+        `<ellipse cx="160" cy="132" rx="90" ry="18" fill="#9aa0bf" ${L}/><ellipse cx="160" cy="128" rx="80" ry="13" fill="#4fc3f7" ${L} stroke-width="2.5"/><path d="M150 126h20v-34h-20z" fill="#c8c2d8" ${L}/><ellipse cx="160" cy="92" rx="34" ry="9" fill="#9aa0bf" ${L}/><ellipse cx="160" cy="90" rx="28" ry="6" fill="#4fc3f7" stroke="${K}" stroke-width="2"/>
+        <path d="M160 88C150 60 120 52 112 78M160 88C170 60 200 52 208 78M160 88V44" fill="none" stroke="#6fd2ff" stroke-width="5" stroke-linecap="round"/><path d="M160 88C150 60 120 52 112 78M160 88C170 60 200 52 208 78M160 88V44" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>` + brillo(160, 36, 9, "#ffe066") + brillo(110, 60, 6, "#ff9ad1") + brillo(212, 60, 6, "#b8a2ff") + brillo(136, 50, 5) + brillo(186, 48, 5),
+      // 11 El techo de la panadería
+      () => cielo("#ffb27a", "#ffe3b8") + `<circle cx="260" cy="44" r="24" fill="#fff0a8"/>` + nube(60, 36, .9, "#fff6e8") +
+        `<path d="M20 160V108l90-50 90 50v52z" fill="#e8a97a" ${L}/><path d="M10 112L110 54l100 58" fill="none" stroke="#a65f3a" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><path d="M14 112L110 58l96 54" fill="none" stroke="#c76b4a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+        <rect x="140" y="38" width="22" height="34" fill="#b05a3a" ${L}/><g fill="#fff" opacity=".9" ${L} stroke-width="2"><circle cx="154" cy="26" r="8"/><circle cx="164" cy="12" r="10"/></g>
+        <path d="M230 160v-50h80v50z" fill="#d38b5d" ${L}/><path d="M222 112h96l-12-18h-72z" fill="#e53935" ${L}/>
+        <g transform="translate(110,132)"><ellipse rx="22" ry="12" fill="#e8b45f" ${L}/><path d="M-12-4q12-8 24 0M-14 2q14-8 28 0" stroke="#b27a30" stroke-width="2.5" fill="none"/></g><g transform="translate(270,138)"><path d="M-18 6q0-18 18-18t18 18z" fill="#e8b45f" ${L}/></g>`,
+      // 12 El museo dormido
+      () => `<rect width="320" height="160" fill="#e6d8c3"/><rect y="124" width="320" height="36" fill="#a8876a" ${L}/>
+        ${[30, 94, 226, 290].map(x => `<g ${L}><rect x="${x - 12}" y="26" width="24" height="98" fill="#fff6e8"/><rect x="${x - 17}" y="20" width="34" height="10" rx="2" fill="#f1e2c8"/><rect x="${x - 17}" y="120" width="34" height="8" rx="2" fill="#f1e2c8"/></g>`).join("")}
+        <g ${L}><rect x="128" y="34" width="64" height="48" rx="4" fill="#ffd9a8"/><rect x="134" y="40" width="52" height="36" fill="#9ad3ff" stroke-width="2"/><path d="M134 76l16-18 14 12 10-8 12 14z" fill="#5cc25f" stroke-width="2"/><circle cx="172" cy="52" r="6" fill="#ffe066" stroke-width="2"/></g>
+        <g ${L}><path d="M140 124V104a20 20 0 0 1 40 0v20z" fill="#d8c8a8"/><circle cx="160" cy="92" r="11" fill="#e9dcc2"/></g><path d="M148 90q4 3 8 0M164 90q4 3 8 0" stroke="${K}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <g font-family="system-ui,sans-serif" font-weight="900" fill="#7b8cff" stroke="${K}" stroke-width="2" paint-order="stroke"><text x="186" y="84" font-size="22">z</text><text x="200" y="66" font-size="30">Z</text><text x="220" y="42" font-size="38">Z</text></g>`,
+      // 13 La escalera del reloj
+      () => cielo("#8e9bff", "#d6dbff") + `<g ${L}><circle cx="160" cy="70" r="58" fill="#fff6dd"/><circle cx="160" cy="70" r="48" fill="#fff" stroke-width="2"/></g>` + [...Array(12)].map((_, i) => { const a = i * Math.PI / 6; return `<line x1="${160 + 40 * Math.sin(a)}" y1="${70 - 40 * Math.cos(a)}" x2="${160 + 46 * Math.sin(a)}" y2="${70 - 46 * Math.cos(a)}" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`; }).join("") +
+        `<path d="M160 70V38M160 70l22 12" ${L} stroke-width="5"/><circle cx="160" cy="70" r="5" fill="#ff6fb5" ${L} stroke-width="2"/>
+        <g fill="#c8a8ff" ${L}><path d="M30 160v-22h36v-22h36v-22h36v-22h36v-22h36" fill="none" stroke-width="0"/><rect x="20" y="136" width="64" height="24"/><rect x="56" y="114" width="64" height="46"/><rect x="92" y="92" width="64" height="68" opacity="0"/><rect x="236" y="136" width="64" height="24"/><rect x="200" y="114" width="64" height="46"/></g>`,
+      // 14 El parque de los globos
+      () => cielo("#9fe0ff", "#e8f8ff") + nube(250, 34, .8) + pasto(122) + globo(60, 50, "#ff5d8f") + globo(100, 34, "#ffca28") + globo(150, 56, "#4fc3f7") + globo(206, 38, "#7bd36f") + globo(256, 62, "#b07cff") + globo(30, 84, "#fb8c00", .8) + `<path d="M60 78q-6 40 20 60M100 62q-4 40-20 76M150 84q10 30-70 54M206 66q-30 40-126 72M256 90q-40 30-176 48M30 108q20 20 50 30" stroke="${K}" stroke-width="1.5" fill="none" opacity=".5"/>` + arbol(285, 112, .9),
+      // 15 El barco del puerto
+      () => cielo("#9ad8ff", "#f1fbff") + `<circle cx="70" cy="40" r="22" fill="#fff0a8"/>` + nube(250, 32, .9) + `<rect y="108" width="320" height="52" fill="#2f9be0" ${L}/><path d="M0 120q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="none" stroke="#bfe9ff" stroke-width="3"/>
+        <path d="M80 98h140l-20 26H100z" fill="#e53935" ${L}/><path d="M92 98h116" stroke="#fff" stroke-width="4"/><path d="M150 98V30" ${L}/><path d="M154 34l50 52h-50z" fill="#fff6dd" ${L}/><path d="M146 44l-40 42h40z" fill="#ffd9a8" ${L}/><path d="M150 30l20-6-20-6z" fill="#ffca28" ${L} stroke-width="2"/>
+        <g ${L}><rect x="254" y="104" width="66" height="10" fill="#a8704a"/><path d="M264 114v30M308 114v30" /></g><g fill="#fff" opacity=".9"><path d="M20 70q8-8 16 0 8-8 16 0" stroke="${K}" stroke-width="2.5" fill="none"/></g>`,
+      // 16 La montaña de nubes
+      () => cielo("#6fb5ff", "#cfe9ff") + `<path d="M0 160V110l60-60 50 44 60-72 70 78 40-30 40 30v60z" fill="#8d9bb8" ${L}/><path d="M130 22l-26 36 14-6 12 10 10-8 14 8z" fill="#fff" ${L} stroke-width="2.5"/><path d="M60 50L40 72l12-4 8 6 8-6 10 8z" fill="#fff" ${L} stroke-width="2.5"/>` + nube(60, 112, 1.3) + nube(160, 124, 1.5) + nube(262, 110, 1.2) + nube(250, 30, .8) + `<path d="M130 24V8l16 5-16 5" fill="#ff6fb5" ${L} stroke-width="2.5"/>`,
+      // 17 El laberinto de espejos
+      () => cielo("#d9b8ff", "#f4e8ff") + `<rect y="130" width="320" height="30" fill="#8d7aa8" ${L}/>` + [[40, "#9ad3ff"], [120, "#ffd1e8"], [200, "#c8f2d0"], [270, "#ffe9a8"]].map(([x, c], i) => `<g ${L}><rect x="${x - 26}" y="${22 + (i % 2) * 8}" width="52" height="98" rx="26" fill="#ffca28"/><rect x="${x - 19}" y="${29 + (i % 2) * 8}" width="38" height="84" rx="19" fill="${c}" stroke-width="2"/><path d="M${x - 10} ${44 + (i % 2) * 8}l16-8M${x - 10} ${60 + (i % 2) * 8}l24-12" stroke="#fff" stroke-width="4" opacity=".8" fill="none"/></g>`).join("") + brillo(80, 70, 9) + brillo(160, 40, 7, "#ffe066") + brillo(240, 78, 8) + mariposa(160, 100, .8, "#ff6fb5"),
+      // 18 El faro del mar
+      () => cielo("#16205e", "#5b6bd6") + estrella(40, 24, 5) + estrella(280, 30, 6) + estrella(80, 62, 4) + `<path d="M170 38L320 6v52z" fill="#fff6a8" opacity=".55"/><path d="M150 38L0 14v50z" fill="#fff6a8" opacity=".35"/><rect y="118" width="320" height="42" fill="#2a8fe0" ${L}/><path d="M0 130q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="none" stroke="#9fdcff" stroke-width="3"/>
+        <path d="M70 124q40-30 90-18l20 18z" fill="#6c6a85" ${L}/><path d="M140 118l8-66h24l8 66z" fill="#fff" ${L}/><path d="M144 98h36l-2 16h-32zM148 70h28l-2 16h-24z" fill="#e53935" stroke="${K}" stroke-width="2.5"/><rect x="146" y="38" width="28" height="14" fill="#ffe066" ${L}/><path d="M142 38l18-16 18 16z" fill="#e53935" ${L}/>`,
+      // 19 El puente del arcoíris
+      () => cielo("#9fdcff", "#f2fbff") + nube(48, 112, 1.2) + nube(274, 112, 1.2) + ["#e53935", "#fb8c00", "#ffd54f", "#7bd36f", "#4fc3f7", "#9b6ae8"].map((c, i) => `<path d="M${40 + i * 9} 124a${120 - i * 9} ${96 - i * 9} 0 0 1 ${240 - (40 + i * 9) * 0 - i * 0}  0" fill="none" stroke="${c}" stroke-width="9" opacity="0"/>`).join("") +
+        ["#e53935", "#fb8c00", "#ffd54f", "#7bd36f", "#4fc3f7", "#9b6ae8"].map((c, i) => `<path d="M${28 + i * 8} 124A${132 - i * 8} ${100 - i * 8} 0 0 1 ${292 - i * 8} 124" fill="none" stroke="${c}" stroke-width="9"/>`).join("") + nube(40, 124, 1.1) + nube(280, 124, 1.1) + brillo(160, 20, 8, "#ffe066") + brillo(70, 40, 6) + brillo(250, 44, 6) + mariposa(160, 70, .7, "#ff6fb5"),
+      // 20 La guarida de la mariposa oscura
+      () => cielo("#1a0b33", "#4a1c7a") + `<path d="M0 160V80l30-30 20 30 30-50 20 40 30-30 20 50V160z" fill="#2b1055" opacity=".7"/><path d="M0 160V120q30-30 60-10t60-20 60 20 60-10 80 20V160z" fill="#150a2e" ${L}/>
+        <g transform="translate(160,76) scale(1.7)" ${L} stroke-width="2"><path d="M0 0C-12-34-52-34-48-8-46 8-16 12 0 2z" fill="#6a1b9a"/><path d="M0 0C12-34 52-34 48-8 46 8 16 12 0 2z" fill="#6a1b9a"/><path d="M0 2C-10 12-34 20-26 34-18 42-2 26 0 8z" fill="#8e24aa"/><path d="M0 2C10 12 34 20 26 34 18 42 2 26 0 8z" fill="#8e24aa"/><circle cx="-26" cy="-12" r="6" fill="#e1bee7" stroke-width="1.5"/><circle cx="26" cy="-12" r="6" fill="#e1bee7" stroke-width="1.5"/><rect x="-3" y="-8" width="6" height="30" rx="3" fill="#150a2e"/><circle cx="-1.6" cy="-4" r="1.5" fill="#ff5252" stroke="none"/><circle cx="1.6" cy="-4" r="1.5" fill="#ff5252" stroke="none"/></g>
+        <path d="M70 20l-14 26h12l-10 22 24-30H70l10-18z" fill="#ffe066" ${L} stroke-width="2"/>` + brillo(250, 30, 8, "#e1bee7") + brillo(60, 120, 6, "#e1bee7") + brillo(268, 112, 7, "#e1bee7")
+    ];
+  })();
+
   // Ladybug: misión por etapas
   function jugarMision(){
     const ETAPAS = [
@@ -1616,12 +1716,14 @@
       const etapa = () => {
         const e = g.e, it = banco(g.orden[e]); let fallos = 0;
         const pct = Math.round(e / TOT * 100);
-        $("gameBody").innerHTML = `<div style="display:flex;align-items:center;gap:8px"><span class="carita" style="width:1.8em;height:1.8em">${ic("bicho")}</span>
-          <div style="flex:1;height:12px;background:rgba(255,255,255,.2);border-radius:8px;overflow:hidden"><div style="height:100%;width:${pct}%;background:#ffca28"></div></div>
-          <span class="carita" style="width:1.8em;height:1.8em">${ic("oscura")}</span></div>
-          <p class="info">Etapa ${e + 1} de ${TOT}${e === TOT / 2 ? " · ¡ya pasaste la mitad!" : e === TOT - 1 ? " · ¡la última!" : ""}</p>
-          <div style="align-self:center;width:54px;height:54px" class="anim">${ic(ICONOS[e % ICONOS.length])}</div>
-          <p class="q" style="font-size:1.3rem">${ETAPAS[e]}</p>
+        $("gameBody").innerHTML = `<div style="position:relative;margin:4px 6px 2px">
+            <div style="height:14px;background:rgba(255,255,255,.22);border-radius:8px;overflow:visible;position:relative;border:2px solid rgba(255,255,255,.35)">
+              <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#ff6fb5,#ffca28);border-radius:6px;transition:width .6s"></div>
+              <span style="position:absolute;top:-12px;left:calc(${pct}% - 17px);width:34px;height:34px;transition:left .6s">${ic("bicho")}</span>
+              <span style="position:absolute;top:-12px;right:-6px;width:34px;height:34px">${ic("oscura")}</span></div></div>
+          <p class="info" style="margin-top:12px">Etapa ${e + 1} de ${TOT}${e === TOT / 2 ? " · ¡ya pasaste la mitad!" : e === TOT - 1 ? " · ¡la última!" : ""}</p>
+          <div class="escMision"><svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" style="width:100%;display:block">${ESC_M[e % ESC_M.length]()}</svg><span class="nEtapa">${e + 1}</span></div>
+          <p class="q" style="font-size:1.35rem;margin:2px 0">${ETAPAS[e]}</p>
           <p class="info">Para seguir tenés que resolver este desafío:</p>
           <p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
           <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div>
