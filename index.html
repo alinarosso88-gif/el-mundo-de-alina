@@ -114,6 +114,17 @@
   #instalarBtn { display:none; margin:18px auto 0; background:#ffca28; color:#2b1055; border:none; border-radius:999px; padding:14px 22px; font-size:1.05rem; font-weight:700; cursor:pointer; }
   #instalarAyuda { display:none; text-align:center; font-size:.9rem; opacity:.9; margin:14px 8px 0; }
 </style>
+<style>
+#cumple{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(20,8,50,.72);animation:cumpleIn .5s ease-out}
+#cumple .cartel{background:linear-gradient(160deg,#fff,#ffe6f2);color:#2b1055;border-radius:26px;padding:28px 22px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.45);border:4px solid #ff6fb5;position:relative;overflow:hidden}
+#cumple h2{margin:6px 0 12px;font-size:1.7rem;line-height:1.2;color:#d81b60}
+#cumple p{margin:0 0 12px;font-size:1.08rem;line-height:1.45}
+#cumple .gran{font-size:3rem;line-height:1}
+#cumple button{margin-top:8px;border:0;border-radius:16px;padding:14px 26px;font-size:1.1rem;font-weight:800;background:#ffca28;color:#2b1055;cursor:pointer;font-family:inherit}
+#cumple .conf{position:absolute;top:-20px;font-size:1.4rem;animation:cae 4s linear infinite;pointer-events:none}
+@keyframes cae{to{transform:translateY(480px) rotate(360deg)}}
+@keyframes cumpleIn{from{opacity:0}to{opacity:1}}
+</style>
 </head>
 <body>
 
@@ -492,7 +503,7 @@
   personajes.forEach(p => {
     const b = document.createElement("button");
     b.className = "card";
-    b.innerHTML = `<div class="avatar-sm">${avatar(p)}</div><div><b>${p.nombre}</b><span>${p.desc}</span></div>`;
+    b.innerHTML = `<div class="avatar-sm">${avatar(p)}</div><div><b>${p.nombre}</b></div>`;
     b.onclick = () => llamar(p);
     $("cards").appendChild(b);
   });
@@ -1744,7 +1755,7 @@
   })();
   function jugarTablero(){
     const mi = ++sesionTablero, contra = modo === "contra";
-    const META = META_C, BONUS = [5, 13, 22, 31, 40, 49, 56], TRAMPA = [9, 17, 26, 35, 44, 52, 58];
+    const META = META_C, BONUS = [5, 13, 22, 31, 40, 49, 56], TRAMPA = [3, 8, 10, 16, 19, 24, 27, 29, 34, 38, 43, 46, 51, 54, 58];
     const pos = { a: 0, p: 0 }; let turno = "a", turnos = 0, mazo = [], preguntas = 0;
     const vivo = () => mi === sesionTablero && !!$("mapa");
     const espera = ms => new Promise(res => setTimeout(res, ms));
@@ -1916,6 +1927,18 @@
     }
     mostrarPregunta();
   }
+</script>
+<div id="cumple"><div class="cartel">
+  <span class="conf" style="left:8%;animation-delay:0s">🎉</span><span class="conf" style="left:30%;animation-delay:1.2s">✨</span><span class="conf" style="left:55%;animation-delay:.6s">🎈</span><span class="conf" style="left:80%;animation-delay:2s">🎉</span>
+  <div class="gran">🎂</div>
+  <h2>¡Feliz cumple, Princesa!!!</h2>
+  <p>Te hicimos esta aplicación para que puedas jugar diferentes juegos.</p>
+  <p>Esperamos que te gusten.</p>
+  <p><b>¡Te amamos!</b> 💖</p>
+  <button id="cumpleBtn">¡A jugar!</button>
+</div></div>
+<script>
+document.getElementById("cumpleBtn").onclick = function(){ var c = document.getElementById("cumple"); c.style.transition = "opacity .3s"; c.style.opacity = 0; setTimeout(function(){ c.remove(); }, 300); };
 </script>
 </body>
 </html>
