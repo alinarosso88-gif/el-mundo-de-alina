@@ -157,7 +157,7 @@
     <button class="gamebtn" id="jNumeros"><span class="ico">🔢</span><span>Números escondidos<small>Encontralos en orden</small></span></button>
     <button class="gamebtn" id="jPurificar"><span class="ico">🦋</span><span>Purificá al villano<small>Resolvé cuentas y ayudalo</small></span></button>
     <button class="gamebtn" id="jQuien"><span class="ico">🕵️</span><span>¿Quién fue?<small>Un caso difícil de detective</small></span></button>
-    <button class="gamebtn" id="jMision"><span class="ico">🐞</span><span>Misión de Ladybug<small>Una aventura por etapas</small></span></button>
+    <button class="gamebtn" id="jMision"><span class="ico">🐞</span><span>Misión de Ladybug<small>Corré y saltá por los techos de París</small></span></button>
     <button class="gamebtn" id="jAkuma"><span class="ico">🦋</span><span>Atrapá la akuma<small>Ayudá y purificá</small></span></button>
     <button class="gamebtn" id="jAdivinanzas"><span class="ico">🐱</span><span>Adivinanzas<small>Pensá y adiviná</small></span></button>
     <button class="gamebtn" id="jGalletitas"><span class="ico">🍪</span><span>Las misiones de Tikki<small>Galletitas y desafíos de lógica</small></span></button>
@@ -194,7 +194,7 @@
       pitch:1.15, rate:0.92,
       saludo:"¡Hola, Alina! ¡Qué alegría verte! ¿A qué jugamos hoy?",
       menu:["¿A qué jugamos ahora?","¡Elegí otro juego, Alina!"],
-      intro:{ akuma:"¡Una akuma akumatizó a unas personas! Primero tenemos que ayudarlas a calmarse, y después capturar la mariposa oscura. ¡Vamos!", mision:"¡Esta es una misión de heroína! Hay que cruzar veinte lugares de la ciudad. En cada uno hay un desafío. ¡Vamos a atrapar a la mariposa oscura!", purificar:"Un villano akumatizado necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
+      intro:{ akuma:"¡Una akuma akumatizó a unas personas! Primero tenemos que ayudarlas a calmarse, y después capturar la mariposa oscura. ¡Vamos!", mision:"¡Misión de heroína! Vamos a correr por los techos de París. Tocá la pantalla para saltar las chimeneas y las mariposas oscuras, juntá estrellas y atrapá a la mariposa oscura. ¡Vamos!", purificar:"Un villano akumatizado necesita ayuda. Resolvé las cuentas para purificarlo, como hacemos en la ciudad.", quien:"Una mariposa oscura se escondió. Tenés que descubrir sobre quién se posó. ¡Este caso es difícil, pensalo bien!", numeros:"Hay números escondidos. Buscá el uno, después el dos, y así en orden. ¡Si te equivocás, hay que empezar de nuevo!", error:"¡Una misión de detective! Mirá bien cada dibujo y descubrí qué está mal.", memoria:"¡Vamos a poner a prueba tu memoria! Encontrá las parejas.",
               quiz:"¡Una misión de preguntas! Estoy segura de que sabés muchas respuestas.",
               logica:"¡Misiones de lógica! Tenés que descubrir qué sigue. ¡Vos podés!" },
       frases:{ ok:["¡Excelente, Alina!","¡Lo lograste!","¡Qué inteligente sos!"],
@@ -1043,22 +1043,202 @@
     escRobot(), escCasa(), escSombrasDer(), escReflejoCasa(), escCollar("RYB"), escCollar("RB"), escMesa("tenedor"), escMesa("vaso"), escMunecas()
   );
 
-  // Temas de los dibujos (para no mostrar dos parecidos en la misma partida)
-  const FAMILIA_ESC = (() => { const f = Array.from({ length: 50 }, (_, i) => "u" + i); const g = (n, ids) => ids.forEach(i => { f[i] = n; });
+  // ---------- 36 dibujos nuevos con ideas distintas (cada uno trae su "tema" f) ----------
+  (() => {
+    const cielo = (c = "#cfe8ff") => rect(0, 0, 300, 300, c), pasto = (y, c = "#8bc34a") => rect(0, y, 300, 300 - y, c), sol = (x, y, rr = 22) => circ(x, y, rr, "#ffd54f");
+    const ell = (cx, cy, rx, ry, f, extra = "") => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${f}" ${extra}/>`;
+    const poly = (p, f, extra = "") => `<polygon points="${p}" fill="${f}" ${extra}/>`;
+    const lin = (x1, y1, x2, y2, c, w = 4) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+    const tr = (d, c, w, extra = "") => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
+    const tx = (x, y, t, sz, f = "#fff") => `<text x="${x}" y="${y}" font-size="${sz}" font-weight="800" text-anchor="middle" fill="${f}" font-family="system-ui,sans-serif">${t}</text>`;
+    const ojo = (x, y, rr = 6) => circ(x, y, rr, "#fff", 'stroke="#333" stroke-width="1.5"') + circ(x + 1, y, rr * .45, "#222");
+    const bord = 'stroke="#333" stroke-width="3"';
+    const D = (f, o) => Object.assign({ f }, o);
+    ESCENAS.push(
+      D("lugar", { pista: "Mirá bien el cielo. ¿Quién vive normalmente ahí arriba, entre las nubes?", explica: "Los peces viven en el agua, no vuelan por el cielo entre las nubes y los pájaros.",
+        hit: (x, y) => cerca(x, y, 150, 135, 42), marca: marcaCirc(150, 135, 42),
+        dibujo: () => cielo() + sol(250, 45) + nube(20, 60) + nube(190, 80) + pasto(235) + rect(40, 195, 12, 45, "#8d6e63") + circ(46, 178, 28, "#43a047")
+          + tr("M 60 150 q 8 -9 16 0 q 8 -9 16 0", "#333", 3) + tr("M 230 160 q 8 -9 16 0 q 8 -9 16 0", "#333", 3)
+          + ell(150, 135, 32, 17, "#ff9800") + poly("178,135 206,118 206,152", "#ff9800") + poly("140,121 155,100 166,123", "#fb8c00") + ojo(133, 130, 5) + lin(118, 138, 126, 142, "#c25e00", 2) }),
+      D("lugar", { pista: "Pensá en el clima de una playa. ¿Qué cosa no puede estar ahí con tanto sol?", explica: "Un muñeco de nieve se derretiría enseguida en la playa con tanto calor.",
+        hit: (x, y) => dentro(x, y, 170, 118, 80, 152), marca: marcaRect(170, 118, 80, 152),
+        dibujo: () => cielo() + sol(60, 50, 24) + rect(0, 150, 300, 40, "#29b6f6") + rect(0, 185, 300, 115, "#ffe0a3")
+          + poly("40,235 48,235 53,112 45,112", "#8d6e43") + ell(48, 108, 36, 10, "#2e7d32", 'transform="rotate(-25 48 108)"') + ell(48, 108, 36, 10, "#2e7d32", 'transform="rotate(25 48 108)"') + ell(48, 104, 30, 9, "#43a047")
+          + circ(210, 235, 32, "#fff", 'stroke="#90a4ae" stroke-width="2"') + circ(210, 190, 24, "#fff", 'stroke="#90a4ae" stroke-width="2"') + circ(210, 158, 18, "#fff", 'stroke="#90a4ae" stroke-width="2"')
+          + rect(198, 122, 24, 18, "#37474f") + rect(192, 138, 36, 5, "#37474f") + circ(204, 154, 2.5, "#222") + circ(216, 154, 2.5, "#222") + poly("210,159 232,163 210,166", "#ff7043") + rect(190, 172, 40, 7, "#e53935") + circ(210, 192, 3, "#222") + circ(210, 204, 3, "#222")
+          + lin(188, 190, 165, 170, "#6d4c41", 4) + lin(232, 190, 255, 170, "#6d4c41", 4) }),
+      D("lugar", { pista: "Un pingüino necesita frío. ¿Cómo es el lugar donde está?", explica: "Los pingüinos viven en lugares helados, no en un desierto con cactus y mucho calor.",
+        hit: (x, y) => dentro(x, y, 165, 148, 82, 118), marca: marcaRect(165, 148, 82, 118),
+        dibujo: () => cielo("#ffe9b0") + circ(250, 50, 26, "#ff9800") + ell(80, 285, 150, 55, "#f2c46d") + ell(250, 290, 120, 50, "#e9b85a")
+          + rect(60, 160, 18, 112, "#2e9d4f", 'rx="9"') + rect(36, 190, 42, 12, "#2e9d4f", 'rx="6"') + rect(36, 168, 12, 34, "#2e9d4f", 'rx="6"') + rect(78, 205, 34, 12, "#2e9d4f", 'rx="6"') + rect(100, 182, 12, 35, "#2e9d4f", 'rx="6"')
+          + ell(172, 218, 8, 26, "#263238", 'transform="rotate(15 172 218)"') + ell(238, 218, 8, 26, "#263238", 'transform="rotate(-15 238 218)"') + ell(205, 215, 30, 44, "#263238") + ell(205, 224, 20, 34, "#fff") + circ(205, 172, 19, "#263238")
+          + circ(198, 168, 3.5, "#fff") + circ(212, 168, 3.5, "#fff") + circ(198, 168, 1.6, "#000") + circ(212, 168, 1.6, "#000") + poly("197,176 213,176 205,190", "#ff9800") + ell(192, 260, 11, 5, "#ff9800") + ell(218, 260, 11, 5, "#ff9800") }),
+      D("lugar", { pista: "Los barcos navegan. ¿Hay agua debajo de este barco?", explica: "Un barco necesita agua para navegar. Este está en medio de un prado, sobre el pasto.",
+        hit: (x, y) => dentro(x, y, 80, 82, 140, 162), marca: marcaRect(80, 82, 140, 162),
+        dibujo: () => cielo() + nube(30, 50) + nube(200, 40) + pasto(205) + ell(60, 215, 120, 35, "#7cb342") + circ(30, 262, 5, "#f48fb1") + circ(260, 255, 5, "#ffee58") + circ(240, 275, 5, "#f48fb1") + circ(50, 280, 5, "#ffee58")
+          + rect(255, 160, 12, 50, "#8d6e63") + circ(261, 145, 28, "#43a047")
+          + poly("85,205 215,205 192,242 108,242", "#8d4a2b") + rect(88, 205, 124, 8, "#fff") + lin(150, 90, 150, 205, "#5d4037", 5) + poly("155,100 155,200 207,200", "#fff6dd", 'stroke="#555" stroke-width="2"') + poly("145,115 145,200 103,200", "#ffd9a8", 'stroke="#555" stroke-width="2"') + poly("150,88 176,97 150,106", "#e53935") }),
+      D("tiempo", { pista: "Mirá el cielo: ¿es de día o es de noche? ¿Qué se ve en ese cielo?", explica: "Es de noche, hay luna y estrellas. El sol no puede estar brillando en el cielo a la noche.",
+        hit: (x, y) => cerca(x, y, 220, 95, 52), marca: marcaCirc(220, 95, 52),
+        dibujo: () => cielo("#101035") + [[30, 30], [90, 55], [140, 25], [180, 60], [270, 30], [40, 110], [120, 100], [150, 150], [280, 140]].map(([x, y]) => circ(x, y, 2.5, "#fff")).join("")
+          + circ(60, 70, 22, "#fffde7") + circ(71, 64, 20, "#101035")
+          + [...Array(8)].map((_, i) => { const a = i * Math.PI / 4; return lin(220 + 38 * Math.cos(a), 95 + 38 * Math.sin(a), 220 + 52 * Math.cos(a), 95 + 52 * Math.sin(a), "#ffd54f", 5); }).join("") + circ(220, 95, 32, "#ffd54f")
+          + rect(0, 215, 300, 85, "#1b1b4b") + rect(20, 170, 60, 60, "#2a2a6a") + rect(100, 150, 50, 80, "#2a2a6a") + rect(200, 180, 70, 50, "#2a2a6a") + [[30, 185], [55, 185], [112, 165], [112, 190], [215, 195], [245, 195]].map(([x, y]) => rect(x, y, 14, 14, "#ffe082")).join("") }),
+      D("forma", { pista: "Pensá en cómo ruedan las ruedas. ¿Qué forma tienen las de este auto?", explica: "Las ruedas tienen que ser redondas para poder rodar. Estas son cuadradas.",
+        hit: (x, y) => dentro(x, y, 68, 181, 58, 58) || dentro(x, y, 178, 181, 58, 58), marca: marcaRect(68, 181, 58, 58) + marcaRect(178, 181, 58, 58),
+        dibujo: () => cielo() + sol(250, 45) + nube(30, 50) + rect(0, 215, 300, 85, "#5f6368") + [0, 90, 180, 270].map(x => rect(x, 262, 50, 5, "#fff")).join("")
+          + rect(55, 150, 190, 50, "#e53935", 'rx="12"') + poly("95,150 115,115 190,115 215,150", "#ef5350") + poly("108,148 122,122 148,122 148,148", "#e3f2fd") + poly("154,148 154,122 183,122 200,148", "#e3f2fd")
+          + rect(75, 188, 44, 44, "#222", 'rx="3"') + rect(88, 201, 18, 18, "#9e9e9e") + rect(185, 188, 44, 44, "#222", 'rx="3"') + rect(198, 201, 18, 18, "#9e9e9e") }),
+      D("construccion", { pista: "Pensá cómo entramos a una casa. ¿Dónde está la puerta de esta?", explica: "La puerta de una casa va en la pared, para poder entrar caminando. Esta está en el techo.",
+        hit: (x, y) => dentro(x, y, 120, 90, 60, 66), marca: marcaRect(120, 90, 60, 66),
+        dibujo: () => cielo() + sol(50, 45) + nube(200, 40) + pasto(235) + rect(195, 85, 22, 45, "#8d6e63") + rect(65, 150, 170, 95, "#ffe0b2") + poly("45,152 150,65 255,152", "#c0392b")
+          + rect(128, 98, 44, 54, "#6d4c41", 'rx="6"') + circ(163, 127, 3.5, "#ffd54f") + rect(85, 175, 42, 42, "#bbdefb") + rect(173, 175, 42, 42, "#bbdefb") + lin(106, 175, 106, 217, "#fff", 3) + lin(85, 196, 127, 196, "#fff", 3) + lin(194, 175, 194, 217, "#fff", 3) + lin(173, 196, 215, 196, "#fff", 3) }),
+      D("construccion", { pista: "Una escalera tiene que apoyarse en algo firme. ¿Dónde termina esta escalera?", explica: "La escalera no toca la casa: se apoya en el aire y se caería. Tiene que quedar apoyada en la pared.",
+        hit: (x, y) => dentro(x, y, 50, 60, 100, 190), marca: marcaRect(50, 60, 100, 190),
+        dibujo: () => cielo() + sol(240, 35) + pasto(240) + rect(190, 95, 100, 145, "#ffe0b2") + poly("180,97 240,45 300,97", "#c0392b") + rect(215, 128, 45, 42, "#bbdefb") + rect(235, 200, 28, 40, "#6d4c41")
+          + lin(60, 240, 105, 70, "#a1887f", 6) + lin(92, 240, 137, 70, "#a1887f", 6) + [0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map(t => lin(60 + 45 * t, 240 - 170 * t, 92 + 45 * t, 240 - 170 * t, "#a1887f", 5)).join("") }),
+      D("falta", { pista: "Contá las ruedas de la bicicleta. ¿Cuántas tiene y cuántas debería tener?", explica: "Una bicicleta tiene dos ruedas. A esta le falta la rueda de atrás.",
+        hit: (x, y) => cerca(x, y, 95, 205, 44), marca: marcaCirc(95, 205, 44),
+        dibujo: () => cielo() + sol(250, 45) + nube(30, 50) + pasto(243) + circ(215, 205, 38, "none", 'stroke="#222" stroke-width="7"') + circ(215, 205, 5, "#555")
+          + lin(95, 205, 140, 150, "#e53935", 6) + lin(140, 150, 200, 150, "#e53935", 6) + lin(200, 150, 215, 205, "#e53935", 6) + lin(95, 205, 150, 205, "#e53935", 6) + lin(150, 205, 140, 150, "#e53935", 6)
+          + lin(200, 150, 192, 126, "#444", 5) + lin(182, 126, 210, 126, "#444", 6) + rect(122, 140, 34, 9, "#333", 'rx="4"') + circ(95, 205, 5, "#555") + circ(150, 205, 7, "#777") }),
+      D("falta", { pista: "Mirá la cara con atención. ¿Tiene todo lo que tiene una cara?", explica: "Una cara tiene dos ojos. A este dibujo le falta uno.",
+        hit: (x, y) => cerca(x, y, 188, 140, 32), marca: marcaCirc(188, 140, 30),
+        dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + circ(150, 110, 98, "#6d4c41") + circ(55, 170, 15, "#ffcc99") + circ(245, 170, 15, "#ffcc99") + circ(150, 160, 92, "#ffcc99")
+          + circ(112, 140, 18, "#fff", bord) + circ(114, 142, 8, "#2b1055") + tr("M 92 112 q 20 -14 40 0", "#5d4037", 5) + tr("M 168 112 q 20 -14 40 0", "#5d4037", 5)
+          + poly("150,150 138,185 162,185", "#f4a97b") + tr("M 105 205 q 45 38 90 0", "#c0392b", 6) + circ(90, 180, 11, "#ffab91") + circ(210, 180, 11, "#ffab91") }),
+      D("falta", { pista: "Mirá las patas de la mesa. ¿Todas llegan hasta el piso?", explica: "Una de las patas de la mesa es más corta y no llega al piso: la mesa se tambalearía.",
+        hit: (x, y) => dentro(x, y, 170, 156, 36, 96), marca: marcaRect(170, 156, 36, 96),
+        dibujo: () => rect(0, 0, 300, 300, "#e8f5e9") + rect(0, 248, 300, 52, "#d7ccc8") + rect(40, 140, 220, 20, "#8d6e63", 'rx="4"') + rect(52, 160, 16, 88, "#6d4c41") + rect(105, 160, 14, 88, "#6d4c41") + rect(181, 160, 14, 48, "#6d4c41") + rect(232, 160, 16, 88, "#6d4c41")
+          + rect(135, 108, 22, 32, "#4fc3f7", 'rx="4"') + circ(146, 100, 10, "#f06292") + circ(138, 96, 8, "#ec407a") + circ(155, 96, 8, "#ec407a") + lin(146, 106, 146, 112, "#388e3c", 3) + rect(205, 128, 28, 12, "#ffcc80", 'rx="3"') }),
+      D("falta", { pista: "Mirá las cuatro flores. ¿Tienen todas lo que necesitan para crecer?", explica: "A una de las flores le falta el tallo: está flotando en el aire, sin nada que la sostenga.",
+        hit: (x, y) => dentro(x, y, 160, 100, 70, 130), marca: marcaRect(160, 100, 70, 130),
+        dibujo: () => cielo("#e1f5fe") + pasto(210) + [55, 125, 195, 255].map((x, i) => (i === 2 ? "" : rect(x - 3, 150, 6, 75, "#388e3c") + ell(x + 12, 190, 11, 5, "#388e3c")) + [0, 1, 2, 3, 4, 5].map(k => circ(x + 13 * Math.cos(k * Math.PI / 3), 130 + 13 * Math.sin(k * Math.PI / 3), 9, ["#f06292", "#ffb300", "#ba68c8", "#ef5350"][i])).join("") + circ(x, 130, 8, "#ffd54f")).join("") }),
+      D("color", { pista: "Mirá bien los colores de las frutas del frutero. ¿Alguno no es como debería?", explica: "Las bananas son amarillas. Esta banana azul no es de verdad.",
+        hit: (x, y) => dentro(x, y, 120, 92, 75, 85), marca: marcaRect(120, 92, 75, 85),
+        dibujo: () => rect(0, 0, 300, 300, "#fff8e1") + rect(0, 230, 300, 70, "#d7a86e") + tr("M 130 172 Q 140 100 190 104", "#1e88e5", 17) + tr("M 178 178 Q 205 120 248 138", "#fdd835", 17) + tr("M 195 182 Q 232 140 262 168", "#fdd835", 17)
+          + circ(90, 172, 24, "#e53935") + circ(70, 190, 20, "#fb8c00") + lin(90, 150, 90, 142, "#5d4037", 3) + poly("55,185 245,185 218,246 82,246", "#8d6e63") + rect(48, 178, 204, 12, "#6d4c41", 'rx="6"') }),
+      D("partes", { pista: "Contá con calma los dedos de la mano.", explica: "Una mano tiene cinco dedos. A esta mano le dibujaron seis.",
+        hit: (x, y) => dentro(x, y, 85, 85, 130, 185), marca: marcaRect(85, 85, 130, 185),
+        dibujo: () => rect(0, 0, 300, 300, "#f3e5f5") + rect(88, 172, 124, 95, "#ffcc99", 'rx="28"') + [0, 1, 2, 3, 4, 5].map(i => rect(91 + i * 20, 180 - [52, 72, 84, 78, 66, 52][i], 17, [52, 72, 84, 78, 66, 52][i] + 10, "#ffcc99", 'rx="8"')).join("") + rect(80, 255, 140, 45, "#7e57c2", 'rx="6"') + tr("M 110 205 q 15 8 30 0", "#e0a979", 3) }),
+      D("partes", { pista: "Contá las patas de la araña, de a una.", explica: "Las arañas tienen ocho patas. Esta tiene solamente seis.",
+        hit: (x, y) => dentro(x, y, 50, 98, 200, 140), marca: marcaRect(50, 98, 200, 140),
+        dibujo: () => rect(0, 0, 300, 300, "#eceff1") + lin(150, 0, 150, 122, "#999", 2) + [[172, 140, "M 172 140 q 30 -30 55 -10 q 15 10 22 35"], [174, 152, "M 174 152 q 35 -2 60 20 q 10 10 12 30"], [170, 164, "M 170 164 q 25 20 42 50 q 3 6 4 12"], [128, 140, "M 128 140 q -30 -30 -55 -10 q -15 10 -22 35"], [126, 152, "M 126 152 q -35 -2 -60 20 q -10 10 -12 30"], [130, 164, "M 130 164 q -25 20 -42 50 q -3 6 -4 12"]].map(l => tr(l[2], "#212121", 6)).join("")
+          + ell(150, 152, 27, 23, "#212121") + circ(150, 122, 15, "#212121") + circ(144, 118, 3.5, "#fff") + circ(156, 118, 3.5, "#fff") + circ(143, 152, 7, "#e53935") + circ(157, 152, 7, "#e53935") }),
+      D("cuenta", { pista: "Fijate qué número tiene la torta y contá las velitas.", explica: "La torta dice 8, pero tiene solamente 7 velitas. Le falta una.",
+        hit: (x, y) => dentro(x, y, 88, 92, 124, 52), marca: marcaRect(88, 92, 124, 52),
+        dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + rect(0, 235, 300, 65, "#a1887f") + rect(70, 175, 160, 62, "#f8bbd0", 'rx="10"') + rect(70, 172, 160, 18, "#fff", 'rx="9"') + rect(90, 142, 120, 36, "#f48fb1", 'rx="8"')
+          + [0, 1, 2, 3, 4, 5, 6].map(i => { const x = 100 + i * 16.7; return rect(x - 3, 114, 6, 28, "#4fc3f7") + ell(x, 108, 4, 7, "#ffb300"); }).join("") + tx(150, 224, "8", 44, "#d81b60") }),
+      D("viento", { pista: "Mirá hacia dónde sopla el viento: fijate en la bandera, el árbol y las rayitas del viento.", explica: "El viento sopla hacia la derecha: la bandera, el árbol y las hojas van para ahí. El humo no puede ir para el otro lado.",
+        hit: (x, y) => dentro(x, y, 145, 45, 110, 62), marca: marcaRect(145, 45, 110, 62),
+        dibujo: () => cielo() + pasto(232) + tr("M 20 58 h 50 q 14 0 14 -10", "#fff", 5) + tr("M 20 85 h 40 q 12 0 12 8", "#fff", 5) + tr("M 20 112 h 56", "#fff", 5)
+          + rect(60, 92, 6, 145, "#757575") + poly("66,96 120,106 66,120", "#e53935") + tr("M 205 238 Q 212 195 228 165", "#8d6e63", 11) + circ(236, 152, 30, "#43a047")
+          + rect(150, 142, 110, 92, "#ffe0b2") + poly("140,144 205,96 270,144", "#c0392b") + rect(235, 100, 16, 36, "#8d6e63") + rect(185, 188, 30, 46, "#6d4c41")
+          + [[243, 92, 7], [230, 80, 10], [212, 70, 12], [190, 64, 14], [166, 62, 16]].map(([x, y, rr]) => circ(x, y, rr, "#e0e0e0")).join("") }),
+      D("agua", { pista: "Imaginá un vaso con agua apoyado en la mesa. ¿Cómo queda la superficie del agua?", explica: "El agua siempre queda plana y derechita. Acá aparece torcida, como si el vaso estuviera inclinado.",
+        hit: (x, y) => dentro(x, y, 98, 85, 104, 170), marca: marcaRect(98, 85, 104, 170),
+        dibujo: () => rect(0, 0, 300, 300, "#e3f2fd") + rect(0, 250, 300, 50, "#a1887f") + poly("107.8,120 188,165 180,248 121,248", "#29b6f6") + poly("105,90 195,90 180,250 120,250", "rgba(255,255,255,.3)", 'stroke="#90a4ae" stroke-width="4" stroke-linejoin="round"') + lin(107, 120, 188, 165, "#e1f5fe", 3) + ell(150, 252, 40, 5, "rgba(0,0,0,.2)") }),
+      D("agua", { pista: "Pensá qué cosas flotan en el agua y cuáles se hunden. ¿Es así en este lago?", explica: "Las piedras se hunden y las hojas livianas flotan. Acá está todo al revés.",
+        hit: (x, y) => cerca(x, y, 105, 118, 46) || dentro(x, y, 183, 230, 80, 56), marca: marcaCirc(105, 118, 46) + marcaRect(183, 230, 80, 56),
+        dibujo: () => cielo() + rect(0, 120, 300, 180, "#4fc3f7") + rect(0, 262, 300, 38, "#e6cf9a") + lin(0, 120, 300, 120, "#e1f5fe", 4) + ell(105, 118, 34, 22, "#78909c") + ell(98, 110, 10, 6, "#90a4ae")
+          + `<path d="M 192 262 Q 220 235 255 260 Q 225 282 192 262 Z" fill="#43a047"/>` + lin(194, 262, 252, 260, "#2e7d32", 2) + ell(170, 190, 14, 8, "#ff9800") + poly("184,190 196,183 196,197", "#ff9800") + circ(60, 190, 4, "#e1f5fe") + circ(66, 170, 3, "#e1f5fe") }),
+      D("partes", { pista: "Las vacas tienen partes muy conocidas. ¿Hay algo en esta vaca que no le corresponde?", explica: "Las vacas no tienen alas ni vuelan. Esa parte no le corresponde.",
+        hit: (x, y) => dentro(x, y, 60, 72, 105, 75), marca: marcaRect(60, 72, 105, 75),
+        dibujo: () => cielo() + sol(250, 40) + pasto(210) + [78, 98, 152, 172].map(x => rect(x, 198, 14, 48, "#fff", bord) + rect(x, 238, 14, 8, "#444")).join("")
+          + ell(130, 170, 70, 42, "#fff", bord) + ell(108, 160, 16, 12, "#222") + ell(150, 186, 14, 10, "#222") + ell(92, 186, 10, 8, "#222") + tr("M 60 160 q -20 10 -14 40", "#333", 4) + ell(205, 148, 28, 24, "#fff", bord) + ell(222, 162, 16, 12, "#f8bbd0") + circ(205, 142, 3.5, "#222") + ell(182, 132, 10, 6, "#fff", bord) + poly("196,128 192,114 202,124", "#ffe082")
+          + ell(108, 118, 40, 14, "#b3e5fc", 'transform="rotate(-35 108 118)" stroke="#333" stroke-width="2.5"') + ell(138, 112, 36, 12, "#e1f5fe", 'transform="rotate(-20 138 112)" stroke="#333" stroke-width="2.5"') }),
+      D("alreves", { pista: "Mirá bien a la persona. ¿Cada cosa está en el lugar donde se la usa?", explica: "El sombrero va en la cabeza, no en los pies. Acá se lo puso en los pies.",
+        hit: (x, y) => dentro(x, y, 100, 210, 100, 46), marca: marcaRect(100, 210, 100, 46),
+        dibujo: () => rect(0, 0, 300, 300, "#e8eaf6") + rect(0, 245, 300, 55, "#a5d6a7") + `<path d="M 126 80 Q 150 50 174 80 Q 150 66 126 80 Z" fill="#6d4c41"/>` + circ(150, 85, 24, "#ffcc99") + circ(142, 83, 3, "#222") + circ(158, 83, 3, "#222") + tr("M 140 94 q 10 8 20 0", "#c0392b", 3)
+          + rect(133, 110, 34, 60, "#42a5f5", 'rx="8"') + lin(133, 120, 100, 150, "#ffcc99", 8) + lin(167, 120, 200, 150, "#ffcc99", 8) + lin(142, 170, 128, 230, "#3949ab", 10) + lin(158, 170, 172, 230, "#3949ab", 10)
+          + [128, 172].map(x => ell(x, 240, 22, 6, "#4e342e") + rect(x - 11, 222, 22, 18, "#4e342e", 'rx="5"') + rect(x - 11, 232, 22, 4, "#e53935")).join("") }),
+      D("tamano", { pista: "Compará los tamaños de los dos animales. ¿Cuál es más grande en la vida real?", explica: "Un elefante es muchísimo más grande que un ratón. En el dibujo está al revés.",
+        hit: (x, y) => dentro(x, y, 105, 112, 190, 125), marca: marcaRect(105, 112, 190, 125),
+        dibujo: () => cielo() + nube(30, 40) + pasto(228)
+          + ell(215, 180, 66, 46, "#bcaaa4") + tr("M 278 188 q 24 -6 14 -46", "#f48fb1", 6) + [185, 235].map(x => rect(x, 208, 18, 26, "#a1887f", 'rx="5"')).join("") + circ(142, 162, 34, "#bcaaa4") + circ(128, 128, 18, "#bcaaa4") + circ(128, 128, 10, "#f8bbd0") + circ(158, 126, 18, "#bcaaa4") + circ(158, 126, 10, "#f8bbd0")
+          + circ(112, 168, 7, "#f06292") + circ(131, 154, 5, "#222") + lin(112, 172, 88, 164, "#555", 2) + lin(112, 176, 88, 182, "#555", 2)
+          + ell(48, 208, 32, 19, "#90a4ae") + circ(76, 200, 15, "#90a4ae") + tr("M 84 205 q 7 12 1 22", "#90a4ae", 7) + ell(68, 198, 9, 12, "#78909c") + circ(76, 196, 2.5, "#222") + [30, 44, 60].map(x => rect(x, 220, 9, 16, "#78909c")).join("") }),
+      D("tamano", { pista: "Compará el tamaño de la mariquita con el de la casa.", explica: "Una mariquita es un bichito chiquitito. Acá es mucho más grande que una casa.",
+        hit: (x, y) => dentro(x, y, 120, 80, 165, 170), marca: marcaRect(120, 80, 165, 170),
+        dibujo: () => cielo() + sol(50, 40) + pasto(235) + rect(35, 190, 62, 46, "#ffe0b2") + poly("28,192 66,160 104,192", "#c0392b") + rect(58, 208, 16, 28, "#6d4c41")
+          + lin(190, 98, 175, 70, "#222", 3) + lin(210, 98, 225, 70, "#222", 3) + circ(205, 175, 74, "#e53935", bord) + `<path d="M 140 130 A 74 74 0 0 1 270 130 Z" fill="#222"/>` + lin(205, 130, 205, 248, "#222", 4) + [[170, 165], [240, 165], [160, 210], [250, 210]].map(([x, y]) => circ(x, y, 12, "#222")).join("") + circ(190, 120, 6, "#fff") + circ(220, 120, 6, "#fff") }),
+      D("naturaleza", { pista: "Pensá dónde crecen las zanahorias. ¿Es en un árbol?", explica: "Las zanahorias crecen debajo de la tierra, no cuelgan de las ramas de un árbol.",
+        hit: (x, y) => cerca(x, y, 150, 100, 76), marca: marcaCirc(150, 100, 76),
+        dibujo: () => cielo() + sol(250, 40) + pasto(222) + rect(135, 130, 30, 100, "#8d6e63") + circ(150, 100, 70, "#43a047") + circ(105, 125, 36, "#43a047") + circ(195, 125, 36, "#43a047")
+          + [[112, 92], [160, 72], [192, 112], [132, 130], [168, 138]].map(([x, y]) => poly(`${x - 8},${y - 14} ${x + 8},${y - 14} ${x},${y + 22}`, "#ff9800") + lin(x, y - 14, x - 4, y - 26, "#1b5e20", 4) + lin(x, y - 14, x + 5, y - 26, "#1b5e20", 4)).join("") }),
+      D("forma", { pista: "Pensá cómo es una pelota de fútbol. ¿Qué forma tiene la de este dibujo?", explica: "Las pelotas son redondas para poder rodar y rebotar. Esta pelota es cuadrada.",
+        hit: (x, y) => dentro(x, y, 120, 188, 62, 62), marca: marcaRect(120, 188, 62, 62),
+        dibujo: () => cielo() + sol(250, 40) + pasto(215) + lin(40, 112, 40, 215, "#fff", 7) + lin(260, 112, 260, 215, "#fff", 7) + lin(40, 112, 260, 112, "#fff", 7) + [70, 100, 130, 160, 190, 220].map(x => lin(x, 112, x, 215, "rgba(255,255,255,.5)", 2)).join("") + [140, 170, 200].map(y => lin(40, y, 260, y, "rgba(255,255,255,.5)", 2)).join("")
+          + rect(125, 195, 50, 50, "#fff", 'stroke="#222" stroke-width="3" rx="4"') + circ(150, 220, 11, "#222") + lin(125, 195, 140, 211, "#222", 2) + lin(175, 195, 160, 211, "#222", 2) + lin(125, 245, 140, 229, "#222", 2) + lin(175, 245, 160, 229, "#222", 2) }),
+      D("color", { pista: "Mirá el árbol con atención. ¿De qué color es cada parte?", explica: "El tronco de un árbol es marrón. Este tronco es azul.",
+        hit: (x, y) => dentro(x, y, 128, 135, 46, 102), marca: marcaRect(128, 135, 46, 102),
+        dibujo: () => cielo() + sol(250, 40) + nube(30, 50) + pasto(225) + rect(135, 140, 32, 95, "#1e88e5") + circ(150, 105, 62, "#43a047") + circ(110, 125, 38, "#43a047") + circ(190, 125, 38, "#43a047") + circ(60, 245, 6, "#f48fb1") + circ(245, 255, 6, "#ffee58") + circ(90, 270, 6, "#ffee58") }),
+      D("color", { pista: "Pensá cómo es la piel de una cebra. ¿Qué dibujo tiene en el cuerpo?", explica: "Las cebras tienen rayas, no lunares. Este cuerpo está lleno de lunares.",
+        hit: (x, y) => dentro(x, y, 62, 122, 146, 92), marca: marcaRect(62, 122, 146, 92),
+        dibujo: () => cielo() + sol(250, 40) + pasto(215) + [78, 98, 152, 172].map(x => rect(x, 196, 14, 48, "#fff", bord) + lin(x, 215, x + 14, 215, "#222", 4) + lin(x, 228, x + 14, 228, "#222", 4)).join("")
+          + poly("178,150 196,100 230,108 220,160", "#fff", bord) + ell(228, 122, 24, 17, "#fff", bord) + [190, 200, 210].map(x => lin(x, 102, x + 6, 140, "#222", 5)).join("") + lin(222, 112, 240, 126, "#222", 4) + circ(232, 118, 3.5, "#222") + poly("205,100 200,84 214,96", "#fff", bord)
+          + ell(130, 165, 68, 42, "#fff", bord) + [[100, 155], [125, 145], [150, 158], [112, 180], [160, 180], [88, 175], [138, 172]].map(([x, y]) => circ(x, y, 7, "#222")).join("") + tr("M 62 160 q -22 14 -14 44", "#333", 5) }),
+      D("mecanica", { pista: "Un balancín baja del lado que pesa más. ¿Qué lado pesa más acá y hacia dónde está bajando?", explica: "El lado de las piedras pesa mucho más que la plumita, así que tendría que bajar. Acá está arriba.",
+        hit: (x, y) => dentro(x, y, 52, 112, 206, 118), marca: marcaRect(52, 112, 206, 118),
+        dibujo: () => cielo() + sol(250, 40) + pasto(238) + poly("150,192 124,246 176,246", "#757575") + lin(60, 162, 240, 212, "#8d6e63", 11) + ell(75, 150, 17, 13, "#78909c") + ell(98, 154, 17, 13, "#607d8b") + ell(86, 136, 16, 12, "#90a4ae") + ell(224, 202, 20, 5, "#f48fb1", 'transform="rotate(15 224 202)"') + lin(205, 206, 242, 198, "#ec407a", 2) }),
+      D("alreves", { pista: "Mirá bien el cuadro de la pared. ¿Qué está arriba y qué está abajo en ese paisaje?", explica: "El cuadro está colgado al revés: el cielo y el sol quedaron abajo y las montañas colgando.",
+        hit: (x, y) => dentro(x, y, 80, 55, 140, 112), marca: marcaRect(80, 55, 140, 112),
+        dibujo: () => rect(0, 0, 300, 300, "#ffe0b2") + rect(0, 250, 300, 50, "#a1887f") + lin(150, 62, 125, 38, "#555", 2) + lin(150, 62, 175, 38, "#555", 2) + circ(150, 34, 3.5, "#333") + rect(85, 62, 130, 100, "#6d4c41", 'rx="4"') + rect(95, 72, 110, 80, "#81d4fa") + rect(95, 72, 110, 28, "#66bb6a")
+          + poly("105,100 125,130 145,100", "#8d6e63") + poly("138,100 162,136 186,100", "#795548") + poly("178,100 195,124 205,100", "#8d6e63") + circ(180, 138, 9, "#ffd54f") + ell(120, 140, 14, 5, "#fff") + rect(232, 215, 34, 35, "#c0392b") + circ(249, 205, 14, "#43a047") + circ(238, 200, 9, "#43a047") }),
+      D("alreves", { pista: "Mirá hacia dónde nada cada pez. ¿Todos van para el mismo lado?", explica: "Todos los peces nadan hacia la izquierda, menos uno que va para el lado contrario.",
+        hit: (x, y) => cerca(x, y, 220, 175, 34), marca: marcaCirc(220, 175, 34),
+        dibujo: () => { const pez = (x, y, d) => ell(x, y, 24, 13, "#ff9800") + poly(`${x - d * 20},${y} ${x - d * 42},${y - 13} ${x - d * 42},${y + 13}`, "#ff9800") + ojo(x + d * 12, y - 2, 4) + poly(`${x - 4},${y - 12} ${x},${y - 24} ${x + 8},${y - 12}`, "#fb8c00");
+          return rect(0, 0, 300, 300, "#4fc3f7") + rect(0, 268, 300, 32, "#e6cf9a") + [[20, 250], [280, 255], [250, 235]].map(([x, y]) => rect(x, y, 6, 36, "#2e7d32", 'rx="3"')).join("") + circ(40, 40, 5, "#e1f5fe") + circ(260, 60, 4, "#e1f5fe") + circ(150, 130, 4, "#e1f5fe")
+            + [[70, 85, -1], [150, 75, -1], [235, 90, -1], [65, 175, -1], [145, 185, -1], [220, 175, 1]].map(([x, y, d]) => pez(x, y, d)).join(""); } }),
+      D("forma", { pista: "Mirá los ladrillos de la pared. ¿Son todos iguales?", explica: "Todos los ladrillos son rectángulos, menos uno que es redondo.",
+        hit: (x, y) => cerca(x, y, 154, 126, 28), marca: marcaCirc(154, 126, 28),
+        dibujo: () => { let s = rect(0, 0, 300, 300, "#d7ccc8"); for (let rw = 0; rw < 9; rw++){ const off = rw % 2 ? -26 : 0; for (let c = 0; c < 7; c++){ if (rw === 3 && c === 3) continue; s += rect(off + c * 52, 30 + rw * 28, 48, 24, "#c0623e", 'rx="2"'); } } return s + circ(154, 126, 17, "#c0623e"); } }),
+      D("mecanica", { pista: "Un tren va sobre las vías. ¿Dónde están apoyadas las ruedas de cada vagón?", explica: "Las ruedas del vagón azul flotan en el aire. Tienen que apoyarse en las vías para que el tren ande.",
+        hit: (x, y) => dentro(x, y, 155, 190, 118, 50), marca: marcaRect(155, 190, 118, 50),
+        dibujo: () => cielo() + sol(250, 40) + rect(0, 250, 300, 50, "#a1887f") + lin(0, 252, 300, 252, "#424242", 5) + [10, 50, 90, 130, 170, 210, 250, 290].map(x => rect(x, 254, 14, 6, "#6d4c41")).join("")
+          + rect(30, 160, 90, 52, "#d32f2f", 'rx="6"') + rect(88, 130, 32, 32, "#b71c1c") + rect(40, 138, 14, 24, "#212121") + circ(52, 232, 19, "#212121") + circ(98, 232, 19, "#212121") + circ(52, 232, 6, "#9e9e9e") + circ(98, 232, 6, "#9e9e9e")
+          + rect(150, 150, 125, 56, "#1976d2", 'rx="6"') + circ(180, 215, 19, "#212121") + circ(246, 215, 19, "#212121") + circ(180, 215, 6, "#9e9e9e") + circ(246, 215, 6, "#9e9e9e") + lin(120, 190, 150, 190, "#555", 4) }),
+      D("mecanica", { pista: "Un cohete se impulsa con fuego. ¿Por qué parte de este cohete sale el fuego?", explica: "El fuego tiene que salir por abajo, para empujar el cohete hacia arriba. Acá sale por la punta.",
+        hit: (x, y) => dentro(x, y, 118, 0, 64, 64), marca: marcaRect(118, 0, 64, 64),
+        dibujo: () => rect(0, 0, 300, 300, "#1a1a4e") + [[30, 40], [70, 120], [240, 60], [265, 150], [40, 220], [250, 240], [90, 270]].map(([x, y]) => circ(x, y, 2.5, "#fff")).join("") + circ(250, 220, 14, "#ffcc80")
+          + poly("125,190 92,238 125,226", "#e53935") + poly("175,190 208,238 175,226", "#e53935") + rect(125, 112, 50, 112, "#eceff1", 'rx="8"') + poly("125,114 175,114 150,58", "#e53935") + circ(150, 152, 13, "#4fc3f7", 'stroke="#455a64" stroke-width="3"') + rect(138, 224, 24, 12, "#78909c")
+          + poly("150,6 128,60 172,60", "#ff9800") + poly("150,24 138,58 162,58", "#ffd54f") }),
+      D("falta", { pista: "Mirá bien la escalera. ¿Podés subir por todos los escalones?", explica: "A la escalera le falta un escalón: hay un hueco y no se puede subir.",
+        hit: (x, y) => dentro(x, y, 148, 116, 44, 126), marca: marcaRect(148, 116, 44, 126),
+        dibujo: () => cielo() + sol(50, 45) + nube(150, 30) + rect(0, 240, 300, 60, "#8bc34a") + [0, 1, 2, 3, 4, 5].map(i => i === 3 ? "" : rect(30 + i * 40, 240 - (i + 1) * 30, 40, (i + 1) * 30, i % 2 ? "#bcaaa4" : "#a1887f", 'stroke="#6d4c41" stroke-width="2"')).join("") + lin(250, 60, 250, 20, "#555", 3) + poly("250,20 278,28 250,36", "#e53935") }),
+      D("partes", { pista: "Mirá bien la remera colgada y contá las mangas.", explica: "Una remera tiene solamente dos mangas. A esta le dibujaron tres.",
+        hit: (x, y) => dentro(x, y, 183, 143, 62, 68), marca: marcaRect(183, 143, 62, 68),
+        dibujo: () => rect(0, 0, 300, 300, "#fff3e0") + lin(0, 60, 300, 60, "#999", 3) + rect(112, 52, 8, 16, "#ffb74d") + rect(180, 52, 8, 16, "#ffb74d") + rect(110, 70, 80, 120, "#42a5f5") + poly("110,70 62,100 76,132 110,112", "#42a5f5") + poly("190,70 238,100 224,132 190,112", "#42a5f5") + poly("190,150 242,172 232,206 190,190", "#42a5f5")
+          + ell(150, 70, 18, 10, "#fff3e0") + circ(150, 130, 4, "#fff") + tx(150, 166, "★", 34, "#ffd54f") }),
+      D("partes", { pista: "Contá las patas de la gallina.", explica: "Las gallinas tienen dos patas. A esta le dibujaron tres.",
+        hit: (x, y) => dentro(x, y, 105, 192, 80, 62), marca: marcaRect(105, 192, 80, 62),
+        dibujo: () => cielo() + sol(50, 45) + pasto(215) + poly("88,145 52,108 96,130", "#ffcc80", 'stroke="#333" stroke-width="2"') + poly("88,158 48,140 92,152", "#ffb74d", 'stroke="#333" stroke-width="2"')
+          + [118, 142, 166].map(x => lin(x, 198, x, 245, "#ffa000", 5) + lin(x - 10, 248, x + 8, 248, "#ffa000", 4)).join("") + ell(140, 160, 58, 44, "#ffe0b2", bord) + ell(135, 165, 28, 20, "#ffcc80", 'stroke="#333" stroke-width="2"')
+          + circ(198, 118, 22, "#ffe0b2", bord) + circ(190, 96, 7, "#e53935") + circ(202, 93, 7, "#e53935") + circ(213, 99, 6, "#e53935") + poly("218,116 240,122 218,128", "#ff9800") + circ(214, 138, 6, "#e53935") + circ(203, 113, 3.5, "#222") })
+    );
+  })();
+
+  // Temas de los dibujos: cada tema es una "idea" de error. Los 50 primeros se agrupan acá; los nuevos traen su tema (f).
+  const FAM_VIEJA = (() => { const f = {}; const g = (n, ids) => ids.forEach(i => { f[i] = n; });
     g("num", [9, 15, 16, 17, 18, 19, 20]); g("valla", [2, 21, 22, 23]); g("reloj", [4, 24, 25, 26, 27]); g("tablero", [5, 28, 29]); g("barras", [13, 30, 31, 32]);
     g("semana", [33, 34]); g("canastas", [14, 35, 36, 37, 38]); g("domino", [39, 40]); g("sombras", [6, 43]); g("reflejo", [8, 44]); g("collar", [45, 46]); g("mesa", [47, 48]); return f; })();
-  // Recuerda qué dibujos ya salieron y no los repite hasta haber visto todos
+  const FAMILIA_ESC = new Proxy({}, { get: (_, i) => (ESCENAS[i] && ESCENAS[i].f) || FAM_VIEJA[i] || "u" + i });
+  // Recuerda qué ideas y qué dibujos ya salieron: no repite una idea hasta haberlas visto todas
   function elegirEscenas(n){
-    const todos = ESCENAS.map((_, i) => i); let vistos = [];
-    try { vistos = (JSON.parse(localStorage.getItem("errorVistos")) || []).filter(i => i < ESCENAS.length); } catch(e) {}
-    let libres = todos.filter(i => !vistos.includes(i)), elegidos = [];
-    const tomar = lista => { for (const i of mezclar(lista)){ if (elegidos.length >= n) break; if (!elegidos.some(j => FAMILIA_ESC[j] === FAMILIA_ESC[i])) elegidos.push(i); } };
-    tomar(libres);
-    if (elegidos.length < n){ // se acabaron los dibujos nuevos: empieza una vuelta nueva
-      vistos = []; libres = todos.filter(i => !elegidos.includes(i)); tomar(libres);
-      for (const i of mezclar(libres)){ if (elegidos.length >= n) break; if (!elegidos.includes(i)) elegidos.push(i); }
+    const leer = k => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch(e) { return []; } };
+    const total = ESCENAS.length, todosIdx = ESCENAS.map((_, i) => i);
+    let famVistas = leer("errorFamilias"), vistos = leer("errorVistos").filter(i => i < total);
+    const familias = [...new Set(todosIdx.map(i => FAMILIA_ESC[i]))];
+    let elegidasF = mezclar(familias.filter(f => !famVistas.includes(f))).slice(0, n);
+    if (elegidasF.length < n){ // se acabaron las ideas nuevas: empieza una vuelta nueva
+      famVistas = []; elegidasF = [...elegidasF, ...mezclar(familias.filter(f => !elegidasF.includes(f))).slice(0, n - elegidasF.length)];
     }
-    try { localStorage.setItem("errorVistos", JSON.stringify([...vistos, ...elegidos])); } catch(e) {}
+    const elegidos = elegidasF.map(f => {
+      const variantes = todosIdx.filter(i => FAMILIA_ESC[i] === f), nuevos = variantes.filter(i => !vistos.includes(i));
+      if (!nuevos.length) vistos = vistos.filter(i => !variantes.includes(i));
+      return r(nuevos.length ? nuevos : variantes);
+    });
+    try { localStorage.setItem("errorFamilias", JSON.stringify([...famVistas, ...elegidasF])); localStorage.setItem("errorVistos", JSON.stringify([...vistos, ...elegidos])); } catch(e) {}
     return mezclar(elegidos).map(i => ESCENAS[i]);
   }
 
@@ -1291,6 +1471,17 @@
       <text x="25" y="116" font-size="10" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif" font-weight="700">${i + 1}</text></svg>`;
   };
 
+  // Cartel llamativo de "¡Muy bien, Ali!" (aparece un ratito y se va solo)
+  function cartelMuyBien(){
+    if (!document.getElementById("muyBienCss")){ const st = document.createElement("style"); st.id = "muyBienCss";
+      st.textContent = "#muyBien{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;pointer-events:none}#muyBien .caja{background:linear-gradient(135deg,#ff6fb5,#ffca28);color:#fff;border:5px solid #fff;border-radius:28px;padding:20px 30px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5);animation:muyBienPop 1.9s ease-out forwards;text-shadow:0 3px 0 #2b1055,0 0 12px rgba(43,16,85,.6)}#muyBien .caja b{display:block;font-size:2.4rem;line-height:1.1;font-weight:900}#muyBien .caja span{font-size:2.6rem;display:block}#muyBien .lluvia{position:absolute;top:-30px;font-size:1.8rem;animation:muyBienCae 1.9s ease-in forwards}@keyframes muyBienPop{0%{transform:scale(.2) rotate(-8deg);opacity:0}18%{transform:scale(1.15) rotate(3deg);opacity:1}30%{transform:scale(1) rotate(-2deg)}85%{transform:scale(1) rotate(0);opacity:1}100%{transform:scale(.9);opacity:0}}@keyframes muyBienCae{to{transform:translateY(105vh) rotate(300deg)}}";
+      document.head.appendChild(st); }
+    const viejo = document.getElementById("muyBien"); if (viejo) viejo.remove();
+    const d = document.createElement("div"); d.id = "muyBien";
+    d.innerHTML = Array.from({ length: 14 }, (_, i) => `<span class="lluvia" style="left:${4 + i * 7}%;animation-delay:${(i % 5) * .12}s">${["⭐", "✨", "🎉", "💖", "🐞"][i % 5]}</span>`).join("") + `<div class="caja"><span>🌟</span><b>¡Muy bien,<br>Ali!</b></div>`;
+    document.body.appendChild(d); setTimeout(() => d.remove(), 2000);
+  }
+
   function jugarQuien(){
     const TOTAL = 5; let caso = 0, bien = 0;
     // Cada caso es más difícil: más personas, más pistas y pistas más complicadas
@@ -1313,7 +1504,7 @@
       $("qAcusa").onclick = () => {
         if (listo || sel < 0) return;
         if (sel === c.cul){
-          listo = true; if (fallos === 0) bien++; decirDe(actual.frases.ok, "ok");
+          listo = true; if (fallos === 0) bien++; decirDe(actual.frases.ok, "ok"); cartelMuyBien();
           $("qMsg").textContent = "¡Era la persona número " + (c.cul + 1) + "! Mirá que bien pensado.";
           $("qAcusa").textContent = "Siguiente →"; $("qAcusa").onclick = seguir; $("qDesc").style.display = "none";
         } else {
@@ -1569,6 +1760,39 @@
     pq("¿Qué figura tiene 3 lados?", "El triángulo", "El cuadrado", "El círculo", "El rectángulo"),
     pq("Dos números suman 10. Si uno es 4, ¿cuál es el otro?", 6, 5, 14, 7)
   ];
+  // Preguntas sobre Miraculous (para el Camino de preguntas)
+  const MIRACULOUS = [
+    pq("¿Cómo se llama la heroína de París con traje rojo de puntos negros?", "Ladybug", "Cat Noir", "Tikki", "Plagg"),
+    pq("¿De qué color es el traje de Cat Noir?", "Negro", "Rojo", "Azul", "Amarillo"),
+    pq("¿Cómo se llama el kwami de Ladybug?", "Tikki", "Plagg", "Nooroo", "Pollen"),
+    pq("¿Cómo se llama el kwami de Cat Noir?", "Plagg", "Tikki", "Nooroo", "Wayzz"),
+    pq("¿Qué es lo que más le gusta comer a Tikki?", "Galletitas", "Queso", "Pizza", "Helado"),
+    pq("¿Qué es lo que más le gusta comer a Plagg?", "Queso", "Galletitas", "Zanahorias", "Sopa"),
+    pq("¿En qué ciudad viven Ladybug y Cat Noir?", "París", "Madrid", "Buenos Aires", "Roma"),
+    pq("¿Qué animalito usa el villano para akumatizar a las personas?", "Una mariposa", "Una abeja", "Una araña", "Un murciélago"),
+    pq("¿Qué objeto usa Ladybug para atrapar a las akumas?", "Un yo-yo", "Una espada", "Un arco", "Una varita"),
+    pq("¿Qué usa Cat Noir como arma?", "Un bastón", "Un yo-yo", "Un escudo", "Un lazo"),
+    pq("¿Cómo se llama el poder de Ladybug que le da un objeto sorpresa para resolver el problema?", "Amuleto de la suerte", "Cataclismo", "Súper vuelo", "Invisibilidad"),
+    pq("¿Cómo se llama el poder de Cat Noir que desintegra lo que toca?", "Cataclismo", "Amuleto de la suerte", "Lluvia de estrellas", "Congelar"),
+    pq("Cuando Ladybug purifica una akuma, ¿de qué color se vuelve la mariposa?", "Blanca", "Negra", "Roja", "Azul"),
+    pq("¿Cómo se llama la mejor amiga de Marinette, que tiene un blog sobre Ladybug?", "Alya", "Chloé", "Sabine", "Nino"),
+    pq("¿Cómo se llama la chica que es Ladybug sin su traje?", "Marinette", "Alya", "Chloé", "Sabine"),
+    pq("¿Cómo se llama el chico que es Cat Noir sin su traje?", "Adrien", "Nino", "Gabriel", "Luka"),
+    pq("¿Qué negocio tienen los papás de Marinette?", "Una panadería", "Una escuela", "Un circo", "Una juguetería"),
+    pq("¿Dónde lleva Ladybug su miraculous?", "En los aretes", "En un anillo", "En un collar", "En un reloj"),
+    pq("¿Qué joya usa Cat Noir para transformarse?", "Un anillo", "Unos aretes", "Un collar", "Un reloj"),
+    pq("¿Cómo se llama el sabio que cuida los miraculous?", "Maestro Fu", "Maestro Tom", "Maestro Plagg", "Maestro Nino"),
+    pq("¿Cómo se llaman los pequeños seres mágicos como Tikki y Plagg?", "Kwamis", "Akumas", "Miraculous", "Hadas"),
+    pq("Tikki es el kwami de la…", "Creación", "Destrucción", "Lluvia", "Noche"),
+    pq("Plagg es el kwami de la…", "Destrucción", "Creación", "Lluvia", "Luz"),
+    pq("Cuando terminan de salvar a París, ¿qué hacen Ladybug y Cat Noir?", "Chocan los puños", "Bailan", "Se abrazan", "Se van a dormir"),
+    pq("¿Cuándo es más fácil que una akuma akumatice a una persona?", "Cuando está muy triste o enojada", "Cuando está feliz", "Cuando está durmiendo", "Cuando está comiendo"),
+    pq("¿Cómo se llama la chica rubia que es hija del alcalde de París?", "Chloé", "Alya", "Marinette", "Juleka"),
+    pq("¿Cómo se llama el kwami de la mariposa?", "Nooroo", "Tikki", "Plagg", "Wayzz"),
+    pq("Cuando Ladybug lanza su objeto al aire y dice «Miraculous Ladybug», ¿qué pasa?", "Se arregla todo lo que se rompió", "Aparece un monstruo", "Se hace de noche", "Todo queda igual"),
+    pq("¿Cómo lleva el pelo Marinette?", "Con dos colitas", "Con una trenza larga", "Suelto", "Con rulos"),
+    pq("¿De qué color son los ojos de Cat Noir?", "Verdes", "Azules", "Marrones", "Rojos")
+  ].map(x => ({ ...x, m: true }));
   // Tikki: las galletitas (sumas y restas)
   function bancoGalletitas(){
     const gal = n => `<span class="carita">${ic("galleta")}</span>`.repeat(n);
@@ -1589,167 +1813,130 @@
   // Misiones de Tikki: mitad cuentas con galletitas y mitad desafíos de lógica
   const bancoMisionesTikki = () => mezclar([...mezclar(bancoGalletitas()).slice(0, 4), ...mezclar([...LOGICA, ...MAS_LOGICA]).slice(0, 4)]);
 
-  // Escenas dibujadas de cada etapa de la Misión de Ladybug (320 x 160)
-  const ESC_M = (() => {
-    const L = `stroke="${K}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
-    let nCielo = 0; const cielo = (a, b) => { const id = "gm" + (++nCielo); return `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="320" height="160" fill="url(#${id})"/>`; };
-    const nube = (x, y, s = 1, c = "#fff") => `<g transform="translate(${x},${y}) scale(${s})" fill="${c}" ${L} stroke-width="2.5"><path d="M-26 8a12 12 0 0 1 4-23 16 16 0 0 1 30-2 13 13 0 0 1 20 11 9 9 0 0 1-2 14z"/></g>`;
-    const brillo = (x, y, r = 5, c = "#fff") => `<path d="M${x} ${y - r}l${r * .3} ${r * .7} ${r * .7} ${r * .3}-${r * .7} ${r * .3}-${r * .3} ${r * .7}-${r * .3}-${r * .7}-${r * .7}-${r * .3} ${r * .7}-${r * .3}z" fill="${c}"/>`;
-    const estrella = (x, y, r = 8, c = "#ffd54f") => { let d = ""; for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; d += (i ? "L" : "M") + (x + rr * Math.cos(a)).toFixed(1) + " " + (y + rr * Math.sin(a)).toFixed(1); } return `<path d="${d}Z" fill="${c}" ${L} stroke-width="2"/>`; };
-    const arbol = (x, y, s = 1, c = "#3fae50") => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-5" y="-4" width="10" height="26" rx="3" fill="#8d5a3b" ${L} stroke-width="2.5"/><circle cy="-18" r="22" fill="${c}" ${L}/><circle cx="-7" cy="-24" r="8" fill="rgba(255,255,255,.28)"/></g>`;
-    const pasto = (y, c = "#5cc25f") => `<path d="M0 ${y}q40-14 90 0t110 0 120-4V160H0z" fill="${c}" ${L}/>`;
-    const mariposa = (x, y, s = 1, c = "#ff6fb5", c2 = "#ffd1e8") => `<g transform="translate(${x},${y}) scale(${s})" ${L} stroke-width="2.4"><path d="M0 0C-8-22-30-22-28-6-27 6-10 8 0 2z" fill="${c}"/><path d="M0 0C8-22 30-22 28-6 27 6 10 8 0 2z" fill="${c}"/><path d="M0 2C-6 10-22 16-18 26-14 32-2 22 0 6z" fill="${c2}"/><path d="M0 2C6 10 22 16 18 26 14 32 2 22 0 6z" fill="${c2}"/><rect x="-2" y="-6" width="4" height="22" rx="2" fill="${K}"/></g>`;
-    const globo = (x, y, c, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M0 28q-3 10 2 16" fill="none" stroke="${K}" stroke-width="2"/><ellipse rx="14" ry="17" fill="${c}" ${L} stroke-width="2.5"/><ellipse cx="-5" cy="-6" rx="3.5" ry="5.5" fill="rgba(255,255,255,.6)"/><path d="M-3 17h6l-3 5z" fill="${c}" ${L} stroke-width="2"/></g>`;
-    return [
-      // 1 El puente roto
-      () => cielo("#8fd3ff", "#e6f6ff") + nube(70, 38) + nube(250, 28, .8) + `<rect y="110" width="320" height="50" fill="#3aa0e6"/><path d="M0 118q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="none" stroke="#9fdcff" stroke-width="3"/>
-        <path d="M0 80h90v80H0z" fill="#8d6e4a" ${L}/><path d="M230 80h90v80h-90z" fill="#8d6e4a" ${L}/><path d="M0 80h90v10H0zM230 80h90v10h-90z" fill="#5cc25f" ${L}/>
-        <g fill="#d8a45f" ${L}><rect x="90" y="76" width="28" height="10" rx="2"/><rect x="120" y="78" width="24" height="10" rx="2" transform="rotate(8 132 83)"/><rect x="176" y="80" width="24" height="10" rx="2" transform="rotate(-10 188 85)"/><rect x="202" y="76" width="28" height="10" rx="2"/><rect x="146" y="118" width="26" height="9" rx="2" transform="rotate(25 160 122)"/></g>
-        <path d="M92 76V54M228 76V54" ${L}/><path d="M92 56q68 18 136 0" fill="none" ${L} stroke-width="2.5"/>` + arbol(30, 66, .8),
-      // 2 La puerta con candado
-      () => cielo("#7a6bb5", "#b9a8e8") + `<rect y="110" width="320" height="50" fill="#8d8a99"/><g fill="#c76b4a" ${L} stroke-width="2"><rect x="0" y="0" width="320" height="110" opacity=".0"/></g>
-        <rect x="70" y="14" width="180" height="116" rx="6" fill="#d38b5d" ${L}/><path d="M70 40h180M70 66h180M70 92h180M115 14v26M160 40v26M205 14v26M115 66v26M205 66v26M160 92v38" stroke="#a65f3a" stroke-width="2.5" fill="none"/>
-        <path d="M110 130V70a50 50 0 0 1 100 0v60z" fill="#8a5a3b" ${L}/><path d="M120 130V72a40 40 0 0 1 80 0v58z" fill="#a8704a" stroke="${K}" stroke-width="2"/><path d="M160 32v98" stroke="${K}" stroke-width="2.5"/>
-        <path d="M148 88a12 12 0 0 1 24 0v10h-24z" fill="none" stroke="#ffca28" stroke-width="7"/><rect x="140" y="96" width="40" height="32" rx="7" fill="#ffca28" ${L}/><circle cx="160" cy="108" r="5" fill="${K}"/><path d="M160 110v10" ${L}/>` + brillo(196, 86, 8) + brillo(124, 100, 6),
-      // 3 El túnel oscuro
-      () => `<rect width="320" height="160" fill="#3b4a6b"/><path d="M0 160V70a160 90 0 0 1 320 0v90z" fill="#6c7a99" ${L}/><path d="M40 160V84a120 78 0 0 1 240 0v76z" fill="#1a1033" ${L}/><path d="M80 160V100a80 62 0 0 1 160 0v60z" fill="#0b0618"/>
-        <path d="M120 160l20-60h40l20 60" fill="#16102a"/><path d="M110 160l25-60M210 160l-25-60" stroke="#8d6e4a" stroke-width="4"/><path d="M118 144h84M126 126h68M134 110h52" stroke="#8d6e4a" stroke-width="4"/>
-        <g fill="#ffe066"><circle cx="146" cy="76" r="4"/><circle cx="174" cy="76" r="4"/></g><g ${L} stroke-width="2.5"><rect x="52" y="52" width="12" height="18" rx="3" fill="#ffca28"/><rect x="256" y="52" width="12" height="18" rx="3" fill="#ffca28"/></g><circle cx="58" cy="61" r="22" fill="rgba(255,224,102,.18)"/><circle cx="262" cy="61" r="22" fill="rgba(255,224,102,.18)"/>` + brillo(160, 40, 6, "#ffe066"),
-      // 4 La torre de la ciudad
-      () => cielo("#7ec8ff", "#d9f0ff") + nube(60, 40) + nube(260, 60, .9) + `<rect y="124" width="320" height="36" fill="#6a6a85" ${L}/><g fill="#b9b6d0" ${L}><rect x="24" y="86" width="40" height="40"/><rect x="258" y="94" width="40" height="32"/></g>
-        <path d="M140 124l8-82h24l8 82z" fill="#e8dcc6" ${L}/><path d="M134 42h52l-6-14h-40z" fill="#c76b4a" ${L}/><path d="M160 28V6" ${L}/><path d="M160 6l24 7-24 7z" fill="#ff6fb5" ${L} stroke-width="2.5"/>
-        <g fill="#5ab0ff" ${L} stroke-width="2.5"><rect x="154" y="56" width="12" height="16" rx="6"/><rect x="154" y="86" width="12" height="16" rx="6"/></g><path d="M148 124v-12a12 12 0 0 1 24 0v12z" fill="#8a5a3b" ${L} stroke-width="2.5"/>`,
-      // 5 La plaza de las sombras
-      () => cielo("#4a2a7a", "#c77dba") + `<circle cx="250" cy="44" r="22" fill="#ffe9a8"/>` + estrella(60, 30, 6) + estrella(120, 18, 5) + estrella(200, 34, 4) + `<rect y="104" width="320" height="56" fill="#7a6aa5" ${L}/>
-        <g ${L} stroke-width="2.5"><path d="M70 104V50M250 104V50" /><circle cx="70" cy="44" r="9" fill="#ffe066"/><circle cx="250" cy="44" r="9" fill="#ffe066"/></g>
-        <g fill="#2b1055" opacity=".55"><ellipse cx="120" cy="136" rx="60" ry="9"/><ellipse cx="210" cy="148" rx="42" ry="7"/></g>` + arbol(120, 98, 1, "#2e7d6b") + arbol(205, 100, .8, "#2e7d6b") + `<g fill="#ffe066" opacity=".9"><circle cx="150" cy="70" r="2.5"/><circle cx="170" cy="84" r="2.5"/><circle cx="96" cy="76" r="2.5"/></g>`,
-      // 6 El mercado de las mariposas
-      () => cielo("#ffe3a8", "#fff6dd") + `<rect y="118" width="320" height="42" fill="#d9b779" ${L}/>
-        ${[[20, "#ff6f91"], [112, "#4fc3f7"], [204, "#ffca28"]].map(([x, c]) => `<g ${L}><rect x="${x}" y="72" width="96" height="46" fill="#a8704a"/><path d="M${x - 6} 72l10-34h72l10 34z" fill="${c}"/><path d="M${x + 14} 38l-4 34M${x + 38} 38l-2 34M${x + 62} 38l2 34M${x + 86} 38l4 34" stroke="#fff" stroke-width="5" fill="none"/><circle cx="${x + 24}" cy="66" r="7" fill="#ff6f6f" stroke-width="2"/><circle cx="${x + 44}" cy="66" r="7" fill="#ffd54f" stroke-width="2"/><circle cx="${x + 64}" cy="66" r="7" fill="#7bd36f" stroke-width="2"/></g>`).join("")}` + mariposa(70, 28, .8, "#ff6fb5") + mariposa(160, 20, .7, "#4fc3f7", "#c5eaff") + mariposa(260, 26, .8, "#ffca28", "#fff0b0") + mariposa(210, 140, .6, "#9b6ae8", "#dccaff"),
-      // 7 La biblioteca encantada
-      () => `<rect width="320" height="160" fill="#6a4a3a"/><rect y="132" width="320" height="28" fill="#4a3226" ${L}/>
-        ${[0, 1].map(f => { const y = 16 + f * 56; const cs = ["#e53935", "#ffca28", "#43a047", "#1e88e5", "#8e24aa", "#fb8c00"]; let x = 12, s = ""; for (let i = 0; i < 12; i++){ const w = 14 + (i * 7) % 10, h = 30 + (i * 11) % 14; s += `<rect x="${x}" y="${y + 44 - h}" width="${w}" height="${h}" fill="${cs[(i + f * 2) % 6]}" ${L} stroke-width="2"/>`; x += w + 2; } return s + `<rect x="4" y="${y + 44}" width="312" height="8" fill="#8d5a3b" ${L}/>`; }).join("")}
-        <g transform="translate(160,98)"><path d="M0 6C-20-8-44-4-52 4v30c10-6 32-8 52 4z" fill="#fff6dd" ${L}/><path d="M0 6C20-8 44-4 52 4v30c-10-6-32-8-52 4z" fill="#ffeab0" ${L}/><path d="M-40 12q16-4 32 2M-40 20q16-4 32 2M8 14q16-6 32-2M8 22q16-6 32-2" stroke="#b08a6a" stroke-width="2" fill="none"/></g>` + brillo(120, 84, 8, "#ffe066") + brillo(205, 80, 10, "#ffe066") + brillo(160, 70, 6, "#fff"),
-      // 8 El río de las estrellas
-      () => cielo("#1a1b5e", "#4c5bd4") + [[30, 20], [90, 40], [150, 14], [220, 30], [280, 18], [260, 56], [60, 62]].map(([x, y]) => estrella(x, y, 6)).join("") + `<path d="M0 100q60-20 120 0t120 0 80 0V160H0z" fill="#2a8fe0" ${L}/><path d="M0 120q60-14 120 0t120 0 80 0" fill="none" stroke="#9fdcff" stroke-width="3"/>
-        <path d="M0 96q40-30 90-14t120 8 110-14V104H0z" fill="#2e7d6b" ${L} opacity=".0"/>` + estrella(70, 132, 7, "#fff3a0") + estrella(150, 140, 6, "#fff3a0") + estrella(220, 128, 8, "#fff3a0") + estrella(280, 144, 5, "#fff3a0") + `<path d="M250 20l-60 50" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/>` + estrella(252, 18, 9, "#fff") + `<g ${L}><path d="M0 100q30-26 70-12v14H0z" fill="#5cc25f"/><path d="M250 98q30-14 70-6v14h-70z" fill="#5cc25f"/></g>`,
-      // 9 El bosque de los acertijos
-      () => cielo("#b4e8a8", "#e9f9d8") + pasto(112, "#4eb25a") + arbol(30, 100, 1.2, "#2e8b4a") + arbol(290, 100, 1.2, "#2e8b4a") + arbol(90, 108, .9, "#3fae50") + arbol(240, 108, .9, "#3fae50") +
-        `<g transform="translate(160,70)"><rect x="-6" y="14" width="12" height="60" fill="#8d5a3b" ${L}/><ellipse cy="0" rx="26" ry="28" fill="#b98a5e" ${L}/><ellipse cy="8" rx="16" ry="16" fill="#f1dcc0" stroke="${K}" stroke-width="2"/><circle cx="-10" cy="-8" r="10" fill="#fff" ${L} stroke-width="2.5"/><circle cx="10" cy="-8" r="10" fill="#fff" ${L} stroke-width="2.5"/><circle cx="-9" cy="-7" r="4" fill="${K}"/><circle cx="9" cy="-7" r="4" fill="${K}"/><path d="M-4 0l4 7 4-7z" fill="#ffb300" ${L} stroke-width="2"/><path d="M-22-20l6 10M22-20l-6 10" ${L}/></g>
-        <text x="214" y="46" font-size="40" font-weight="900" fill="#ffca28" stroke="${K}" stroke-width="3" paint-order="stroke" font-family="system-ui,sans-serif">?</text><text x="98" y="56" font-size="26" font-weight="900" fill="#ff8aa0" stroke="${K}" stroke-width="2.5" paint-order="stroke" font-family="system-ui,sans-serif">?</text>`,
-      // 10 La fuente mágica
-      () => cielo("#a5e4ff", "#e4f8ff") + `<rect y="120" width="320" height="40" fill="#c8c2d8" ${L}/>` + arbol(36, 104, 1) + arbol(284, 104, 1) +
-        `<ellipse cx="160" cy="132" rx="90" ry="18" fill="#9aa0bf" ${L}/><ellipse cx="160" cy="128" rx="80" ry="13" fill="#4fc3f7" ${L} stroke-width="2.5"/><path d="M150 126h20v-34h-20z" fill="#c8c2d8" ${L}/><ellipse cx="160" cy="92" rx="34" ry="9" fill="#9aa0bf" ${L}/><ellipse cx="160" cy="90" rx="28" ry="6" fill="#4fc3f7" stroke="${K}" stroke-width="2"/>
-        <path d="M160 88C150 60 120 52 112 78M160 88C170 60 200 52 208 78M160 88V44" fill="none" stroke="#6fd2ff" stroke-width="5" stroke-linecap="round"/><path d="M160 88C150 60 120 52 112 78M160 88C170 60 200 52 208 78M160 88V44" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>` + brillo(160, 36, 9, "#ffe066") + brillo(110, 60, 6, "#ff9ad1") + brillo(212, 60, 6, "#b8a2ff") + brillo(136, 50, 5) + brillo(186, 48, 5),
-      // 11 El techo de la panadería
-      () => cielo("#ffb27a", "#ffe3b8") + `<circle cx="260" cy="44" r="24" fill="#fff0a8"/>` + nube(60, 36, .9, "#fff6e8") +
-        `<path d="M20 160V108l90-50 90 50v52z" fill="#e8a97a" ${L}/><path d="M10 112L110 54l100 58" fill="none" stroke="#a65f3a" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/><path d="M14 112L110 58l96 54" fill="none" stroke="#c76b4a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-        <rect x="140" y="38" width="22" height="34" fill="#b05a3a" ${L}/><g fill="#fff" opacity=".9" ${L} stroke-width="2"><circle cx="154" cy="26" r="8"/><circle cx="164" cy="12" r="10"/></g>
-        <path d="M230 160v-50h80v50z" fill="#d38b5d" ${L}/><path d="M222 112h96l-12-18h-72z" fill="#e53935" ${L}/>
-        <g transform="translate(110,132)"><ellipse rx="22" ry="12" fill="#e8b45f" ${L}/><path d="M-12-4q12-8 24 0M-14 2q14-8 28 0" stroke="#b27a30" stroke-width="2.5" fill="none"/></g><g transform="translate(270,138)"><path d="M-18 6q0-18 18-18t18 18z" fill="#e8b45f" ${L}/></g>`,
-      // 12 El museo dormido
-      () => `<rect width="320" height="160" fill="#e6d8c3"/><rect y="124" width="320" height="36" fill="#a8876a" ${L}/>
-        ${[30, 94, 226, 290].map(x => `<g ${L}><rect x="${x - 12}" y="26" width="24" height="98" fill="#fff6e8"/><rect x="${x - 17}" y="20" width="34" height="10" rx="2" fill="#f1e2c8"/><rect x="${x - 17}" y="120" width="34" height="8" rx="2" fill="#f1e2c8"/></g>`).join("")}
-        <g ${L}><rect x="128" y="34" width="64" height="48" rx="4" fill="#ffd9a8"/><rect x="134" y="40" width="52" height="36" fill="#9ad3ff" stroke-width="2"/><path d="M134 76l16-18 14 12 10-8 12 14z" fill="#5cc25f" stroke-width="2"/><circle cx="172" cy="52" r="6" fill="#ffe066" stroke-width="2"/></g>
-        <g ${L}><path d="M140 124V104a20 20 0 0 1 40 0v20z" fill="#d8c8a8"/><circle cx="160" cy="92" r="11" fill="#e9dcc2"/></g><path d="M148 90q4 3 8 0M164 90q4 3 8 0" stroke="${K}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <g font-family="system-ui,sans-serif" font-weight="900" fill="#7b8cff" stroke="${K}" stroke-width="2" paint-order="stroke"><text x="186" y="84" font-size="22">z</text><text x="200" y="66" font-size="30">Z</text><text x="220" y="42" font-size="38">Z</text></g>`,
-      // 13 La escalera del reloj
-      () => cielo("#8e9bff", "#d6dbff") + `<g ${L}><circle cx="160" cy="70" r="58" fill="#fff6dd"/><circle cx="160" cy="70" r="48" fill="#fff" stroke-width="2"/></g>` + [...Array(12)].map((_, i) => { const a = i * Math.PI / 6; return `<line x1="${160 + 40 * Math.sin(a)}" y1="${70 - 40 * Math.cos(a)}" x2="${160 + 46 * Math.sin(a)}" y2="${70 - 46 * Math.cos(a)}" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`; }).join("") +
-        `<path d="M160 70V38M160 70l22 12" ${L} stroke-width="5"/><circle cx="160" cy="70" r="5" fill="#ff6fb5" ${L} stroke-width="2"/>
-        <g fill="#c8a8ff" ${L}><path d="M30 160v-22h36v-22h36v-22h36v-22h36v-22h36" fill="none" stroke-width="0"/><rect x="20" y="136" width="64" height="24"/><rect x="56" y="114" width="64" height="46"/><rect x="92" y="92" width="64" height="68" opacity="0"/><rect x="236" y="136" width="64" height="24"/><rect x="200" y="114" width="64" height="46"/></g>`,
-      // 14 El parque de los globos
-      () => cielo("#9fe0ff", "#e8f8ff") + nube(250, 34, .8) + pasto(122) + globo(60, 50, "#ff5d8f") + globo(100, 34, "#ffca28") + globo(150, 56, "#4fc3f7") + globo(206, 38, "#7bd36f") + globo(256, 62, "#b07cff") + globo(30, 84, "#fb8c00", .8) + `<path d="M60 78q-6 40 20 60M100 62q-4 40-20 76M150 84q10 30-70 54M206 66q-30 40-126 72M256 90q-40 30-176 48M30 108q20 20 50 30" stroke="${K}" stroke-width="1.5" fill="none" opacity=".5"/>` + arbol(285, 112, .9),
-      // 15 El barco del puerto
-      () => cielo("#9ad8ff", "#f1fbff") + `<circle cx="70" cy="40" r="22" fill="#fff0a8"/>` + nube(250, 32, .9) + `<rect y="108" width="320" height="52" fill="#2f9be0" ${L}/><path d="M0 120q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="none" stroke="#bfe9ff" stroke-width="3"/>
-        <path d="M80 98h140l-20 26H100z" fill="#e53935" ${L}/><path d="M92 98h116" stroke="#fff" stroke-width="4"/><path d="M150 98V30" ${L}/><path d="M154 34l50 52h-50z" fill="#fff6dd" ${L}/><path d="M146 44l-40 42h40z" fill="#ffd9a8" ${L}/><path d="M150 30l20-6-20-6z" fill="#ffca28" ${L} stroke-width="2"/>
-        <g ${L}><rect x="254" y="104" width="66" height="10" fill="#a8704a"/><path d="M264 114v30M308 114v30" /></g><g fill="#fff" opacity=".9"><path d="M20 70q8-8 16 0 8-8 16 0" stroke="${K}" stroke-width="2.5" fill="none"/></g>`,
-      // 16 La montaña de nubes
-      () => cielo("#6fb5ff", "#cfe9ff") + `<path d="M0 160V110l60-60 50 44 60-72 70 78 40-30 40 30v60z" fill="#8d9bb8" ${L}/><path d="M130 22l-26 36 14-6 12 10 10-8 14 8z" fill="#fff" ${L} stroke-width="2.5"/><path d="M60 50L40 72l12-4 8 6 8-6 10 8z" fill="#fff" ${L} stroke-width="2.5"/>` + nube(60, 112, 1.3) + nube(160, 124, 1.5) + nube(262, 110, 1.2) + nube(250, 30, .8) + `<path d="M130 24V8l16 5-16 5" fill="#ff6fb5" ${L} stroke-width="2.5"/>`,
-      // 17 El laberinto de espejos
-      () => cielo("#d9b8ff", "#f4e8ff") + `<rect y="130" width="320" height="30" fill="#8d7aa8" ${L}/>` + [[40, "#9ad3ff"], [120, "#ffd1e8"], [200, "#c8f2d0"], [270, "#ffe9a8"]].map(([x, c], i) => `<g ${L}><rect x="${x - 26}" y="${22 + (i % 2) * 8}" width="52" height="98" rx="26" fill="#ffca28"/><rect x="${x - 19}" y="${29 + (i % 2) * 8}" width="38" height="84" rx="19" fill="${c}" stroke-width="2"/><path d="M${x - 10} ${44 + (i % 2) * 8}l16-8M${x - 10} ${60 + (i % 2) * 8}l24-12" stroke="#fff" stroke-width="4" opacity=".8" fill="none"/></g>`).join("") + brillo(80, 70, 9) + brillo(160, 40, 7, "#ffe066") + brillo(240, 78, 8) + mariposa(160, 100, .8, "#ff6fb5"),
-      // 18 El faro del mar
-      () => cielo("#16205e", "#5b6bd6") + estrella(40, 24, 5) + estrella(280, 30, 6) + estrella(80, 62, 4) + `<path d="M170 38L320 6v52z" fill="#fff6a8" opacity=".55"/><path d="M150 38L0 14v50z" fill="#fff6a8" opacity=".35"/><rect y="118" width="320" height="42" fill="#2a8fe0" ${L}/><path d="M0 130q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0" fill="none" stroke="#9fdcff" stroke-width="3"/>
-        <path d="M70 124q40-30 90-18l20 18z" fill="#6c6a85" ${L}/><path d="M140 118l8-66h24l8 66z" fill="#fff" ${L}/><path d="M144 98h36l-2 16h-32zM148 70h28l-2 16h-24z" fill="#e53935" stroke="${K}" stroke-width="2.5"/><rect x="146" y="38" width="28" height="14" fill="#ffe066" ${L}/><path d="M142 38l18-16 18 16z" fill="#e53935" ${L}/>`,
-      // 19 El puente del arcoíris
-      () => cielo("#9fdcff", "#f2fbff") + nube(48, 112, 1.2) + nube(274, 112, 1.2) + ["#e53935", "#fb8c00", "#ffd54f", "#7bd36f", "#4fc3f7", "#9b6ae8"].map((c, i) => `<path d="M${40 + i * 9} 124a${120 - i * 9} ${96 - i * 9} 0 0 1 ${240 - (40 + i * 9) * 0 - i * 0}  0" fill="none" stroke="${c}" stroke-width="9" opacity="0"/>`).join("") +
-        ["#e53935", "#fb8c00", "#ffd54f", "#7bd36f", "#4fc3f7", "#9b6ae8"].map((c, i) => `<path d="M${28 + i * 8} 124A${132 - i * 8} ${100 - i * 8} 0 0 1 ${292 - i * 8} 124" fill="none" stroke="${c}" stroke-width="9"/>`).join("") + nube(40, 124, 1.1) + nube(280, 124, 1.1) + brillo(160, 20, 8, "#ffe066") + brillo(70, 40, 6) + brillo(250, 44, 6) + mariposa(160, 70, .7, "#ff6fb5"),
-      // 20 La guarida de la mariposa oscura
-      () => cielo("#1a0b33", "#4a1c7a") + `<path d="M0 160V80l30-30 20 30 30-50 20 40 30-30 20 50V160z" fill="#2b1055" opacity=".7"/><path d="M0 160V120q30-30 60-10t60-20 60 20 60-10 80 20V160z" fill="#150a2e" ${L}/>
-        <g transform="translate(160,76) scale(1.7)" ${L} stroke-width="2"><path d="M0 0C-12-34-52-34-48-8-46 8-16 12 0 2z" fill="#6a1b9a"/><path d="M0 0C12-34 52-34 48-8 46 8 16 12 0 2z" fill="#6a1b9a"/><path d="M0 2C-10 12-34 20-26 34-18 42-2 26 0 8z" fill="#8e24aa"/><path d="M0 2C10 12 34 20 26 34 18 42 2 26 0 8z" fill="#8e24aa"/><circle cx="-26" cy="-12" r="6" fill="#e1bee7" stroke-width="1.5"/><circle cx="26" cy="-12" r="6" fill="#e1bee7" stroke-width="1.5"/><rect x="-3" y="-8" width="6" height="30" rx="3" fill="#150a2e"/><circle cx="-1.6" cy="-4" r="1.5" fill="#ff5252" stroke="none"/><circle cx="1.6" cy="-4" r="1.5" fill="#ff5252" stroke="none"/></g>
-        <path d="M70 20l-14 26h12l-10 22 24-30H70l10-18z" fill="#ffe066" ${L} stroke-width="2"/>` + brillo(250, 30, 8, "#e1bee7") + brillo(60, 120, 6, "#e1bee7") + brillo(268, 112, 7, "#e1bee7")
-    ];
-  })();
-
-  // Ladybug: misión por etapas
+  // ---------- Misión de Ladybug: carrera por los techos de París ----------
+  let sesionCarrera = 0;
   function jugarMision(){
-    const ETAPAS = [
-      "El puente roto", "La puerta con candado", "El túnel oscuro", "La torre de la ciudad", "La plaza de las sombras",
-      "El mercado de las mariposas", "La biblioteca encantada", "El río de las estrellas", "El bosque de los acertijos", "La fuente mágica",
-      "El techo de la panadería", "El museo dormido", "La escalera del reloj", "El parque de los globos", "El barco del puerto",
-      "La montaña de nubes", "El laberinto de espejos", "El faro del mar", "El puente del arcoíris", "La guarida de la mariposa oscura"
-    ];
-    const ICONOS = ["🌈", "🍀", "⭐", "🎁", "🌸", "🦋", "🍎", "🐠", "🐢", "🍓", "🚀", "🎈", "🐶"];
-    const TOT = ETAPAS.length, GUARDADO = "misionAlina";
-    const leer = () => { try { const g = JSON.parse(localStorage.getItem(GUARDADO)); return g && g.v === 1 && g.orden && g.orden.length === TOT && g.e < TOT ? g : null; } catch(e) { return null; } };
-    const guardar = g => { try { localStorage.setItem(GUARDADO, JSON.stringify(g)); } catch(e) {} };
-    const borrar = () => { try { localStorage.removeItem(GUARDADO); } catch(e) {} };
-    const banco = ref => ref[0] === "L" ? LOGICA[ref[1]] : PREGUNTAS[ref[1]];
-    const nuevo = () => {
-      const l = mezclar(LOGICA.map((_, i) => ["L", i])).slice(0, TOT / 2);
-      const p = mezclar(PREGUNTAS.map((_, i) => ["P", i])).slice(0, TOT / 2);
-      return { v: 1, orden: mezclar([...l, ...p]), e: 0, bien: 0 };
-    };
+    const mi = ++sesionCarrera;
+    const W = 360, H = 300, SUELO = 240, META = 11000, VIDAS = 3;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     decir(actual.intro.mision, "gBubble", actual.id + "_intro-mision");
+    $("gameBody").innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin:2px 4px">
+        <span style="width:34px;height:34px;flex:none">${ic("bicho")}</span>
+        <div style="flex:1;height:14px;background:rgba(255,255,255,.22);border-radius:8px;border:2px solid rgba(255,255,255,.35);overflow:hidden"><div id="rProg" style="height:100%;width:0;background:linear-gradient(90deg,#ff6fb5,#ffca28)"></div></div>
+        <span style="width:34px;height:34px;flex:none">${ic("oscura")}</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:0 6px"><span id="rVidas" style="font-size:1.3rem;letter-spacing:2px"></span><span id="rEstrellas" class="info" style="margin:0;font-weight:800"></span></div>
+      <div id="rCaja" style="position:relative;max-width:420px;width:100%;align-self:center;border-radius:20px;overflow:hidden;border:4px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.35);touch-action:manipulation;user-select:none;-webkit-user-select:none">
+        <canvas id="rCanvas" width="${W * dpr}" height="${H * dpr}" style="width:100%;display:block;background:#2b1055"></canvas>
+        <div id="rVelo" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(20,8,50,.6);text-align:center;padding:16px"></div></div>
+      <button class="gbtn" id="rSalto" style="font-size:1.4rem">⬆ ¡Saltar!</button>
+      <p class="info" style="margin:0">Tocá la pantalla o el botón para saltar. ¡Podés saltar dos veces en el aire!</p>`;
+    const cv = $("rCanvas"), ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+    const vivo = () => mi === sesionCarrera && cv.isConnected;
+    const foto = new Image(); let fotoOk = false; foto.onload = () => { fotoOk = true; }; foto.src = actual.img;
 
-    function inicio(){
-      const g = leer();
-      if (!g) return empezar(nuevo());
-      $("gameBody").innerHTML = `<p class="q">Tenés una misión empezada</p>
-        <p class="info">Ibas por la etapa ${g.e + 1} de ${TOT}: ${ETAPAS[g.e]}.</p>
-        <button class="gbtn" id="mSeguir">Seguir la misión</button>
-        <button class="gbtn sec" id="mNueva">Empezar de nuevo</button>`;
-      $("mSeguir").onclick = () => empezar(g);
-      $("mNueva").onclick = () => { borrar(); empezar(nuevo()); };
+    // Edificios de fondo (siempre iguales)
+    const edif = (sem, n, hMin, hMax, ancho) => { const a = []; let x = 0; for (let i = 0; i < n; i++){ const w = ancho + ((i * 37 + sem) % 28), h = hMin + ((i * 53 + sem * 7) % (hMax - hMin)); a.push({ x, w, h }); x += w + 4 + (i * 11 + sem) % 10; } return { a, largo: x }; };
+    const lejos = edif(3, 22, 50, 110, 30), cerca = edif(9, 18, 70, 140, 40);
+    let st; // estado
+    const nuevo = (vidas, estrellas, dist) => ({ x: dist, vel: 215, y: SUELO, vy: 0, saltos: 0, giro: 0, vidas, estrellas, obs: [], ests: [], prox: dist + 520, inmune: 0, fin: false, pausa: true, t: 0, humo: 0 });
+    const vidasTxt = () => "❤️".repeat(Math.max(0, st.vidas)) + "🤍".repeat(Math.max(0, VIDAS - st.vidas));
+    const hud = () => { $("rVidas").textContent = vidasTxt(); $("rEstrellas").textContent = "⭐ " + st.estrellas; $("rProg").style.width = Math.min(100, st.x / META * 100) + "%"; };
+    const velo = (html, accion, texto) => { const v = $("rVelo"); v.innerHTML = html + `<button class="gbtn" id="rOk" style="width:auto;padding:12px 28px">${texto}</button>`; v.style.display = "flex"; $("rOk").onclick = e => { e.stopPropagation(); v.style.display = "none"; accion(); }; };
+
+    function generar(){
+      // crea obstáculos y estrellas por delante de la pantalla
+      while (st.prox < st.x + W + 400 && st.prox < META - 500){
+        const tipo = Math.random(), x = st.prox, grupo = tipo < .3 ? 2 : 1; let ancho = 0;
+        for (let g = 0; g < grupo; g++){
+          const t = Math.random() < .55 ? "chimenea" : Math.random() < .5 ? "antena" : "mariposa";
+          const o = t === "chimenea" ? { t, w: 34, h: 40 + Math.random() * 14 } : t === "antena" ? { t, w: 14, h: 52 } : { t, w: 34, h: 30 };
+          o.x = x + ancho; st.obs.push(o); ancho += o.w + (g ? 0 : 36);
+        }
+        const centro = x + ancho / 2; // estrellas en arco sobre el obstáculo
+        for (let k = -1; k <= 1; k++) st.ests.push({ x: centro + k * 34, y: SUELO - 90 - (k === 0 ? 34 : 14), ok: false });
+        st.prox = x + ancho + 300 + Math.random() * 180;
+      }
+      st.obs = st.obs.filter(o => o.x > st.x - 100); st.ests = st.ests.filter(e => e.x > st.x - 100 && !e.ok);
     }
-    function empezar(g){
-      guardar(g);
-      const etapa = () => {
-        const e = g.e, it = banco(g.orden[e]); let fallos = 0;
-        const pct = Math.round(e / TOT * 100);
-        $("gameBody").innerHTML = `<div style="position:relative;margin:4px 6px 2px">
-            <div style="height:14px;background:rgba(255,255,255,.22);border-radius:8px;overflow:visible;position:relative;border:2px solid rgba(255,255,255,.35)">
-              <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#ff6fb5,#ffca28);border-radius:6px;transition:width .6s"></div>
-              <span style="position:absolute;top:-12px;left:calc(${pct}% - 17px);width:34px;height:34px;transition:left .6s">${ic("bicho")}</span>
-              <span style="position:absolute;top:-12px;right:-6px;width:34px;height:34px">${ic("oscura")}</span></div></div>
-          <p class="info" style="margin-top:12px">Etapa ${e + 1} de ${TOT}${e === TOT / 2 ? " · ¡ya pasaste la mitad!" : e === TOT - 1 ? " · ¡la última!" : ""}</p>
-          <div class="escMision"><svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" style="width:100%;display:block">${ESC_M[e % ESC_M.length]()}</svg><span class="nEtapa">${e + 1}</span></div>
-          <p class="q" style="font-size:1.35rem;margin:2px 0">${ETAPAS[e]}</p>
-          <p class="info">Para seguir tenés que resolver este desafío:</p>
-          <p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
-          <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div>
-          <p class="info" id="mMsg" style="min-height:1.6em"></p>`;
-        const sig = () => {
-          g.e++; guardar(g);
-          if (g.e < TOT) return etapa();
-          borrar();
-          final("¡Misión cumplida! 🐞", `Atrapaste a la mariposa oscura. Resolviste ${g.bien} de ${TOT} desafíos al primer intento.`, jugarMision);
-        };
-        document.querySelectorAll(".opt").forEach(btn => btn.onclick = () => {
-          if (btn.textContent === it.a){
-            document.querySelectorAll(".opt").forEach(x => x.disabled = true); btn.classList.add("ok");
-            if (fallos === 0) g.bien++; decirDe(actual.frases.ok, "ok"); setTimeout(sig, 1300);
-          } else {
-            fallos++; btn.disabled = true; btn.style.opacity = .4; decirDe(actual.frases.mal, "mal");
-            if (fallos >= 2){
-              document.querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.textContent === it.a) x.classList.add("ok"); });
-              $("mMsg").textContent = "La respuesta era " + it.a + ". ¡Seguimos con la misión!"; setTimeout(sig, 2200);
-            } else $("mMsg").textContent = "Pensalo otra vez, ¡vos podés!";
-          }
-        });
-      };
-      etapa();
+    function saltar(){
+      if (!vivo() || !st || st.pausa || st.fin) return;
+      if (st.saltos < 2){ st.vy = st.saltos === 0 ? -640 : -560; st.saltos++; st.giro = st.saltos === 2 ? 1 : st.giro; }
     }
-    inicio();
+    const PX = 78, R = 22; // posición en pantalla y radio de Ladybug
+    function actualizar(dt){
+      st.t += dt; st.vel = Math.min(215 + st.x / META * 90, 305); st.x += st.vel * dt;
+      st.vy += 1800 * dt; st.y += st.vy * dt; if (st.y >= SUELO){ st.y = SUELO; st.vy = 0; st.saltos = 0; }
+      if (st.giro > 0) st.giro = Math.max(0, st.giro - dt * 1.6);
+      if (st.inmune > 0) st.inmune -= dt;
+      generar();
+      const cx = st.x + PX, cy = st.y - R;
+      for (const e of st.ests){ if (!e.ok && Math.hypot(e.x - cx, e.y - cy) < R + 14){ e.ok = true; st.estrellas++; } }
+      if (st.inmune <= 0){
+        for (const o of st.obs){
+          const ox0 = o.x + 5, ox1 = o.x + o.w - 5, oy0 = SUELO - o.h + 5;
+          const px = Math.max(ox0, Math.min(cx, ox1)), py = Math.max(oy0, Math.min(cy, SUELO));
+          if (Math.hypot(px - cx, py - cy) < R - 5){ st.vidas--; st.inmune = 1.4; st.vy = -380; st.saltos = 1;
+            if (st.vidas <= 0){ st.pausa = true; hud(); velo(`<div style="font-size:3rem">💫</div><p class="q" style="margin:0">¡Casi!</p><p class="info" style="margin:0">Todos tropezamos. ¡Seguí desde acá con otras 3 vidas!</p>`, () => { st.vidas = VIDAS; st.inmune = 2; st.pausa = false; st.obs = st.obs.filter(q => q.x > st.x + 300); }, "Seguir"); }
+            break; }
+        }
+      }
+      if (st.x >= META){ st.fin = true; hud(); const n = st.estrellas;
+        setTimeout(() => { if (vivo()) final("¡Misión cumplida! 🐞", `Atrapaste a la mariposa oscura y cruzaste todos los techos de París. Juntaste ${n} estrellas.`, jugarMision); }, 600); }
+      hud();
+    }
+    // ---------- dibujo ----------
+    const estrella = (x, y, r, c) => { ctx.beginPath(); for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; ctx[i ? "lineTo" : "moveTo"](x + rr * Math.cos(a), y + rr * Math.sin(a)); } ctx.closePath(); ctx.fillStyle = c; ctx.fill(); ctx.strokeStyle = "#2b1055"; ctx.lineWidth = 2; ctx.stroke(); };
+    const mariposa = (x, y, s, aleteo) => { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const a = .55 + .45 * Math.abs(Math.sin(aleteo)); ctx.fillStyle = "#6a1b9a"; ctx.strokeStyle = "#1a0b33"; ctx.lineWidth = 2.5;
+      for (const d of [-1, 1]){ ctx.save(); ctx.scale(d * a, 1); ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(14, -34, 52, -26, 44, -2); ctx.bezierCurveTo(40, 12, 14, 10, 0, 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#8e24aa"; ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(10, 12, 32, 18, 24, 32); ctx.bezierCurveTo(16, 38, 2, 24, 0, 8); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#6a1b9a"; ctx.restore(); }
+      ctx.fillStyle = "#1a0b33"; ctx.fillRect(-3, -6, 6, 26); ctx.fillStyle = "#ff5252"; ctx.fillRect(-3.5, -3, 3, 3); ctx.fillRect(.5, -3, 3, 3); ctx.restore(); };
+    function dibujar(){
+      const g = ctx.createLinearGradient(0, 0, 0, SUELO); g.addColorStop(0, "#2b1055"); g.addColorStop(.6, "#8a3fa8"); g.addColorStop(1, "#ff9ab8"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#fff6c8"; ctx.beginPath(); ctx.arc(290, 52, 24, 0, 7); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.8)"; for (const [x, y] of [[40, 30], [110, 56], [180, 22], [230, 70], [330, 100], [70, 90]]){ ctx.fillRect(x, y, 2, 2); }
+      const capa = (c, col, vel, base) => { const off = (st.x * vel) % c.largo; ctx.fillStyle = col; for (let rep = -1; rep < 2; rep++) for (const b of c.a){ const x = b.x - off + rep * c.largo; if (x > W || x + b.w < 0) continue; ctx.fillRect(x, base - b.h, b.w, b.h); } };
+      capa(lejos, "#5a2a7a", .12, SUELO - 14);
+      // torre de fondo
+      const tx = 215 - (st.x * .08) % 600; for (const dx of [0, 600]){ const x = tx + dx; if (x < -60 || x > W + 60) continue; ctx.fillStyle = "#47206b"; ctx.beginPath(); ctx.moveTo(x - 26, SUELO - 14); ctx.lineTo(x - 5, SUELO - 120); ctx.lineTo(x - 2, SUELO - 160); ctx.lineTo(x + 2, SUELO - 160); ctx.lineTo(x + 5, SUELO - 120); ctx.lineTo(x + 26, SUELO - 14); ctx.lineTo(x + 14, SUELO - 14); ctx.lineTo(x, SUELO - 60); ctx.lineTo(x - 14, SUELO - 14); ctx.fill(); }
+      capa(cerca, "#3a1a5e", .3, SUELO - 4);
+      // techo
+      ctx.fillStyle = "#6b4a8f"; ctx.fillRect(0, SUELO, W, H - SUELO); ctx.fillStyle = "#8d6bb5"; ctx.fillRect(0, SUELO, W, 8);
+      ctx.strokeStyle = "rgba(43,16,85,.35)"; ctx.lineWidth = 2; const off = st.x % 36; for (let x = -off; x < W; x += 36){ ctx.beginPath(); ctx.moveTo(x, SUELO + 8); ctx.lineTo(x, H); ctx.stroke(); } for (const y of [SUELO + 28, SUELO + 48]){ ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      // meta
+      const mx = META - st.x + PX; if (mx < W + 80){ ctx.save(); ctx.translate(mx, SUELO - 60); mariposa(0, 0, 1.6, st.t * 6); ctx.restore(); }
+      // estrellas y obstáculos
+      for (const e of st.ests){ const x = e.x - st.x; if (x > -20 && x < W + 20) estrella(x, e.y + Math.sin(st.t * 4 + e.x) * 3, 12, "#ffd54f"); }
+      for (const o of st.obs){ const x = o.x - st.x; if (x < -50 || x > W + 50) continue;
+        if (o.t === "chimenea"){ ctx.fillStyle = "#b05a3a"; ctx.strokeStyle = "#2b1055"; ctx.lineWidth = 3; ctx.fillRect(x, SUELO - o.h, o.w, o.h); ctx.strokeRect(x, SUELO - o.h, o.w, o.h); ctx.fillStyle = "#8d4326"; ctx.fillRect(x - 4, SUELO - o.h - 8, o.w + 8, 10); ctx.strokeRect(x - 4, SUELO - o.h - 8, o.w + 8, 10); ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, SUELO - o.h / 2); ctx.lineTo(x + o.w, SUELO - o.h / 2); ctx.stroke(); }
+        else if (o.t === "antena"){ ctx.strokeStyle = "#2b1055"; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x + 7, SUELO); ctx.lineTo(x + 7, SUELO - o.h); ctx.moveTo(x - 6, SUELO - o.h + 8); ctx.lineTo(x + 20, SUELO - o.h + 8); ctx.moveTo(x - 2, SUELO - o.h + 22); ctx.lineTo(x + 16, SUELO - o.h + 22); ctx.stroke(); }
+        else mariposa(x + o.w / 2, SUELO - 20, .8, st.t * 8 + o.x); }
+      // Ladybug
+      const px = PX, py = st.y - R; if (st.inmune > 0 && Math.floor(st.inmune * 10) % 2) ctx.globalAlpha = .4;
+      ctx.save(); ctx.translate(px, py); ctx.rotate(st.giro * Math.PI * 2 * (st.saltos === 2 ? 1 : 0) + Math.sin(st.x / 14) * (st.y >= SUELO ? .06 : 0));
+      ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.save(); ctx.rotate(0); ctx.restore();
+      ctx.beginPath(); ctx.arc(0, 0, R + 3, 0, 7); ctx.fillStyle = "#fff"; ctx.fill();
+      ctx.save(); ctx.beginPath(); ctx.arc(0, 0, R, 0, 7); ctx.clip();
+      if (fotoOk){ const z = actual.zoom || 1, s = (R * 2 * z) / Math.min(foto.width, foto.height); ctx.drawImage(foto, -foto.width * s / 2, -foto.height * s * .12 - R * (z > 1.2 ? .0 : 0), foto.width * s, foto.height * s); }
+      else { ctx.fillStyle = "#e53935"; ctx.fillRect(-R, -R, R * 2, R * 2); ctx.fillStyle = "#2b1055"; for (const [x, y] of [[-8, -6], [8, -4], [-4, 8], [10, 10]]){ ctx.beginPath(); ctx.arc(x, y, 4, 0, 7); ctx.fill(); } }
+      ctx.restore(); ctx.restore(); ctx.globalAlpha = 1;
+      // sombra en el techo
+      ctx.fillStyle = "rgba(0,0,0,.25)"; const sc = 1 - Math.min(.5, (SUELO - st.y) / 220); ctx.beginPath(); ctx.ellipse(px, SUELO + 5, 20 * sc, 4 * sc, 0, 0, 7); ctx.fill();
+    }
+    // ---------- bucle ----------
+    let ult = 0;
+    function bucle(ts){
+      if (!vivo()) return;
+      const dt = Math.min(.05, (ts - ult) / 1000 || 0); ult = ts;
+      if (!st.pausa && !st.fin) actualizar(dt);
+      dibujar(); requestAnimationFrame(bucle);
+    }
+    const alTocar = e => { e.preventDefault(); saltar(); };
+    $("rCaja").addEventListener("pointerdown", e => { if (e.target.id === "rOk") return; alTocar(e); });
+    $("rSalto").onclick = saltar;
+    const tecla = e => { if (!vivo()){ document.removeEventListener("keydown", tecla); return; } if (e.code === "Space" || e.code === "ArrowUp"){ e.preventDefault(); saltar(); } };
+    document.addEventListener("keydown", tecla);
+    st = nuevo(VIDAS, 0, 0); hud(); generar();
+    velo(`<div style="font-size:2.6rem">🏙️</div><p class="q" style="margin:0">¡A correr por los techos de París!</p><p class="info" style="margin:0">Saltá las chimeneas, las antenas y las mariposas oscuras. Juntá estrellas y llegá hasta la guarida de la mariposa oscura.</p>`, () => { st.pausa = false; }, "¡Empezar!");
+    requestAnimationFrame(bucle);
   }
 
   // ---------- Atrapá la akuma: calmar a la persona y capturar la mariposa oscura ----------
@@ -1861,7 +2048,8 @@
     const pos = { a: 0, p: 0 }; let turno = "a", turnos = 0, mazo = [], preguntas = 0;
     const vivo = () => mi === sesionTablero && !!$("mapa");
     const espera = ms => new Promise(res => setTimeout(res, ms));
-    const sacar = () => { if (!mazo.length) mazo = mezclar([...PREGUNTAS, ...LOGICA, ...MAS_CALCULO, ...MAS_CULTURA, ...MAS_LOGICA]); return mazo.pop(); };
+    let mazoM = [];
+    const sacar = () => { if (Math.random() < .4){ if (!mazoM.length) mazoM = mezclar([...MIRACULOUS]); return mazoM.pop(); } if (!mazo.length) mazo = mezclar([...PREGUNTAS, ...LOGICA, ...MAS_CALCULO, ...MAS_CULTURA, ...MAS_LOGICA]); return mazo.pop(); };
     decir(actual.intro.tablero || actual.intro.quiz, "gBubble", actual.id + "_intro-tablero");
 
     // Dibujo del camino
@@ -1921,7 +2109,7 @@
     }
     const pregunta = () => new Promise(res => {
       const it = sacar(); preguntas++;
-      $("zona").innerHTML = `<p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
+      $("zona").innerHTML = `${it.m ? `<p class="info" style="margin:0;font-weight:800;color:#ffca28">🐞 Pregunta de Miraculous</p>` : ""}<p class="q">${it.q}</p>${it.s ? `<div class="seq">${it.s}</div>` : ""}
         <div class="opts">${mezclar([it.a, ...it.o]).map(o => `<button class="opt">${o}</button>`).join("")}</div><p class="info" id="msg" style="min-height:1.6em"></p>`;
       $("zona").scrollIntoView({ block: "nearest", behavior: "smooth" });
       document.querySelectorAll(".opt").forEach(b => b.onclick = () => {
