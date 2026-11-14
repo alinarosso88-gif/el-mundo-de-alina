@@ -1838,18 +1838,74 @@
     const edif = (sem, n, hMin, hMax, ancho) => { const a = []; let x = 0; for (let i = 0; i < n; i++){ const w = ancho + ((i * 37 + sem) % 28), h = hMin + ((i * 53 + sem * 7) % (hMax - hMin)); a.push({ x, w, h }); x += w + 4 + (i * 11 + sem) % 10; } return { a, largo: x }; };
     const lejos = edif(3, 22, 50, 110, 30), cerca = edif(9, 18, 70, 140, 40);
     let st; // estado
-    const nuevo = (vidas, estrellas, dist) => ({ x: dist, vel: 215, y: SUELO, vy: 0, saltos: 0, giro: 0, vidas, estrellas, obs: [], ests: [], prox: dist + 520, inmune: 0, fin: false, pausa: true, t: 0, humo: 0 });
+    const nuevo = (vidas, estrellas, dist) => ({ x: dist, vel: 215, y: SUELO, vy: 0, saltos: 0, giro: 0, vidas, estrellas, obs: [], ests: [], prox: dist + 520, inmune: 0, fin: false, pausa: true, t: 0, humo: 0, tramo: -1, cartel: 0 });
     const vidasTxt = () => "❤️".repeat(Math.max(0, st.vidas)) + "🤍".repeat(Math.max(0, VIDAS - st.vidas));
     const hud = () => { $("rVidas").textContent = vidasTxt(); $("rEstrellas").textContent = "⭐ " + st.estrellas; $("rProg").style.width = Math.min(100, st.x / META * 100) + "%"; };
     const velo = (html, accion, texto) => { const v = $("rVelo"); v.innerHTML = html + `<button class="gbtn" id="rOk" style="width:auto;padding:12px 28px">${texto}</button>`; v.style.display = "flex"; $("rOk").onclick = e => { e.stopPropagation(); v.style.display = "none"; accion(); }; };
 
+    // ---------- 4 tramos con escenarios y obstáculos distintos ----------
+    const TR = [
+      { nom: "🌇 ¡Atardecer en los tejados!", c: ["#ff6b6b", "#ff9966", "#ffd89b"], lejos: "#9c4a6e", cerca: "#6e2f5c", techo: "#b5654a", borde: "#d98a68", lin: "rgba(80,30,20,.3)", obs: ["chimenea", "maceta", "caja", "antena", "maceta"] },
+      { nom: "🌙 ¡Llegó la noche!", c: ["#2b1055", "#8a3fa8", "#ff9ab8"], lejos: "#5a2a7a", cerca: "#3a1a5e", techo: "#6b4a8f", borde: "#8d6bb5", lin: "rgba(43,16,85,.35)", obs: ["farola", "buzon", "chimenea", "caja", "farola", "buzon"] },
+      { nom: "🌉 ¡Cruzando el puente sobre el río!", c: ["#5ec0ff", "#a8e0ff", "#e9f8ff"], lejos: "#9fc3e0", cerca: "#7aa6cc", techo: "#9aa3b5", borde: "#c3cad8", lin: "rgba(60,70,100,.3)", obs: ["cono", "banco", "farola", "cono", "maceta", "banco"] },
+      { nom: "🦋 ¡La guarida de la mariposa oscura!", c: ["#12052b", "#3b1470", "#6a2a96"], lejos: "#2a0f4f", cerca: "#1a0838", techo: "#3b1d5e", borde: "#5a2d82", lin: "rgba(0,0,0,.35)", obs: ["cristal", "roca", "mariposa", "cristal", "roca", "mariposa"] }
+    ];
+    const OB = { chimenea: { w: 34, h: 44 }, antena: { w: 14, h: 52 }, maceta: { w: 30, h: 30 }, caja: { w: 36, h: 36 }, farola: { w: 12, h: 62 }, buzon: { w: 30, h: 42 }, cono: { w: 26, h: 34 }, banco: { w: 54, h: 28 }, cristal: { w: 32, h: 46 }, roca: { w: 44, h: 30 }, mariposa: { w: 34, h: 30 } };
+    const tipoOb = x => { const t = TR[Math.min(3, Math.floor(x / (META / 4)))].obs; return t[Math.floor(Math.random() * t.length)]; };
+    const dibujaOb = (o, x) => {
+      const K = "#2b1055", Y = SUELO, h = o.h, w = o.w; ctx.lineWidth = 3; ctx.strokeStyle = K;
+      const caja = (c, xx, yy, ww, hh) => { ctx.fillStyle = c; ctx.fillRect(xx, yy, ww, hh); ctx.strokeRect(xx, yy, ww, hh); };
+      if (o.t === "chimenea"){ caja("#b05a3a", x, Y - h, w, h); caja("#8d4326", x - 4, Y - h - 8, w + 8, 10); ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, Y - h / 2); ctx.lineTo(x + w, Y - h / 2); ctx.stroke(); }
+      else if (o.t === "antena"){ ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x + 7, Y); ctx.lineTo(x + 7, Y - h); ctx.moveTo(x - 6, Y - h + 8); ctx.lineTo(x + 20, Y - h + 8); ctx.moveTo(x - 2, Y - h + 22); ctx.lineTo(x + 16, Y - h + 22); ctx.stroke(); }
+      else if (o.t === "maceta"){ ctx.fillStyle = "#c8694a"; ctx.beginPath(); ctx.moveTo(x + 2, Y - 18); ctx.lineTo(x + w - 2, Y - 18); ctx.lineTo(x + w - 7, Y); ctx.lineTo(x + 7, Y); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#43a047"; ctx.beginPath(); ctx.arc(x + 9, Y - 24, 8, 0, 7); ctx.arc(x + 21, Y - 24, 8, 0, 7); ctx.fill(); ctx.fillStyle = "#ff6fb5"; ctx.beginPath(); ctx.arc(x + 15, Y - 28, 6, 0, 7); ctx.fill(); ctx.fillStyle = "#ffd54f"; ctx.beginPath(); ctx.arc(x + 15, Y - 28, 2.5, 0, 7); ctx.fill(); }
+      else if (o.t === "caja"){ caja("#c8934f", x, Y - h, w, h); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x, Y - h); ctx.lineTo(x + w, Y); ctx.moveTo(x + w, Y - h); ctx.lineTo(x, Y); ctx.stroke(); }
+      else if (o.t === "farola"){ ctx.fillStyle = "rgba(255,224,102,.28)"; ctx.beginPath(); ctx.arc(x + 6, Y - h + 4, 22, 0, 7); ctx.fill(); caja("#37474f", x + 3, Y - h + 8, 6, h - 8); caja("#ffe066", x - 2, Y - h - 6, 16, 16); }
+      else if (o.t === "buzon"){ ctx.fillStyle = "#1e88e5"; ctx.beginPath(); ctx.moveTo(x, Y); ctx.lineTo(x, Y - h + 12); ctx.arc(x + w / 2, Y - h + 12, w / 2, Math.PI, 0); ctx.lineTo(x + w, Y); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = K; ctx.fillRect(x + 6, Y - h + 14, w - 12, 5); }
+      else if (o.t === "cono"){ ctx.fillStyle = "#ff7043"; ctx.beginPath(); ctx.moveTo(x + w / 2, Y - h); ctx.lineTo(x + w - 2, Y - 6); ctx.lineTo(x + 2, Y - 6); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#fff"; ctx.fillRect(x + 7, Y - 22, w - 14, 6); caja("#455a64", x - 2, Y - 8, w + 4, 8); }
+      else if (o.t === "banco"){ caja("#a1887f", x, Y - h + 6, w, 8); caja("#8d6e63", x + 2, Y - h - 4, w - 4, 8); ctx.fillStyle = K; ctx.fillRect(x + 6, Y - 14, 5, 14); ctx.fillRect(x + w - 11, Y - 14, 5, 14); }
+      else if (o.t === "cristal"){ ctx.fillStyle = "#8e44c9"; ctx.beginPath(); ctx.moveTo(x, Y); ctx.lineTo(x + 6, Y - h * .6); ctx.lineTo(x + w * .45, Y - h); ctx.lineTo(x + w - 4, Y - h * .55); ctx.lineTo(x + w, Y); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.beginPath(); ctx.moveTo(x + 9, Y - 6); ctx.lineTo(x + 11, Y - h * .6); ctx.lineTo(x + w * .45, Y - h + 6); ctx.lineTo(x + w * .4, Y - h * .45); ctx.closePath(); ctx.fill(); }
+      else if (o.t === "roca"){ ctx.fillStyle = "#6b5b8a"; ctx.beginPath(); ctx.moveTo(x, Y); ctx.quadraticCurveTo(x - 2, Y - h, x + w * .4, Y - h); ctx.quadraticCurveTo(x + w + 2, Y - h * .8, x + w, Y); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = "rgba(255,255,255,.2)"; ctx.beginPath(); ctx.ellipse(x + w * .32, Y - h * .65, 7, 4, -.5, 0, 7); ctx.fill(); }
+      else mariposa(x + w / 2, Y - 20, .8, st.t * 8 + o.x);
+    };
+    const capaEd = (c, col, vel, base, pico, ven) => { const off = (st.x * vel) % c.largo; ctx.fillStyle = col;
+      for (let rep = -1; rep < 2; rep++) for (const b of c.a){ const x = b.x - off + rep * c.largo; if (x > W || x + b.w < 0) continue;
+        if (pico){ ctx.beginPath(); ctx.moveTo(x - 6, base); ctx.lineTo(x + b.w / 2, base - b.h * 1.15); ctx.lineTo(x + b.w + 6, base); ctx.closePath(); ctx.fill(); }
+        else { ctx.fillRect(x, base - b.h, b.w, b.h); if (ven){ ctx.fillStyle = "#ffe082"; for (let yy = base - b.h + 10; yy < base - 14; yy += 20) for (let xx = x + 7; xx < x + b.w - 8; xx += 14) if (((xx * 7 + yy * 3 + Math.floor(b.x)) | 0) % 3) ctx.fillRect(xx, yy, 6, 9); ctx.fillStyle = col; } } } };
+    function fondoTramo(i){
+      const t = TR[i], g = ctx.createLinearGradient(0, 0, 0, SUELO); g.addColorStop(0, t.c[0]); g.addColorStop(.6, t.c[1]); g.addColorStop(1, t.c[2]); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      if (i === 0){ ctx.fillStyle = "rgba(255,240,170,.35)"; ctx.beginPath(); ctx.arc(250, SUELO - 50, 62, 0, 7); ctx.fill(); ctx.fillStyle = "#ffe08a"; ctx.beginPath(); ctx.arc(250, SUELO - 50, 40, 0, 7); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.5)"; for (const [x, y, w] of [[40, 40, 60], [190, 70, 80], [300, 30, 50]]){ const xx = ((x - st.x * .04) % 420 + 420) % 420 - 60; ctx.beginPath(); ctx.ellipse(xx, y, w / 2, 9, 0, 0, 7); ctx.fill(); }
+        ctx.strokeStyle = "#5a2a4a"; ctx.lineWidth = 2.5; for (const [x, y] of [[0, 60], [60, 90]]){ const xx = ((x + 340 - st.t * 30) % 420 + 420) % 420 - 30; ctx.beginPath(); ctx.moveTo(xx, y); ctx.quadraticCurveTo(xx + 6, y - 7, xx + 12, y); ctx.quadraticCurveTo(xx + 18, y - 7, xx + 24, y); ctx.stroke(); } }
+      if (i === 1){ ctx.fillStyle = "#fff6c8"; ctx.beginPath(); ctx.arc(290, 52, 24, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.8)"; for (const [x, y] of [[40, 30], [110, 56], [180, 22], [230, 70], [330, 100], [70, 90], [150, 90]]) ctx.fillRect(x, y, 2, 2); }
+      if (i === 2){ ctx.fillStyle = "#fff"; ctx.globalAlpha = .8; for (const [x, y, w] of [[50, 36, 70], [220, 60, 90], [330, 30, 60]]){ const xx = ((x - st.x * .05) % 440 + 440) % 440 - 70; ctx.beginPath(); ctx.ellipse(xx, y, w / 2, 11, 0, 0, 7); ctx.fill(); } ctx.globalAlpha = 1; }
+      if (i === 3){ for (let k = 0; k < 4; k++){ const bx = ((k * 130 - st.x * .1 - st.t * 14) % 520 + 520) % 520 - 60, by = 50 + (k * 37) % 90; mariposa(bx, by, .4, st.t * 7 + k); } }
+      capaEd(lejos, t.lejos, .12, SUELO - 14, i === 3);
+      if (i === 1){ const tx = 215 - (st.x * .08) % 600; for (const dx of [0, 600]){ const x = tx + dx; if (x < -60 || x > W + 60) continue; ctx.fillStyle = "#47206b"; ctx.beginPath(); ctx.moveTo(x - 26, SUELO - 14); ctx.lineTo(x - 5, SUELO - 120); ctx.lineTo(x - 2, SUELO - 160); ctx.lineTo(x + 2, SUELO - 160); ctx.lineTo(x + 5, SUELO - 120); ctx.lineTo(x + 26, SUELO - 14); ctx.lineTo(x + 14, SUELO - 14); ctx.lineTo(x, SUELO - 60); ctx.lineTo(x - 14, SUELO - 14); ctx.fill(); } }
+      if (i === 2){ ctx.fillStyle = "#2f93dc"; ctx.fillRect(0, SUELO - 30, W, 30); ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = 2; for (let k = 0; k < 3; k++){ const off = (st.x * .5 + k * 40) % 60; for (let x = -off; x < W; x += 60){ ctx.beginPath(); ctx.moveTo(x, SUELO - 22 + k * 8); ctx.quadraticCurveTo(x + 15, SUELO - 28 + k * 8, x + 30, SUELO - 22 + k * 8); ctx.stroke(); } }
+        const bx = ((260 - st.x * .15) % 480 + 480) % 480 - 60; ctx.fillStyle = "#8d4a2b"; ctx.beginPath(); ctx.moveTo(bx, SUELO - 38); ctx.lineTo(bx + 34, SUELO - 38); ctx.lineTo(bx + 28, SUELO - 28); ctx.lineTo(bx + 6, SUELO - 28); ctx.closePath(); ctx.fill(); ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.moveTo(bx + 16, SUELO - 74); ctx.lineTo(bx + 16, SUELO - 40); ctx.lineTo(bx + 32, SUELO - 40); ctx.closePath(); ctx.fill(); ctx.fillStyle = "#ff8a65"; ctx.beginPath(); ctx.moveTo(bx + 13, SUELO - 66); ctx.lineTo(bx + 13, SUELO - 40); ctx.lineTo(bx + 2, SUELO - 40); ctx.closePath(); ctx.fill(); }
+      else capaEd(cerca, t.cerca, .3, SUELO - 4, i === 3, i === 1);
+      ctx.fillStyle = t.techo; ctx.fillRect(0, SUELO, W, H - SUELO); ctx.fillStyle = t.borde; ctx.fillRect(0, SUELO, W, 8);
+      ctx.strokeStyle = t.lin; ctx.lineWidth = 2; const off = st.x % 36; for (let x = -off; x < W; x += 36){ ctx.beginPath(); ctx.moveTo(x, SUELO + 8); ctx.lineTo(x, H); ctx.stroke(); } for (const y of [SUELO + 28, SUELO + 48]){ ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      if (i === 2){ ctx.fillStyle = "#7d879c"; for (let x = -off; x < W; x += 36) ctx.fillRect(x + 14, SUELO - 12, 8, 12); ctx.fillRect(0, SUELO - 12, W, 3); }
+    }
+    function fondoCompleto(){
+      const f = st.x / (META / 4), i = Math.min(3, Math.floor(f)), fr = f - i; fondoTramo(i);
+      if (fr > .93 && i < 3){ ctx.globalAlpha = (fr - .93) / .07; fondoTramo(i + 1); ctx.globalAlpha = 1; }
+      if (i === 3 || (i === 2 && fr > .93)){ const fl = Math.max(0, Math.sin(st.t * 1.1) - .965) * 14; if (fl > 0){ ctx.fillStyle = `rgba(255,255,255,${Math.min(.45, fl)})`; ctx.fillRect(0, 0, W, SUELO); } }
+    }
+    function cartel(){
+      if (st.cartel <= 0) return; const t = TR[Math.max(0, st.tramo)].nom, a = Math.min(1, st.cartel / .5, (2.6 - st.cartel) / .3 + .2);
+      ctx.save(); ctx.globalAlpha = Math.max(0, Math.min(1, a)); ctx.font = "800 17px system-ui,sans-serif"; const w = ctx.measureText(t).width + 30;
+      ctx.fillStyle = "rgba(43,16,85,.85)"; ctx.beginPath(); ctx.roundRect ? ctx.roundRect((W - w) / 2, 14, w, 36, 18) : ctx.rect((W - w) / 2, 14, w, 36); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(t, W / 2, 33); ctx.restore();
+    }
     function generar(){
       // crea obstáculos y estrellas por delante de la pantalla
       while (st.prox < st.x + W + 400 && st.prox < META - 500){
         const tipo = Math.random(), x = st.prox, grupo = tipo < .3 ? 2 : 1; let ancho = 0;
         for (let g = 0; g < grupo; g++){
-          const t = Math.random() < .55 ? "chimenea" : Math.random() < .5 ? "antena" : "mariposa";
-          const o = t === "chimenea" ? { t, w: 34, h: 40 + Math.random() * 14 } : t === "antena" ? { t, w: 14, h: 52 } : { t, w: 34, h: 30 };
+          const t = tipoOb(x);
+          const o = { t, w: OB[t].w, h: OB[t].h + (t === "chimenea" ? Math.random() * 10 : 0) };
           o.x = x + ancho; st.obs.push(o); ancho += o.w + (g ? 0 : 36);
         }
         const centro = x + ancho / 2; // estrellas en arco sobre el obstáculo
@@ -1864,7 +1920,7 @@
     }
     const PX = 78, R = 22; // posición en pantalla y radio de Ladybug
     function actualizar(dt){
-      st.t += dt; st.vel = Math.min(215 + st.x / META * 90, 305); st.x += st.vel * dt;
+      st.t += dt; const trm = Math.min(3, Math.floor(st.x / META * 4)); if (trm !== st.tramo){ st.tramo = trm; st.cartel = 2.6; } if (st.cartel > 0) st.cartel -= dt; st.vel = Math.min(215 + st.x / META * 90, 305); st.x += st.vel * dt;
       st.vy += 1800 * dt; st.y += st.vy * dt; if (st.y >= SUELO){ st.y = SUELO; st.vy = 0; st.saltos = 0; }
       if (st.giro > 0) st.giro = Math.max(0, st.giro - dt * 1.6);
       if (st.inmune > 0) st.inmune -= dt;
@@ -1890,25 +1946,13 @@
       for (const d of [-1, 1]){ ctx.save(); ctx.scale(d * a, 1); ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(14, -34, 52, -26, 44, -2); ctx.bezierCurveTo(40, 12, 14, 10, 0, 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#8e24aa"; ctx.beginPath(); ctx.moveTo(0, 2); ctx.bezierCurveTo(10, 12, 32, 18, 24, 32); ctx.bezierCurveTo(16, 38, 2, 24, 0, 8); ctx.fill(); ctx.stroke(); ctx.fillStyle = "#6a1b9a"; ctx.restore(); }
       ctx.fillStyle = "#1a0b33"; ctx.fillRect(-3, -6, 6, 26); ctx.fillStyle = "#ff5252"; ctx.fillRect(-3.5, -3, 3, 3); ctx.fillRect(.5, -3, 3, 3); ctx.restore(); };
     function dibujar(){
-      const g = ctx.createLinearGradient(0, 0, 0, SUELO); g.addColorStop(0, "#2b1055"); g.addColorStop(.6, "#8a3fa8"); g.addColorStop(1, "#ff9ab8"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = "#fff6c8"; ctx.beginPath(); ctx.arc(290, 52, 24, 0, 7); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,.8)"; for (const [x, y] of [[40, 30], [110, 56], [180, 22], [230, 70], [330, 100], [70, 90]]){ ctx.fillRect(x, y, 2, 2); }
-      const capa = (c, col, vel, base) => { const off = (st.x * vel) % c.largo; ctx.fillStyle = col; for (let rep = -1; rep < 2; rep++) for (const b of c.a){ const x = b.x - off + rep * c.largo; if (x > W || x + b.w < 0) continue; ctx.fillRect(x, base - b.h, b.w, b.h); } };
-      capa(lejos, "#5a2a7a", .12, SUELO - 14);
-      // torre de fondo
-      const tx = 215 - (st.x * .08) % 600; for (const dx of [0, 600]){ const x = tx + dx; if (x < -60 || x > W + 60) continue; ctx.fillStyle = "#47206b"; ctx.beginPath(); ctx.moveTo(x - 26, SUELO - 14); ctx.lineTo(x - 5, SUELO - 120); ctx.lineTo(x - 2, SUELO - 160); ctx.lineTo(x + 2, SUELO - 160); ctx.lineTo(x + 5, SUELO - 120); ctx.lineTo(x + 26, SUELO - 14); ctx.lineTo(x + 14, SUELO - 14); ctx.lineTo(x, SUELO - 60); ctx.lineTo(x - 14, SUELO - 14); ctx.fill(); }
-      capa(cerca, "#3a1a5e", .3, SUELO - 4);
-      // techo
-      ctx.fillStyle = "#6b4a8f"; ctx.fillRect(0, SUELO, W, H - SUELO); ctx.fillStyle = "#8d6bb5"; ctx.fillRect(0, SUELO, W, 8);
-      ctx.strokeStyle = "rgba(43,16,85,.35)"; ctx.lineWidth = 2; const off = st.x % 36; for (let x = -off; x < W; x += 36){ ctx.beginPath(); ctx.moveTo(x, SUELO + 8); ctx.lineTo(x, H); ctx.stroke(); } for (const y of [SUELO + 28, SUELO + 48]){ ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      fondoCompleto();
       // meta
       const mx = META - st.x + PX; if (mx < W + 80){ ctx.save(); ctx.translate(mx, SUELO - 60); mariposa(0, 0, 1.6, st.t * 6); ctx.restore(); }
       // estrellas y obstáculos
       for (const e of st.ests){ const x = e.x - st.x; if (x > -20 && x < W + 20) estrella(x, e.y + Math.sin(st.t * 4 + e.x) * 3, 12, "#ffd54f"); }
-      for (const o of st.obs){ const x = o.x - st.x; if (x < -50 || x > W + 50) continue;
-        if (o.t === "chimenea"){ ctx.fillStyle = "#b05a3a"; ctx.strokeStyle = "#2b1055"; ctx.lineWidth = 3; ctx.fillRect(x, SUELO - o.h, o.w, o.h); ctx.strokeRect(x, SUELO - o.h, o.w, o.h); ctx.fillStyle = "#8d4326"; ctx.fillRect(x - 4, SUELO - o.h - 8, o.w + 8, 10); ctx.strokeRect(x - 4, SUELO - o.h - 8, o.w + 8, 10); ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, SUELO - o.h / 2); ctx.lineTo(x + o.w, SUELO - o.h / 2); ctx.stroke(); }
-        else if (o.t === "antena"){ ctx.strokeStyle = "#2b1055"; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x + 7, SUELO); ctx.lineTo(x + 7, SUELO - o.h); ctx.moveTo(x - 6, SUELO - o.h + 8); ctx.lineTo(x + 20, SUELO - o.h + 8); ctx.moveTo(x - 2, SUELO - o.h + 22); ctx.lineTo(x + 16, SUELO - o.h + 22); ctx.stroke(); }
-        else mariposa(x + o.w / 2, SUELO - 20, .8, st.t * 8 + o.x); }
+      for (const o of st.obs){ const x = o.x - st.x; if (x < -60 || x > W + 60) continue; dibujaOb(o, x); }
+      cartel();
       // Ladybug
       const px = PX, py = st.y - R; if (st.inmune > 0 && Math.floor(st.inmune * 10) % 2) ctx.globalAlpha = .4;
       ctx.save(); ctx.translate(px, py); ctx.rotate(st.giro * Math.PI * 2 * (st.saltos === 2 ? 1 : 0) + Math.sin(st.x / 14) * (st.y >= SUELO ? .06 : 0));

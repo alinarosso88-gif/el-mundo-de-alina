@@ -1,6 +1,6 @@
 // Guarda la app en el celular para que abra rápido y también sin internet.
 // Para publicar una versión nueva, cambiá el número de VERSION.
-const VERSION = "mundo-alina-v39";
+const VERSION = "mundo-alina-v40";
 const BASE = ["./", "index.html", "manifest.json", "icon-192.png", "icon-512.png",
               "ladybug.png", "catnoir.png", "tikki.png"];
 
